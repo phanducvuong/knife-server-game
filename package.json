@@ -1,0 +1,24 @@
+{
+  "name": "knife-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "NODE_ENV=dev node app.js",
+    "prod": "NODE_ENV=production node app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.5",
+    "fastify": "^3.2.1",
+    "fastify-cors": "^4.1.0",
+    "firebase-admin": "^9.1.1",
+    "fluent-logger": "^3.4.1",
+    "node-cron": "^2.0.3",
+    "point-of-view": "^4.5.0",
+    "redis": "^3.0.2",
+    "request": "^2.88.2"
+  }
+}
