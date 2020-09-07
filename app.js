@@ -1,6 +1,7 @@
 const fastify     = require('fastify');
 const app         = fastify({ logger: false });
 const logger      = require('fluent-logger');
+const path        = require('path');
 
 var config;
 if (process.env.NODE_ENV === "production") {
@@ -53,7 +54,15 @@ app.register(require('point-of-view'), {
   templates: './admin/views'
 });
 
+app.register(require('fastify-static'), {
+  root: path.join(__dirname, './admin/public'),
+  prefix: '/public/', // optional: default '/'
+})
+
 app.register(require('./routes/verify_user_route'), { prefix: '/api/v1/user' });
+
+//route admin
+app.register(require('./admin/route/dashboard_route'), { prefix: '/api/v1/admin/dashboard' });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', (err, address) => {
