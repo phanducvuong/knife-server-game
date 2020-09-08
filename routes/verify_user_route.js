@@ -1,4 +1,6 @@
-const request     = require('request')
+const verifyTokenFunc     = require('../functions/verify_user_func');
+const redisClient         = require('../redis/redis_client');
+const FS                  = require('../repository/firestore');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -8,6 +10,15 @@ else {
   config = require('../config_dev');
 }
 
+const dataInitUser = {
+  inven: [],
+  turn: 0,
+  token:'',
+  ibillion: 0,
+  phone: '',
+  userID: ''
+}
+
 const verifyUserRoute = async (app, opt) => {
 
   app.post('/verify-user', async (req, rep) => {
@@ -15,10 +26,36 @@ const verifyUserRoute = async (app, opt) => {
     try {
 
       const token   = req.body.token.toString().trim();
-      const result  = await verifyTokenUser(token);
+      const result  = await verifyTokenFunc.verifyTokenUser(token);
 
       if (result === null || result === undefined) {
-        throw 'can not verify user';
+        throw 'unvalid token';
+      }
+
+      let dataUser = JSON.parse(await redisClient.getTurnAndInvenUser(`${result.mega1_code}`));
+      if (dataUser === null || dataUser === undefined) {
+        dataUser = await FS.FSGetTurnAndInven(`${result.mega1_code}`);
+        if (dataUser === null || dataUser === undefined) {
+          dataInitUser.token  = token;
+          dataInitUser.phone  = result.phone;
+          dataInitUser.userID = result.user_id;
+          redisClient.updateTurnAndInvenUser(`${result.mega1_code}`, JSON.stringify(dataInitUser));
+          FS.FSInitDataUser(`${result.mega1_code}`, 'turn_inven', dataInitUser);
+        }
+        else {
+          dataUser.token  = token;
+          dataUser.phone  = result.phone;
+          dataUser.userID = result.user_id;
+          redisClient.updateTurnAndInvenUser(`${result.mega1_code}`, JSON.stringify(dataUser));
+          FS.FSUpdateTokenUser(`${result.mega1_code}`, token);
+        }
+      }
+      else {
+        dataUser.token  = token;
+        dataUser.phone  = result.phone;
+        dataUser.userID = result.user_id;
+        redisClient.updateTurnAndInvenUser(`${result.mega1_code}`, JSON.stringify(dataUser));
+        FS.FSUpdateTokenUser(`${result.mega1_code}`, token);
       }
 
       rep.send({
@@ -41,26 +78,3 @@ const verifyUserRoute = async (app, opt) => {
 }
 
 module.exports = verifyUserRoute;
-
-function verifyTokenUser(token) {
-  return new Promise((resv, rej) => {
-
-    request.post({
-      headers : {
-        'Authorization': `Bearer ${token}`
-      },
-      url     : config.URL_VALID_TOKEN
-    }, (err, res, body) => {
-
-      if (err) return rej(err)
-
-      let jsonData = JSON.parse(body);
-      if (jsonData.code !== 2000) {
-        return rej('can not verify user');
-      }
-      return resv(jsonData.data);
-
-    });
-
-  });
-}

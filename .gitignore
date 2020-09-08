@@ -112,7 +112,7 @@ run
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
 
-service_account.json
+knife-service-account.json
 # mega_account.json
 
 bench_test/

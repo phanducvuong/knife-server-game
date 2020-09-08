@@ -2,6 +2,7 @@ const fastify     = require('fastify');
 const app         = fastify({ logger: false });
 const logger      = require('fluent-logger');
 const path        = require('path');
+const dataGlobal  = require('./utils/load_data');
 
 var config;
 if (process.env.NODE_ENV === "production") {
@@ -59,13 +60,21 @@ app.register(require('fastify-static'), {
   prefix: '/public/', // optional: default '/'
 })
 
+app.register(require('./routes/config_route'),      { prefix: '/api/v1/config/get-partition' });
 app.register(require('./routes/verify_user_route'), { prefix: '/api/v1/user' });
 
 //route admin
-app.register(require('./admin/route/dashboard_route'), { prefix: '/api/v1/admin/dashboard' });
+app.register(require('./admin/route/dashboard_route'),  { prefix: '/api/v1/admin/dashboard' });
+app.register(require('./admin/route/setup_route'),      { prefix: '/api/v1/admin/setup' });
+
+//route test
+app.register(require('./test/global_route'), { prefix: '/api/v1/test' });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', (err, address) => {
+app.listen(PORT, '0.0.0.0', async (err, address) => {
+
+  await dataGlobal.loadDataGlobal();
+
   console.log(`app listening on port ${PORT}`);
   if (err) {
     console.log(err);
