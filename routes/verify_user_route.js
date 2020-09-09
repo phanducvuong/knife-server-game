@@ -60,11 +60,14 @@ const verifyUserRoute = async (app, opt) => {
 
       rep.send({
         status_code : 2000,
-        result      : result
+        result      : result,
+        config      : config.PARTITIONS
       });
 
     }
     catch(err) {
+
+      console.log(err);
 
       rep.send({
         status_code : 3000,

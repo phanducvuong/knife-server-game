@@ -38,6 +38,37 @@ const setupRoute = async (app, opt) => {
 
   });
 
+  app.get('/get-partition', async (req, rep) => {
+
+    try {
+
+      let dataPartition = JSON.parse(await redisClient.getPartition());
+      if (dataPartition === null || dataPartition === undefined) {
+
+        dataPartition = await FS.FSGetPartition();
+        if (dataPartition === null || dataPartition === undefined) {
+          throw 'can not get partition';
+        }
+
+      }
+
+      rep.view('/partials/error_view.ejs', {
+        data  : dataPartition,
+        title_error : 'can not get partition'
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.view('/partials/error_view.ejs', {
+        title_error : err
+      });
+
+    }
+
+  });
+
 }
 
 module.exports = setupRoute;

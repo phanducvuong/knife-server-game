@@ -1,7 +1,7 @@
 const dashboardRoute = async (app, opt) => {
 
   app.get('/', async (req, rep) => {
-    rep.view('/partials/dashboard.ejs');
+    rep.view('/partials/dashboard_view.ejs');
   });
 
 }

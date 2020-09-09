@@ -47,6 +47,16 @@ exports.updatePartition = (data) => {
   insLsRedis[index].set('partition', data);
 }
 
+exports.getPartition = () => {
+  return new Promise((resv, rej) => {
+    const index = getIndex('partition');
+    insLsRedis[index].get('partition', (err, reply) => {
+      if (err) return rej(err);
+      return resv(reply);
+    });
+  });
+}
+
 //-----------------------------------------functional-----------------------------------------------
 function getIndex(key) {
   let index = Math.abs(hashCode(key)) % config.LENGTH_REDIS;
