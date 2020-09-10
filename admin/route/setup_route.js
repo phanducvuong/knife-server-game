@@ -52,9 +52,8 @@ const setupRoute = async (app, opt) => {
 
       }
 
-      rep.view('/partials/error_view.ejs', {
-        data  : dataPartition,
-        title_error : 'can not get partition'
+      rep.view('/partials/config_view.ejs', {
+        data  : dataPartition
       });
 
     }
