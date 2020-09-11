@@ -20,3 +20,7 @@ exports.PARTITIONS                = {
   veloc             : 3000,
   data              : []
 }
+
+exports.ARR_ITEM                  = [];
+exports.ARR_ID_ITEM_BL            = [];     //danh sách id item dành cho user nằm trong blacklist
+exports.BLACK_LIST                = [];

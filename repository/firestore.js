@@ -46,6 +46,22 @@ exports.FSUpdateTokenUser = (keyCollection, token) => {
   }
 }
 
+exports.FSUpdateHistoryUser = (keyCollection, data) => {
+  const history = db.collection(keyCollection).doc('histories');
+  history.update({
+    'his': admin.firestore.FieldValue.arrayUnion(data)
+  })
+  .then(result => {})
+  .catch(async (err) => {
+    let doc = await history.get();
+    if (!doc.exists) {
+      let arrHis = [];
+      arrHis.push(data);
+      history.set({ 'his': arrHis });
+    }
+  });
+}
+
 //--------------------------------------------admin--------------------------------------------
 exports.FSUpdatePartition = (data) => {
   try {
@@ -62,8 +78,49 @@ exports.FSGetPartition = async () => {
   try {
     const admin = db.collection('admin').doc('partition');
     const data  = await admin.get();
+
     if (!data.exists) return null;
     return data.data();
+  }
+  catch(err) {
+    console.log(err);
+    return null;
+  }
+}
+
+exports.FSGetItemBy = async (keyDoc) => {
+  try {
+    const admin = db.collection('items').doc(`${keyDoc}`);
+    const data  = await admin.get();
+
+    if (!data.exists) return null;
+    return data.data();
+  }
+  catch(err) {
+    console.log(err);
+    return null;
+  }
+}
+
+exports.FSUpdateARRItemBy = (keyDoc, data) => {
+  try {
+    db.collection('items')
+      .doc(`${keyDoc}`)
+      .set(data);
+  }
+  catch(err) {
+    console.log(err);
+  }
+}
+
+exports.FSGetAllItem = async () => {
+  try {
+    let   arrKeyItem  = [];
+    const itemKey     = await db.collection('items').get();
+    for (e of itemKey.docs) {
+      arrKeyItem.push(e.data());
+    }
+    return arrKeyItem;
   }
   catch(err) {
     console.log(err);

@@ -36,7 +36,7 @@ app.get('/', async (req, rep) => {
 //   timeout           : 3.0,
 //   reconnectInterval : 600000
 // });
-
+app.register(require('fastify-formbody'));
 app.addContentTypeParser('application/json', { parseAs: 'string' }, (req, body, done) => {
   try {
     let json = JSON.parse(body);
@@ -62,6 +62,7 @@ app.register(require('fastify-static'), {
 
 app.register(require('./routes/config_route'),      { prefix: '/api/v1/config/get-partition' });
 app.register(require('./routes/verify_user_route'), { prefix: '/api/v1/user' });
+app.register(require('./routes/wheel_route'),       { prefix: '/api/v1/wheel' });
 
 //route admin
 app.register(require('./admin/route/dashboard_route'),  { prefix: '/api/v1/admin/dashboard' });
@@ -73,7 +74,10 @@ app.register(require('./test/global_route'), { prefix: '/api/v1/test' });
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', async (err, address) => {
 
-  await dataGlobal.loadDataGlobal();
+  const result = await dataGlobal.loadDataGlobal();
+  if (!result) {
+    console.log('please setup data');
+  }
 
   console.log(`app listening on port ${PORT}`);
   if (err) {
