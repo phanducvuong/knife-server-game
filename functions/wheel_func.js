@@ -29,7 +29,7 @@ exports.getRndItem = async (totalPercent) => {
     amountItem = itemFS['amount'];
   }
 
-  if (amountItem >= tmpItem['maximum']) {
+  if (amountItem >= tmpItem['maximum'] && tmpItem['maximum'] !== -1) {
     tmpItem = config.ARR_ITEM.find(e => { return e['id'] === 3 });
   }
 

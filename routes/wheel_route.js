@@ -1,7 +1,8 @@
-const FS              = require('../repository/firestore');
-const redisClient     = require('../redis/redis_client');
-const util            = require('../utils/util');
-const wheelFunc       = require('../functions/wheel_func');
+const FS                    = require('../repository/firestore');
+const redisClient           = require('../redis/redis_client');
+const util                  = require('../utils/util');
+const wheelFunc             = require('../functions/wheel_func');
+const profileUserFunc       = require('../functions/profile_user_func');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -57,11 +58,24 @@ const wheelRoute = async (app, opt) => {
 
       //TODO: update data user and incr amount item
       dataUser['turn'] -= 1;
+      dataUser['inven'] = profileUserFunc.updateInventory(dataUser['inven'], item);
+
+      //TODO: nếu user xoay trúng được mã cơ hội => gen mã lưu lại trong lucky_code
+
+      const strHis = JSON.stringify({
+        time    : new Date().getTime(),
+        id_item : item['id']
+      });
+      redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
+      redisClient.updateHistoryUser(megaID, strHis);
+
+      FS.FSInitDataUser(megaID, 'turn_inven', dataUser);
+      FS.FSUpdateHistoryUser(megaID, strHis);
 
       rep.send({
         status_code : 2000,
         turn        : dataUser['turn'],
-        item        : item['id']
+        id          : item['id']
       });
 
     }

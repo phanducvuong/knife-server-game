@@ -3,6 +3,7 @@ const app         = fastify({ logger: false });
 const logger      = require('fluent-logger');
 const path        = require('path');
 const dataGlobal  = require('./utils/load_data');
+const schedule    = require('./utils/schedule');
 
 var config;
 if (process.env.NODE_ENV === "production") {
@@ -70,6 +71,9 @@ app.register(require('./admin/route/setup_route'),      { prefix: '/api/v1/admin
 
 //route test
 app.register(require('./test/global_route'), { prefix: '/api/v1/test' });
+
+//schedule
+schedule.scheDataGlobal();
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', async (err, address) => {
