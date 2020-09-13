@@ -13,7 +13,7 @@ exports.getRndItem = async (totalPercent) => {
   let rnd     = Math.round(Math.random() * totalPercent) + 1;
   let percent = 0;
 
-  let tmpItem = config.ARR_ITEM.find(e => { return e.maximum === -1 });
+  let tmpItem = config.ARR_ITEM.find(e => { return e.maximum <= 0 });
   for (let item of config.ARR_ITEM) {
     percent += item.percent;
     if (rnd <= percent) {
@@ -29,7 +29,7 @@ exports.getRndItem = async (totalPercent) => {
     amountItem = itemFS['amount'];
   }
 
-  if (amountItem >= tmpItem['maximum'] && tmpItem['maximum'] !== -1) {
+  if (amountItem >= tmpItem['maximum'] && tmpItem['maximum'] > 0) {
     tmpItem = config.ARR_ITEM.find(e => { return e['id'] === 3 });
   }
 

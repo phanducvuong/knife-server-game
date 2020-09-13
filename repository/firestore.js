@@ -113,6 +113,15 @@ exports.FSUpdateARRItemBy = (keyDoc, data) => {
   }
 }
 
+exports.FSDeleteItemBy = async (keyDoc) => {
+  try {
+    const res = await db.collection('items').doc(`${keyDoc}`).delete();
+  }
+  catch(err) {
+    console.log(err);
+  }
+}
+
 exports.FSGetAllItem = async () => {
   try {
     let   arrKeyItem  = [];
