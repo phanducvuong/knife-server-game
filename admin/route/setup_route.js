@@ -41,7 +41,9 @@ const setupRoute = async (app, opt) => {
     try {
 
       let dataPartition = await FS.FSGetPartition();
-      redisClient.updatePartition(JSON.stringify(dataPartition));
+      if (dataPartition === null || dataPartition === undefined) {
+        dataPartition = [];
+      }
 
       rep.view('/partials/config_partition_view.ejs', {
         data  : dataPartition

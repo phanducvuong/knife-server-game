@@ -143,7 +143,7 @@
 										<label class="col-md-12 control-label" for="product_name_fr">NAME PARTITION</label>
 										<div class="col-md-12">
 											<div class="col-md-12">
-												<p id="addNamePartition"></p>
+												<p id="addNamePartition" style="font-size: 25px; color: darkorange;"></p>
 											</div>
 										</div>
 								</div>
@@ -153,16 +153,15 @@
 									<label class="col-md-12 control-label" for="product_name_fr">REGION</label>
 									<div class="col-md-12">
 										<div class="col-md-12">
-											<ul id="addSelectRegionPartition">
-												<li>
-													<img src="/public/regions/Tv.png" alt="" srcset="">
+											<button id="btn-select-region" value="">
+												<li value="Tv">
 													<span>Tivi</span>
+													<img id="img-region" src="/public/regions/Tv.png" alt="" srcset="">
 												</li>
-												<li>
-													<img src="/public/regions/500k.png" alt="" srcset="">
-													<span>Tivi</span>
-												</li>
-											</ul>
+											</button>
+											<div id="bound-region">
+												<ul id="ul-region"></ul>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -226,9 +225,12 @@
 						alert(data['error']);
 						return;
 					}
+
 					lsItem.push(...data['lsItem']);
 					lsRegion.push(...data['lsRegion']);
+
 					setDataIdToSelectIdItemTag(lsItem);
+					setDataRegionToUlTag(lsRegion);
 
 				})
 					.fail(() => {
@@ -241,12 +243,33 @@
 		$('#addSelectIdPartition').on('change', () => {
 			let id 				= parseInt($('#addSelectIdPartition').val(), 10);
 			let itemFind	= lsItem.find(e => { return e['id'] === id });
-			console.log(itemFind);
+			
+			$('#addNamePartition').text(itemFind['name']);
 		});
 
 		//add new partition by item
 		$('#btnAddPartition').click(() => {
 
+		});
+
+		//get value in li tag
+		$('body').delegate('#ul-region li', 'click', (event) => {
+			let value		= event.currentTarget.attributes.getNamedItem('value').value.split('_');
+			let region	= value[0];
+			let name		= value[1];
+			let src			= value[2];
+
+			let markup 	= `<li value="${region}">
+											<span>${name}</span>
+											<img src="${src}" alt="" srcset="">
+										</li>`;
+			$('#btn-select-region').html(markup);
+			$('#btn-select-region').val(name);
+		});
+
+		//toggel btn-region
+		$('#btn-select-region').click(() => {
+			$('#bound-region').toggle();
 		});
 	}
 
@@ -267,11 +290,80 @@
 		$('#addSelectIdPartition').append(markup);
 	}
 
-	function setDataToSelectRegionTag(lsRegion) {
-		let markup = `<option value="${lsRegion[0]}"
-													>
+	function setDataRegionToUlTag(lsRegion) {
+		for (e of lsRegion) {
+			let tmp			= findSrcImgAndNameRegion(e);
+			let markup 	= `<li value="${tmp['region']}_${tmp['name']}_${tmp['src']}">
+											<span>${tmp['name']}</span>
+											<img src="${tmp['src']}" alt="" srcset="">
+										</li>`;
+      $('#ul-region').append(markup);
+		}
+	}
 
-									</option>`
+	function findSrcImgAndNameRegion(key) {
+		switch(key) {
+			case 'Tv': 			return {
+				src			: '/public/regions/Tv.png',
+				name		: 'Tivi',
+				region	: 'Tv'
+			};
+			case 'Matluot': return {
+				src			: '/public/regions/Matluot.png',
+				name		: 'Mất Lượt',
+				region	: 'Matluot'
+			};
+			case 'Macohoi': return {
+				src			: '/public/regions/Macohoi.png',
+				name		: 'Mã Cơ Hội',
+				region	: 'Macohoi'
+			};
+			case 'Ip11': 		return {
+				src			: '/public/regions/Ip11.png',
+				name		: 'Iphone 11',
+				region	: 'Ip11'
+			};
+			case '500k': 		return {
+				src			: '/public/regions/500k.png',
+				name		: 'Thẻ Cào 500k',
+				region	: '500k'
+			};
+			case '200k': 		return {
+				src			: '/public/regions/200K.png',
+				name		: 'Thẻ Cào 200k',
+				region	: '200k'
+			};
+			case '100k': 		return {
+				src			: '/public/regions/100k.png',
+				name		: 'Thẻ Cào 100k',
+				region	: '100k'
+			};
+			case '50k': 		return {
+				src			: '/public/regions/50k.png',
+				name		: 'Thẻ Cào 50k',
+				region	: '50k'
+			};
+			case '20k': 		return {
+				src			: '/public/regions/20k.png',
+				name		: 'Thẻ Cào 20k',
+				region	: '20k'
+			};
+			case '10k': 		return {
+				src			: '/public/regions/10k.png',
+				name		: 'Thẻ Cào 10k',
+				region	: '10k'
+			};
+			case '15Tr': 		return {
+				src			: '/public/regions/15Tr.png',
+				name		: '15 Triệu',
+				region	: '15Tr'
+			};
+			case '5Tr': 		return {
+				src			: '/public/regions/5Tr.png',
+				name		: '5 Triệu',
+				region	: '5Tr'
+			};
+		}
 	}
 
 </script>
