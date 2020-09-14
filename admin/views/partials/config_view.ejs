@@ -227,6 +227,8 @@
           
   
         </tbody>
+        <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
+
         <tbody>
           <tr>
               <td>
@@ -408,7 +410,16 @@
           <!-- ////////////////// js edit product////////////////// -->
         
 
-      </tbody>
+        </tbody>
+         <!-- Page-Level Scripts -->
+         <script>
+            $(document).ready(function () {
+
+                $('.footable').footable();
+
+            });
+        </script>
+        </table>
         <tfoot>
             <tr>
                 <td colspan="6">
