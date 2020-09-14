@@ -21,3 +21,15 @@ exports.deleteItemBy = (lsItem, idDel) => {
     status  : false
   };
 }
+
+exports.findItemAndIndex = (lsItem, idChk) => {
+  for (let i=0; i<lsItem.length; i++) {
+    if (lsItem[i]['id'] === idChk) {
+      return {
+        item  : lsItem[i],
+        index : i
+      }
+    }
+  }
+  return null;
+}

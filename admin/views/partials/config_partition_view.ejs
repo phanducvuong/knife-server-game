@@ -56,319 +56,224 @@
             <% } %>
           </div>
       </div>
-
-  </div>
-  </section>
+  	</div>
+	</section>
+	
   <section class="content">
     <div style="background-color: white;">
-      <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
-        <tbody>
-            <tr>
-                <td>
-                    <h4>ok</h4>
-                </td>
-                <td>
-                    <h4>img</h4>
-                </td>
-                <td>
-                    ok
-                </td>
-  
-                <td>
-                  <h4>ok3</h4>
-  
-                </td>
-                <td>
-                  ok
-                </td>
-                <td>
-                    <span class="label label-primary prod_quantity">ok</span>
-                </td>
-                <td class="text-right">
-                    <div class="btn-group">
-                        <a href="#"
-                            style="margin-right: 20px">
-                            View
-                        </a>
-                        <p class="product_id" hidden>ok</p>
-                        <a href="#" class="abc"  data-toggle="modal"
-                            data-target="#myModal">Edit</a>
-                        <a href="#" class="del" 
-                            style="margin-left: 20px">delete</a>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
+      <table id="tableItem" class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
 
-        <tbody>
-          <tr>
-              <td><h4>ok</h4></td>
-              <td><h4>img</h4></td>
-              <td>ok</td>
-              <td><h4>ok3</h4></td>
-              <td>ok</td>
-              <td><span class="label label-primary prod_quantity">ok</span></td>
-              <td class="text-right">
-                  <div class="btn-group">
-                      <a href="#" style="margin-right: 20px">View</a>
-                      <p class="product_id" hidden>ok</p>
-                      <a href="#" class="abc" data-toggle="modal" data-target="#myModal">Edit</a>
-                      <a href="#" class="del" style="margin-left: 20px">delete</a>
-                  </div>
-              </td>
-          </tr>
+				<thead>
+					<tr style="font-weight: bolder;">
+						<td style="font-weight: bolder;">ID</td>
+						<td style="font-weight: bolder;">NAME</td>
+						<td style="font-weight: bolder;">REGION</td>
+						<td style="font-weight: bolder;">POSITION</td>
+					</tr>
+				</thead>
 
-      </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="6" style="text-align: right;">
-                    <button type="button" id="btnUpdate" class="btn btn-success">THÊM</button>
-                </td>
-            </tr>
-        </tfoot>
-    </table>
+				<tbody>
+					<% for (e of data['data']) { %>
+						<tr>
+								<td><%= e['id'] %></td>
+								<td><%= e['name'] %></td>
+								<td>
+									<% switch(e['region']) {
+										case 'Tv': %> <img src="/public/regions/Tv.png" alt="" srcset=""> <% break;
+										case 'Matluot': %> <img src="/public/regions/Matluot.png" alt="" srcset=""> <% break;
+										case 'Macohoi': %> <img src="/public/regions/Macohoi.png" alt="" srcset=""> <% break;
+										case 'Ip11': 		%> <img src="/public/regions/Ip11.png" alt="" srcset=""> <% break;
+										case '500k': 		%> <img src="/public/regions/500k.png" alt="" srcset=""> <% break;
+										case '200k': 		%> <img src="/public/regions/200k.png" alt="" srcset=""> <% break;
+										case '100k': 		%> <img src="/public/regions/100k.png" alt="" srcset=""> <% break;
+										case '50k': 		%> <img src="/public/regions/50k.png" alt="" srcset=""> <% break;
+										case '20k': 		%> <img src="/public/regions/20k.png" alt="" srcset=""> <% break;
+										case '10k': 		%> <img src="/public/regions/10k.png" alt="" srcset=""> <% break;
+										case '15Tr': 		%> <img src="/public/regions/15Tr.png" alt="" srcset=""> <% break;
+										case '10Tr': 		%> <img src="/public/regions/10Tr.png" alt="" srcset=""> <% break;
+										case '5Tr': 		%> <img src="/public/regions/5Tr.png" alt="" srcset=""> <% break;
+									} %>
+								</td>
+								<td><%= e['pos'] %></td>
+								<td class="text-right">
+									<div class="btn-group">
+											<a href="#" class="edtPartition" data-id="<%= e['id'] %>" data-toggle="modal"
+													data-target="#modalEditItem">Edit</a>
+											<a href="#" class="deletePartition" data-id="<%= e['id'] %>"
+													style="margin-left: 20px">Delete</a>
+									</div>
+							</td>
+						</tr>
+					<% } %>
+				</tbody>
 
-    <!-- The Modal -->
-    <div class="modal" id="myModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
+				<tfoot>
+					<tr>
+						<td colspan="6" style="text-align: right;">
+							<button type="button" id="btnAdd" data-toggle="modal" data-target="#modalAddPartition"class="btn btn-success">ADD</button>
+						</td>
+					</tr>
+				</tfoot>
+		</table>
 
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h4 class="modal-title">EDIT PRODUCT</h4>
-                    <button type="button" class="close"
-                        data-dismiss="modal">&times;</button>
-                </div>
+    <!-- THE MODAL ADD PARTITION -->
+		<div class="modal" id="modalAddPartition">
+			<div class="modal-dialog">
+					<div class="modal-content">
 
-                <!-- Modal body -->
-                <div class="modal-body">
-                    <form id="myForm" class="form-horizontal" method="POST"
-                        enctype="multipart/form-data">
-                        <fieldset>
-                            <input id="ID" hidden type="text">
+							<!-- Modal Header -->
+							<div class="modal-header">
+									<h4 class="modal-title" style="font-weight: bolder">ADD PARTITION</h4>
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+							</div>
 
-                            <!-- Form Name -->
+							<!-- Modal body -->
+							<div class="modal-body">
+								<!-- ID-->
+								<div class="form-group">
+									<label class="col-md-4 control-label">ID</label>
+									<div class="col-md-12">
+										<select id="addSelectIdPartition">
+										</select>
+									</div>
+								</div>
 
+								<!-- NAME-->
+								<div class="form-group">
+										<label class="col-md-12 control-label" for="product_name_fr">NAME PARTITION</label>
+										<div class="col-md-12">
+											<div class="col-md-12">
+												<p id="addNamePartition"></p>
+											</div>
+										</div>
+								</div>
 
-                            <!-- Text input-->
-                            <div class="form-group">
-                                <label class="col-md-4 control-label" for="product_name"
-                                    value="">PRODUCT
-                                    NAME</label>
-                                <div class="col-md-12">
-                                    <input id="product_name1" name="product_name"
-                                        placeholder="PRODUCT NAME"
-                                        class="form-control input-md" required=""
-                                        type="text">
+								<!-- REGION -->
+								<div class="form-group">
+									<label class="col-md-12 control-label" for="product_name_fr">REGION</label>
+									<div class="col-md-12">
+										<div class="col-md-12">
+											<ul id="addSelectRegionPartition">
+												<li>
+													<img src="/public/regions/Tv.png" alt="" srcset="">
+													<span>Tivi</span>
+												</li>
+												<li>
+													<img src="/public/regions/500k.png" alt="" srcset="">
+													<span>Tivi</span>
+												</li>
+											</ul>
+										</div>
+									</div>
+								</div>
 
-                                </div>
-                            </div>
+								<!-- POSITION -->
+								<div class="form-group">
+									<label class="col-md-4 control-label">POSITION</label>
+									<div class="col-md-12">
+											<input  id="addPosPartition" placeholder="POSITION"
+															class="form-control input-md" type="number"
+															step="0" min="0">
+									</div>
+								</div>
 
-                            <!-- Text input-->
-                            <div class="form-group">
-                                <label class="col-md-12 control-label"
-                                    for="product_name_fr">PRODUCT PRICE </label>
-                                <div class="col-md-12">
-                                    <input id="product_price" name="product_price"
-                                        placeholder="PRODUCT DESCRIPTION FR"
-                                        class="form-control input-md" required=""
-                                        type="text">
+							<br>
+							<br>
 
-                                </div>
-                            </div>
-                            <!-- File Button -->
-                            <div class="form-group">
-                                <label class="col-md-12 control-label"
-                                    for="filebutton">IMAGE</label>
-                                <div class="col-md-12">
-                                    <input id="image" name="image" class="input-file"
-                                        type="file" src="">
-                                </div>
-                            </div>
+							<!-- Button -->
+							<div class="form-group">
+									<div class="col-md-12" style="text-align: center;">
+										<button id="btnAddPartition" type="submit" name="singlebutton" class="btn btn-success">ADD</button>
+									</div>
+							</div>
+						</div>
 
-                            <!-- Text input-->
-                            <div class="form-group">
-                                <label class="col-md-12 control-label"
-                                    for="available_quantity">RPODUCT QUANTITY</label>
-                                <div class="col-md-12">
-                                    <input id="product_quantity" name="product_quantity"
-                                        placeholder="AVAILABLE QUANTITY"
-                                        class="form-control input-md" required=""
-                                        type="number">
-
-                                </div>
-                            </div>
-
-                            <!-- Text input-->
-                            <div class="form-group">
-                                <label class="col-md-12 control-label"
-                                    for="product_weight">PRODUCT DETAIL</label>
-                                <div class="col-md-12">
-                                    <textarea class="form-control" id="product_detail"
-                                        name="product_detail"></textarea>
-
-                                </div>
-                            </div>
-
-                          
-                            <div>
-                                <label for="departmentsDropdown"
-                                    style="margin-left: 15px"><b>CATEGORY</b></label>
-                                <select class="form-control" id="departmentsDropdown"
-                                    name="cate_id"
-                                    style="width: 93%; margin-left: 15px"></select>
-                            </div>
-                            <br>
-                            <br>
-
-                            <!-- Button -->
-                            <div class="form-group">
-                                <div class="col-md-12">
-                                    <button id="post" type="submit" name="singlebutton"
-                                        class="btn btn-primary">Button</button>
-                                    <button style="float: right" type="button"
-                                        class="btn btn-danger"
-                                        data-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-
-                        </fieldset>
-                    </form>
-                </div>
-
-            </div>
-        </div>
-    </div>
+					</div>
+			</div>
+		</div>
   </section>
 
   <div style="text-align: center; margin-bottom: 10%;">
-    <button type="button" id="btnUpdate" class="btn btn-primary">CẬP NHẬT</button>
+    <button type="button" id="btnUpdatePartition" class="btn btn-primary">CẬP NHẬT</button>
   </div>
   
   <br>
 </div>
 
 <script>
-  let getApi
-  $(document).ready(() => {
-      $('.abc').each((i, e) => {
-          $(e).click(() => {
-              var temp = $(e).data('id')
-              getApi = 'http://localhost:3000/api/show-form/' + temp
-              //postData(temp)
 
-              Edit_product(getApi)
+	$(document).ready(() => {
 
-          })
+		clearValueInModal();
+		addPartition();
 
-      })
-      $('.del').each((i, e) => {
-          $(e).click(() => {
-              var temp = $(e).data('id')
-              //  function AlertDelete() {
-              swal({
-                  title: 'Are you sure?',
-                  text: "You won't be able to revert this!",
-                  type: 'warning',
-                  showCancelButton: true,
-                  confirmButtonColor: '#3085d6',
-                  cancelButtonColor: '#d33',
-                  confirmButtonText: 'Yes, delete it!'
-              }).then((result) => {
-                  if (result.value) {
-                      Swal.fire(
-                          'Deleted!',
-                          'Your file has been deleted.',
-                          'success'
-                      )
-                      setTimeout(() => {
-                          $.ajax({
-                          url: 'http://localhost:3000/api/xoa-san-pham/' + temp,
-                          type: 'POST',
-                      }).done((data) => {
-                          if (data.check.length > 0) {
-                              window.location.reload()
-                          } else {
-                              alert(data.message)
-                          }
-                      }).fail(data => {
-                          console.log(data);
-                      })
-                      }, 500);
-                  }
-              })
-          })
-      })
-  })
-  ///////// combobox category//////////
-  $(document).ready(() => {
-      $.ajax({
-          type: "GET",
-          url: "http://localhost:3000/api/tat-ca-the-loai",
-          dataType: 'json',
-          success: function (data) {
-              console.log('load data', data.data[0].cate_name);
+	});
 
-              var s = '<option id="getCate" value="-1">Chọn thể loại</option>';
-              var ss = []
-              for (var i = 0; i < data.data.length; i++) {
-                  s += '<option value="' + data.data[i]._id + '">' + data.data[i].cate_name + '</option>';
-                  ss.push(data.data[i]._id)
-              }
-              console.log('here', ss);
+	function addPartition() {
 
-              $("#departmentsDropdown").html(s);
+		let lsItem 		= [];
+		let lsRegion	= [];
+		//get all item
+		$('#btnAdd').click(() => {
+			
+			$.ajax({
+				url					: 'http://' + window.location.host + '/api/v1/admin/setup/data/get-all-item',
+				method			: 'GET'
+			})
+				.done((data) => {
 
-          }
+					if (data['status_code'] !== 2000) {
+						alert(data['error']);
+						return;
+					}
+					lsItem.push(...data['lsItem']);
+					lsRegion.push(...data['lsRegion']);
+					setDataIdToSelectIdItemTag(lsItem);
 
-      }).done((data) => {
+				})
+					.fail(() => {
 
-          console.log('ok', data.ss);
+					});
 
-      }).fail(() => {
-          console.log('fail');
-      })
+		});
 
+		//event change #addSelectIdPartition
+		$('#addSelectIdPartition').on('change', () => {
+			let id 				= parseInt($('#addSelectIdPartition').val(), 10);
+			let itemFind	= lsItem.find(e => { return e['id'] === id });
+			console.log(itemFind);
+		});
 
-  })
-  async function Edit_product(api) {
+		//add new partition by item
+		$('#btnAddPartition').click(() => {
 
-      console.log(getApi)
-      var View_data
+		});
+	}
 
-      const result = await $.ajax({
-          url: getApi,
-          type: 'GET',
-          dataType: 'json',
-          success: function (data, textStatus, xhr) {
-              console.log('name', data.data.product_name);
-              var product_name = data.data
-              var src = product_name.product_pic_big
+	function clearValueInModal() {
+		$(".modal").on("hidden.bs.modal", () => {
+			$('#addSelectIdPartition option').remove();
+			$('#addSelectRegionPartition option').remove();
+			$('#addNamePartition').val('');
+			$('#addPosPartition').val('');
+		});
+	}
+	
+	function setDataIdToSelectIdItemTag(lsItem) {
+		let markup = '<option value="-1">Choose ID Item</option>';
+		for (e of lsItem) {
+			markup += `<option value="${e['id']}">${e['id']}</option>`;
+		}
+		$('#addSelectIdPartition').append(markup);
+	}
 
-              $('#image').attr('src', src);
-              $('#myForm').attr('action', 'http://localhost:3000/api/cap-nhat-san-pham/' + data.data._id)
-              $("#ID").val(data.data._id)
-              $("#product_name1").val(data.data.product_name)
-              $("#product_price").val(data.data.product_price)
-              $("#product_detail").val(data.data.product_detail)
-              $("#product_quantity").val(data.data.product_quantity)
-              $("#cate_id").val(data.data.cate_id)
-              $("#brand_id").val(data.data.brand_id)
+	function setDataToSelectRegionTag(lsRegion) {
+		let markup = `<option value="${lsRegion[0]}"
+													>
 
+									</option>`
+	}
 
-          },
-          error: function (xhr, textStatus, errorThrown) {
-              console.log('Error in Operation');
-          }
-      })
-      $(document).ready(() => {
-          $("#myForm").submit(function (event) {
-              event.preventDefault();
-              window.location.replace('http://localhost:3000/api/index')
-
-          });
-      });
-  }
 </script>
 
 <%- include('../layouts/footer') %>

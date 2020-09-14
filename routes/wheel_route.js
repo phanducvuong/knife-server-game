@@ -72,10 +72,14 @@ const wheelRoute = async (app, opt) => {
       FS.FSInitDataUser(megaID, 'turn_inven', dataUser);
       FS.FSUpdateHistoryUser(megaID, strHis);
 
+      let region = lsPartition['data'].find(e => { return e['id'] === item['id'] });
+      if (region === null || region === undefined) throw `Can not get region by ${item['id']}`;
+
       rep.send({
         status_code : 2000,
         turn        : dataUser['turn'],
-        id          : item['id']
+        id          : item['id'],
+        region      : region['region']
       });
 
     }

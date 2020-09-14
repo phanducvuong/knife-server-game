@@ -24,3 +24,5 @@ exports.PARTITIONS                = {
 exports.ARR_ITEM                  = [];
 exports.ARR_ID_ITEM_BL            = [];     //danh sách id item dành cho user nằm trong blacklist
 exports.BLACK_LIST                = [];
+
+exports.REGIONS                   = ['Tv', 'Matluot', 'Macohoi', '5Tr', 'Ip11', '15Tr', '10k', '20k', '50k', '100k', '200k', '500k'];

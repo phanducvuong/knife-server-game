@@ -10,6 +10,10 @@ else {
 }
 
 exports.getRndItem = async (totalPercent) => {
+
+  //TODO: lọc mảng item có trong danh sách partitions. Tính total_percent
+  //TODO: random item dựa trên danh sách item vừa lọc ra.
+
   let rnd     = Math.round(Math.random() * totalPercent) + 1;
   let percent = 0;
 
