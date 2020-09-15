@@ -33,3 +33,12 @@ exports.findItemAndIndex = (lsItem, idChk) => {
   }
   return null;
 }
+
+exports.posIsExistInLsRegion = (lsRegion, pos) => {
+  for (let e of lsRegion) {
+    if (e['pos'] === pos) {
+      return true;
+    }
+  }
+  return false;
+}

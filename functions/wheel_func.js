@@ -26,6 +26,8 @@ exports.getRndItem = async (totalPercent) => {
     }
   }
 
+  if (tmpItem === null || tmpItem === undefined) return null;
+
   let amountItem = await redisClient.getAmountItem(tmpItem['id']);
   if (amountItem === null || amountItem === undefined) {
     let itemFS = await FS.FSGetItemBy(tmpItem['id']);

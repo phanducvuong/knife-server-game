@@ -12,6 +12,7 @@ else {
 
 const setupRoute = async (app, opt) => {
 
+  //setup partition
   app.post('/partition', async (req, rep) => {
     try {
 
@@ -42,7 +43,14 @@ const setupRoute = async (app, opt) => {
 
       let dataPartition = await FS.FSGetPartition();
       if (dataPartition === null || dataPartition === undefined) {
-        dataPartition = [];
+        dataPartition = {
+          distane_ani_board : 50,
+          dura_ani_board    : 0.1,
+          dura_knife_fly    : 0.1,
+          partition         : 12,
+          veloc             : 3000,
+          data              : []
+        }
       }
 
       rep.view('/partials/config_partition_view.ejs', {
@@ -60,6 +68,119 @@ const setupRoute = async (app, opt) => {
     }
   });
 
+  app.post('/add-partition', async (req, rep) => {
+    try {
+
+      let id      = parseInt(req.body.id, 10);
+      let name    = req.body.name.toString().trim();
+      let region  = req.body.region.toString().trim();
+      let pos     = parseInt(req.body.pos, 10);
+
+      if (isNaN(id) || isNaN(pos) || name === null || name === undefined || name === '' ||
+          region === null || region === undefined  || region === '') {
+        throw `Add failed!\nCheck info partition!`;
+      }
+
+      let [partitions, items] = await Promise.all([
+        FS.FSGetPartition(),
+        FS.FSGetAllItem()
+      ]);
+
+      if (items         === null  || items                           === undefined       ||
+          items.length  <= 0      || setupFunc.idExistIn(items, id)  === false) {
+        throw `${id} is not exist in list item!`;
+      }
+
+      if (partitions === null || partitions === undefined) {
+        let data = [];
+        data.push({
+          id      : id,
+          region  : region,
+          name    : name,
+          pos     : pos
+        });
+
+        partitions = {
+          distane_ani_board : 50,
+          dura_ani_board    : 0.1,
+          dura_knife_fly    : 0.1,
+          partition         : 12,
+          veloc             : 3000,
+          data              : data
+        }
+
+        FS.FSUpdatePartition(partitions);
+        rep.send({
+          status_code : 2000,
+          lsPartition : data
+        });
+
+        return;
+      } //partitions is not exist
+
+      if (partitions['data'] === null || partitions['data'] === undefined || partitions['data'].length <= 0) {
+        let data = [];
+        data.push({
+          id      : id,
+          region  : region,
+          name    : name,
+          pos     : pos
+        });
+
+        let distane_ani_board = (partitions['distane_ani_board'] === null || partitions['distane_ani_board'] === undefined) ? 50 : partitions['distane_ani_board'];
+        let dura_ani_board    = (partitions['dura_ani_board'] === null || partitions['dura_ani_board'] === undefined) ? 0.1 : partitions['dura_ani_board'];
+        let dura_knife_fly    = (partitions['dura_knife_fly'] === null || partitions['dura_knife_fly'] === undefined) ? 0.1 : partitions['dura_knife_fly'];
+        let partition         = (partitions['partition'] === null || partitions['partition'] === undefined) ? 12 : partitions['partition'];
+        let veloc             = (partitions['veloc'] === null || partitions['veloc'] === undefined) ? 3000 : partitions['veloc'];
+
+        let tmpPar = {
+          distane_ani_board : distane_ani_board,
+          dura_ani_board    : dura_ani_board,
+          dura_knife_fly    : dura_knife_fly,
+          partition         : partition,
+          veloc             : veloc,
+          data              : data
+        }
+
+        FS.FSUpdatePartition(tmpPar);
+        rep.send({
+          status_code : 2000,
+          lsPartition : data
+        });
+
+        return;
+      } //list region is not exist in partitions
+
+      if (setupFunc.posIsExistInLsRegion(partitions['data'], pos) === true) {
+        throw `${pos} is exist in partition`;
+      }
+
+      partitions['data'].push({
+        id      : id,
+        name    : name,
+        region  : region,
+        pos     : pos
+      });
+
+      FS.FSUpdatePartition(partitions);
+      rep.send({
+        status_code : 2000,
+        lsPartition : partitions['data']
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  //setup item
   app.get('/get-all-item', async (req, rep) => {
     try {
 

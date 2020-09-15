@@ -16,7 +16,7 @@ exports.PARTITIONS                = {
   distane_ani_board : 50,
   dura_ani_board    : 0.1,
   dura_knife_fly    : 0.1,
-  partition         : 0,
+  partition         : 12,
   veloc             : 3000,
   data              : []
 }

@@ -79,7 +79,7 @@
 								<td><%= e['name'] %></td>
 								<td>
 									<% switch(e['region']) {
-										case 'Tv': %> <img src="/public/regions/Tv.png" alt="" srcset=""> <% break;
+										case 'Tv': 			%> <img src="/public/regions/Tv.png" alt="" srcset=""> <% break;
 										case 'Matluot': %> <img src="/public/regions/Matluot.png" alt="" srcset=""> <% break;
 										case 'Macohoi': %> <img src="/public/regions/Macohoi.png" alt="" srcset=""> <% break;
 										case 'Ip11': 		%> <img src="/public/regions/Ip11.png" alt="" srcset=""> <% break;
@@ -153,7 +153,7 @@
 									<label class="col-md-12 control-label" for="product_name_fr">REGION</label>
 									<div class="col-md-12">
 										<div class="col-md-12">
-											<button id="btn-select-region" value="">
+											<button id="btn-select-region" value="Tv">
 												<li value="Tv">
 													<span>Tivi</span>
 													<img id="img-region" src="/public/regions/Tv.png" alt="" srcset="">
@@ -244,12 +244,44 @@
 			let id 				= parseInt($('#addSelectIdPartition').val(), 10);
 			let itemFind	= lsItem.find(e => { return e['id'] === id });
 			
-			$('#addNamePartition').text(itemFind['name']);
+			let name			= (itemFind === null || itemFind === undefined) ? '' : itemFind['name'];
+			$('#addNamePartition').text(name);
 		});
 
 		//add new partition by item
 		$('#btnAddPartition').click(() => {
+			let id 			= $('#addSelectIdPartition option:selected').val();
+			let name		= $('#addNamePartition').text();
+			let region	= $('#btn-select-region').val();
+			let pos			= $('#addPosPartition').val();
 
+			if (id === '' || name === '' || region === '' || pos === '') {
+				alert('Add partition failed!');
+				return;
+			}
+
+			$.ajax({
+				url					: 'http://' + window.location.host + '/api/v1/admin/setup/add-partition',
+				method			: 'POST',
+				contentType	: 'application/json; charset=utf-8',
+				data				: JSON.stringify({
+					id			: id,
+					name		: name,
+					region	: region,
+					pos			: pos
+				})
+			})
+				.done((data) => {
+
+					if (data['status_code'] !== 2000) {
+						alert(data['error']);
+						return;
+					}
+
+				})
+				.fail(() => {
+
+				});
 		});
 
 		//get value in li tag
@@ -263,8 +295,10 @@
 											<span>${name}</span>
 											<img src="${src}" alt="" srcset="">
 										</li>`;
+
 			$('#btn-select-region').html(markup);
-			$('#btn-select-region').val(name);
+			$('#btn-select-region').val(region);
+			$('#bound-region').toggle();
 		});
 
 		//toggel btn-region
@@ -276,9 +310,15 @@
 	function clearValueInModal() {
 		$(".modal").on("hidden.bs.modal", () => {
 			$('#addSelectIdPartition option').remove();
-			$('#addSelectRegionPartition option').remove();
-			$('#addNamePartition').val('');
+			$('#addNamePartition').text('');
 			$('#addPosPartition').val('');
+
+			let markup 	= `<li value="Tv">
+											<span>Tivi</span>
+											<img src="/public/regions/Tv.png" alt="" srcset="">
+										</li>`;
+			$('#btn-select-region').html(markup);
+			$('#btn-select-region').val('Tv');
 		});
 	}
 	
