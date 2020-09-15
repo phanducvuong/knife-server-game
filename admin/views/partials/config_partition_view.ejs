@@ -1,0 +1,371 @@
+<%- include('../layouts/header') %>
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>CẤU HÌNH THÔNG SỐ TRONG GAME </h1>
+
+  </section>
+
+  <section class="content">
+    <div class="tab-content">
+      <div id="tab-1" class="tab-pane active">
+          <div class="panel-body" style="background-color: white;">
+            <% if (data === null || data === undefined) { %>
+                <div class="form-group row"><label class="col-sm-2 col-form-label">Partition(số cửa):</label>
+                    <div class="col-sm-10"><input type="text" class="form-control" placeholder="10" name="partition"></div>
+                </div>
+                <div class="form-group row"><label class="col-sm-2 col-form-label">Velocity(vận tốc xoay):</label>
+                    <div class="col-sm-10"><input type="text" class="form-control" placeholder="1000" name="product_price"></div>
+                </div>
+                <div class="form-group row"><label class="col-sm-2 col-form-label">Dura_Fly_Knife(vận tốc tiêu bay):</label>
+                    <div class="col-sm-10"><input type="text" class="form-control" placeholder="0.1" name="product_price"></div>
+                </div>
+                <div class="form-group row"><label class="col-sm-2 col-form-label">Dura_ani_board(vận tốc thớt bay):</label>
+                    <div class="col-sm-10"><input type="text" class="form-control" placeholder="0.1" name="product_price"></div>
+                </div>
+                <div class="form-group row"><label class="col-sm-2 col-form-label">distane_ani_board(khoảng cách thớt bay):</label>
+                    <div class="col-sm-10"><input type="text" class="form-control" placeholder="50" name="product_price"></div>
+                </div>
+            <% } else { %>
+                <div class="form-group row"><label class="col-sm-2 col-form-label">Partition(số cửa):</label>
+                    <div class="col-sm-10">
+                        <input type="number" class="form-control" placeholder="10" name="partition" value="<%= data['partition'] %>">
+                    </div>
+                </div>
+                <div class="form-group row"><label class="col-sm-2 col-form-label">Velocity(vận tốc xoay):</label>
+                    <div class="col-sm-10">
+                        <input type="number" class="form-control" placeholder="1000" name="product_price" value="<%= data['veloc'] %>">
+                    </div>
+                </div>
+                <div class="form-group row"><label class="col-sm-2 col-form-label">Dura_Fly_Knife(vận tốc tiêu bay):</label>
+                    <div class="col-sm-10">
+                        <input type="number" step="0.01" class="form-control" placeholder="0.1" name="product_price" value="<%= data['dura_knife_fly'] %>">
+                    </div>
+                </div>
+                <div class="form-group row"><label class="col-sm-2 col-form-label">Dura_ani_board(vận tốc thớt bay):</label>
+                    <div class="col-sm-10">
+                        <input type="number" step="0.01" class="form-control" placeholder="0.1" name="product_price" value="<%= data['dura_ani_board'] %>">
+                    </div>
+                </div>
+                <div class="form-group row"><label class="col-sm-2 col-form-label">distane_ani_board(khoảng cách thớt bay):</label>
+                    <div class="col-sm-10">
+                        <input type="number" class="form-control" placeholder="50" name="product_price" value="<%= data['distane_ani_board'] %>">
+                    </div>
+                </div>
+            <% } %>
+          </div>
+      </div>
+  	</div>
+	</section>
+	
+  <section class="content">
+    <div style="background-color: white;">
+      <table id="tableItem" class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
+
+				<thead>
+					<tr style="font-weight: bolder;">
+						<td style="font-weight: bolder;">ID</td>
+						<td style="font-weight: bolder;">NAME</td>
+						<td style="font-weight: bolder;">REGION</td>
+						<td style="font-weight: bolder;">POSITION</td>
+					</tr>
+				</thead>
+
+				<tbody>
+					<% for (e of data['data']) { %>
+						<tr>
+								<td><%= e['id'] %></td>
+								<td><%= e['name'] %></td>
+								<td>
+									<% switch(e['region']) {
+										case 'Tv': %> <img src="/public/regions/Tv.png" alt="" srcset=""> <% break;
+										case 'Matluot': %> <img src="/public/regions/Matluot.png" alt="" srcset=""> <% break;
+										case 'Macohoi': %> <img src="/public/regions/Macohoi.png" alt="" srcset=""> <% break;
+										case 'Ip11': 		%> <img src="/public/regions/Ip11.png" alt="" srcset=""> <% break;
+										case '500k': 		%> <img src="/public/regions/500k.png" alt="" srcset=""> <% break;
+										case '200k': 		%> <img src="/public/regions/200k.png" alt="" srcset=""> <% break;
+										case '100k': 		%> <img src="/public/regions/100k.png" alt="" srcset=""> <% break;
+										case '50k': 		%> <img src="/public/regions/50k.png" alt="" srcset=""> <% break;
+										case '20k': 		%> <img src="/public/regions/20k.png" alt="" srcset=""> <% break;
+										case '10k': 		%> <img src="/public/regions/10k.png" alt="" srcset=""> <% break;
+										case '15Tr': 		%> <img src="/public/regions/15Tr.png" alt="" srcset=""> <% break;
+										case '10Tr': 		%> <img src="/public/regions/10Tr.png" alt="" srcset=""> <% break;
+										case '5Tr': 		%> <img src="/public/regions/5Tr.png" alt="" srcset=""> <% break;
+									} %>
+								</td>
+								<td><%= e['pos'] %></td>
+								<td class="text-right">
+									<div class="btn-group">
+											<a href="#" class="edtPartition" data-id="<%= e['id'] %>" data-toggle="modal"
+													data-target="#modalEditItem">Edit</a>
+											<a href="#" class="deletePartition" data-id="<%= e['id'] %>"
+													style="margin-left: 20px">Delete</a>
+									</div>
+							</td>
+						</tr>
+					<% } %>
+				</tbody>
+
+				<tfoot>
+					<tr>
+						<td colspan="6" style="text-align: right;">
+							<button type="button" id="btnAdd" data-toggle="modal" data-target="#modalAddPartition"class="btn btn-success">ADD</button>
+						</td>
+					</tr>
+				</tfoot>
+		</table>
+
+    <!-- THE MODAL ADD PARTITION -->
+		<div class="modal" id="modalAddPartition">
+			<div class="modal-dialog">
+					<div class="modal-content">
+
+							<!-- Modal Header -->
+							<div class="modal-header">
+									<h4 class="modal-title" style="font-weight: bolder">ADD PARTITION</h4>
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+							</div>
+
+							<!-- Modal body -->
+							<div class="modal-body">
+								<!-- ID-->
+								<div class="form-group">
+									<label class="col-md-4 control-label">ID</label>
+									<div class="col-md-12">
+										<select id="addSelectIdPartition">
+										</select>
+									</div>
+								</div>
+
+								<!-- NAME-->
+								<div class="form-group">
+										<label class="col-md-12 control-label" for="product_name_fr">NAME PARTITION</label>
+										<div class="col-md-12">
+											<div class="col-md-12">
+												<p id="addNamePartition" style="font-size: 25px; color: darkorange;"></p>
+											</div>
+										</div>
+								</div>
+
+								<!-- REGION -->
+								<div class="form-group">
+									<label class="col-md-12 control-label" for="product_name_fr">REGION</label>
+									<div class="col-md-12">
+										<div class="col-md-12">
+											<button id="btn-select-region" value="">
+												<li value="Tv">
+													<span>Tivi</span>
+													<img id="img-region" src="/public/regions/Tv.png" alt="" srcset="">
+												</li>
+											</button>
+											<div id="bound-region">
+												<ul id="ul-region"></ul>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<!-- POSITION -->
+								<div class="form-group">
+									<label class="col-md-4 control-label">POSITION</label>
+									<div class="col-md-12">
+											<input  id="addPosPartition" placeholder="POSITION"
+															class="form-control input-md" type="number"
+															step="0" min="0">
+									</div>
+								</div>
+
+							<br>
+							<br>
+
+							<!-- Button -->
+							<div class="form-group">
+									<div class="col-md-12" style="text-align: center;">
+										<button id="btnAddPartition" type="submit" name="singlebutton" class="btn btn-success">ADD</button>
+									</div>
+							</div>
+						</div>
+
+					</div>
+			</div>
+		</div>
+  </section>
+
+  <div style="text-align: center; margin-bottom: 10%;">
+    <button type="button" id="btnUpdatePartition" class="btn btn-primary">CẬP NHẬT</button>
+  </div>
+  
+  <br>
+</div>
+
+<script>
+
+	$(document).ready(() => {
+
+		clearValueInModal();
+		addPartition();
+
+	});
+
+	function addPartition() {
+
+		let lsItem 		= [];
+		let lsRegion	= [];
+		//get all item
+		$('#btnAdd').click(() => {
+			
+			$.ajax({
+				url					: 'http://' + window.location.host + '/api/v1/admin/setup/data/get-all-item',
+				method			: 'GET'
+			})
+				.done((data) => {
+
+					if (data['status_code'] !== 2000) {
+						alert(data['error']);
+						return;
+					}
+
+					lsItem.push(...data['lsItem']);
+					lsRegion.push(...data['lsRegion']);
+
+					setDataIdToSelectIdItemTag(lsItem);
+					setDataRegionToUlTag(lsRegion);
+
+				})
+					.fail(() => {
+
+					});
+
+		});
+
+		//event change #addSelectIdPartition
+		$('#addSelectIdPartition').on('change', () => {
+			let id 				= parseInt($('#addSelectIdPartition').val(), 10);
+			let itemFind	= lsItem.find(e => { return e['id'] === id });
+			
+			$('#addNamePartition').text(itemFind['name']);
+		});
+
+		//add new partition by item
+		$('#btnAddPartition').click(() => {
+
+		});
+
+		//get value in li tag
+		$('body').delegate('#ul-region li', 'click', (event) => {
+			let value		= event.currentTarget.attributes.getNamedItem('value').value.split('_');
+			let region	= value[0];
+			let name		= value[1];
+			let src			= value[2];
+
+			let markup 	= `<li value="${region}">
+											<span>${name}</span>
+											<img src="${src}" alt="" srcset="">
+										</li>`;
+			$('#btn-select-region').html(markup);
+			$('#btn-select-region').val(name);
+		});
+
+		//toggel btn-region
+		$('#btn-select-region').click(() => {
+			$('#bound-region').toggle();
+		});
+	}
+
+	function clearValueInModal() {
+		$(".modal").on("hidden.bs.modal", () => {
+			$('#addSelectIdPartition option').remove();
+			$('#addSelectRegionPartition option').remove();
+			$('#addNamePartition').val('');
+			$('#addPosPartition').val('');
+		});
+	}
+	
+	function setDataIdToSelectIdItemTag(lsItem) {
+		let markup = '<option value="-1">Choose ID Item</option>';
+		for (e of lsItem) {
+			markup += `<option value="${e['id']}">${e['id']}</option>`;
+		}
+		$('#addSelectIdPartition').append(markup);
+	}
+
+	function setDataRegionToUlTag(lsRegion) {
+		for (e of lsRegion) {
+			let tmp			= findSrcImgAndNameRegion(e);
+			let markup 	= `<li value="${tmp['region']}_${tmp['name']}_${tmp['src']}">
+											<span>${tmp['name']}</span>
+											<img src="${tmp['src']}" alt="" srcset="">
+										</li>`;
+      $('#ul-region').append(markup);
+		}
+	}
+
+	function findSrcImgAndNameRegion(key) {
+		switch(key) {
+			case 'Tv': 			return {
+				src			: '/public/regions/Tv.png',
+				name		: 'Tivi',
+				region	: 'Tv'
+			};
+			case 'Matluot': return {
+				src			: '/public/regions/Matluot.png',
+				name		: 'Mất Lượt',
+				region	: 'Matluot'
+			};
+			case 'Macohoi': return {
+				src			: '/public/regions/Macohoi.png',
+				name		: 'Mã Cơ Hội',
+				region	: 'Macohoi'
+			};
+			case 'Ip11': 		return {
+				src			: '/public/regions/Ip11.png',
+				name		: 'Iphone 11',
+				region	: 'Ip11'
+			};
+			case '500k': 		return {
+				src			: '/public/regions/500k.png',
+				name		: 'Thẻ Cào 500k',
+				region	: '500k'
+			};
+			case '200k': 		return {
+				src			: '/public/regions/200K.png',
+				name		: 'Thẻ Cào 200k',
+				region	: '200k'
+			};
+			case '100k': 		return {
+				src			: '/public/regions/100k.png',
+				name		: 'Thẻ Cào 100k',
+				region	: '100k'
+			};
+			case '50k': 		return {
+				src			: '/public/regions/50k.png',
+				name		: 'Thẻ Cào 50k',
+				region	: '50k'
+			};
+			case '20k': 		return {
+				src			: '/public/regions/20k.png',
+				name		: 'Thẻ Cào 20k',
+				region	: '20k'
+			};
+			case '10k': 		return {
+				src			: '/public/regions/10k.png',
+				name		: 'Thẻ Cào 10k',
+				region	: '10k'
+			};
+			case '15Tr': 		return {
+				src			: '/public/regions/15Tr.png',
+				name		: '15 Triệu',
+				region	: '15Tr'
+			};
+			case '5Tr': 		return {
+				src			: '/public/regions/5Tr.png',
+				name		: '5 Triệu',
+				region	: '5Tr'
+			};
+		}
+	}
+
+</script>
+
+<%- include('../layouts/footer') %>

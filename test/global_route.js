@@ -1,3 +1,6 @@
+const FS            = require('../repository/firestore');
+const redisClient   = require('../redis/redis_client');
+
 var config;
 if (process.env.NODE_ENV === 'production') {
   config = require('../config_prod');
@@ -10,6 +13,38 @@ const globalRoute = async (app, opt) => {
 
   app.get('/partition', async (req, rep) => {
     rep.send(config.PARTITIONS);
+  });
+
+  app.post('/init-item', async (req, rep) => {
+
+    const data = req.body.data;
+    for (e of data) {
+      FS.FSUpdateARRItemBy(e['id'], e);
+    }
+
+    rep.send('ok');
+
+  });
+
+  app.get('/get-all-item', async (req, rep) => {
+
+    const data = await FS.FSGetAllItem();
+    rep.send(config.ARR_ITEM);
+
+  });
+
+  app.post('/set-turn-user', async (req, rep) => {
+    const megaID  = req.body.megaID;
+    const turn    = req.body.turn;
+
+    let dataUser      = JSON.parse(await redisClient.getTurnAndInvenUser(megaID));
+    dataUser['turn']  = turn;
+
+    FS.FSInitDataUser(megaID, 'turn_inven', dataUser);
+    redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
+
+    rep.send('success');
+
   });
 
 }

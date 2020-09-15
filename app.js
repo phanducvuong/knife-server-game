@@ -3,6 +3,7 @@ const app         = fastify({ logger: false });
 const logger      = require('fluent-logger');
 const path        = require('path');
 const dataGlobal  = require('./utils/load_data');
+const schedule    = require('./utils/schedule');
 
 var config;
 if (process.env.NODE_ENV === "production") {
@@ -36,7 +37,7 @@ app.get('/', async (req, rep) => {
 //   timeout           : 3.0,
 //   reconnectInterval : 600000
 // });
-
+app.register(require('fastify-formbody'));
 app.addContentTypeParser('application/json', { parseAs: 'string' }, (req, body, done) => {
   try {
     let json = JSON.parse(body);
@@ -62,6 +63,7 @@ app.register(require('fastify-static'), {
 
 app.register(require('./routes/config_route'),      { prefix: '/api/v1/config/get-partition' });
 app.register(require('./routes/verify_user_route'), { prefix: '/api/v1/user' });
+app.register(require('./routes/wheel_route'),       { prefix: '/api/v1/wheel' });
 
 //route admin
 app.register(require('./admin/route/dashboard_route'),  { prefix: '/api/v1/admin/dashboard' });
@@ -70,10 +72,16 @@ app.register(require('./admin/route/setup_route'),      { prefix: '/api/v1/admin
 //route test
 app.register(require('./test/global_route'), { prefix: '/api/v1/test' });
 
+//schedule
+schedule.scheDataGlobal();
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', async (err, address) => {
 
-  await dataGlobal.loadDataGlobal();
+  const result = await dataGlobal.loadDataGlobal();
+  if (!result) {
+    console.log('please setup data');
+  }
 
   console.log(`app listening on port ${PORT}`);
   if (err) {

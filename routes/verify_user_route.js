@@ -14,7 +14,7 @@ const dataInitUser = {
   inven: [],
   turn: 0,
   token:'',
-  ibillion: 0,
+  lucky_code: [],
   phone: '',
   userID: ''
 }
@@ -61,6 +61,7 @@ const verifyUserRoute = async (app, opt) => {
       rep.send({
         status_code : 2000,
         result      : result,
+        turn        : dataUser['turn'],
         config      : config.PARTITIONS
       });
 
