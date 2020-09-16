@@ -180,6 +180,126 @@ const setupRoute = async (app, opt) => {
     }
   });
 
+  app.post('/delete-partition', async (req, rep) => {
+    try {
+
+      let pos = parseInt(req.body.pos, 10);
+      if (isNaN(pos)) throw `pos is NaN!`;
+
+      let partitions = await FS.FSGetPartition();
+      if (partitions['data'] === null || partitions['data'] === undefined) throw `Delete partition failed!`;
+
+      let result = setupFunc.deletePartitionBy(partitions['data'], pos);
+      if (result['status'] === false) throw `${pos} is not exist in list partition!`;
+
+      partitions['data'] = result['lsPartitionUpdate'];
+      FS.FSUpdatePartition(partitions);
+
+      rep.send({
+        status_code       : 2000,
+        lsPartitionUpdate : result['lsPartitionUpdate']
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/get-partition-by-id', async (req, rep) => {
+    try {
+
+      let pos = parseInt(req.body.pos, 10);
+      if (isNaN(pos)) throw `pos is NaN!`;
+
+      let [partitions, lsItem] = await Promise.all([
+        FS.FSGetPartition(),
+        FS.FSGetAllItem()
+      ]);
+
+      if (partitions['data']  === null || partitions['data']  === undefined ||
+          lsItem              === null || lsItem              === undefined) {
+        throw `List partition is not exist!`;
+      }
+
+      let parAtPos = partitions['data'].find(e => { return e['pos'] === pos });
+      if (parAtPos === null || parAtPos === undefined) throw `${pos} is not exist`;
+
+      rep.send({
+        status_code : 2000,
+        partition   : parAtPos,
+        lsItem      : lsItem,
+        lsRegion    : config.REGIONS
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/update-partition', async (req, rep) => {
+    try {
+
+      let id      = parseInt(req.body.id, 10);
+      let pos     = parseInt(req.body.pos, 10);
+      let name    = req.body.name.toString().trim();
+      let region  = req.body.region.toString().trim();
+
+      if (isNaN(id) || isNaN(pos) || name === null || name === undefined || name === '' ||
+          region === null || region === undefined || region === '') {
+        throw `Check info partition!`;
+      }
+
+      let [partitions, lsItem] = await Promise.all([
+        FS.FSGetPartition(),
+        FS.FSGetAllItem()
+      ]);
+
+      if (partitions['data']  === null || partitions['data']  === undefined ||
+          lsItem              === null || lsItem              === undefined ||
+          setupFunc.idExistIn(lsItem, id) === false || setupFunc.posIsExistInLsRegion(partitions['data'], pos)) {
+        throw `Update partition failed!`;
+      }
+
+      let parAtPos = setupFunc.findPartitionAndIndex(partitions['data'], pos);
+      if (parAtPos === null || parAtPos === undefined) throw `Partition is not exist!`;
+
+      parAtPos['item']['id']      = id;
+      parAtPos['item']['pos']     = pos;
+      parAtPos['item']['name']    = name;
+      parAtPos['item']['region']  = region;
+
+      partitions['data'][`${parAtPos['index']}`] = parAtPos['item'];
+
+      rep.send({
+        status_code       : 2000,
+        lsPartitionUpdate : partitions['data']
+      });
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
   //setup item
   app.get('/get-all-item', async (req, rep) => {
     try {
@@ -285,12 +405,14 @@ const setupRoute = async (app, opt) => {
   app.post('/delete-item', async (req, rep) => {
     try {
 
-      let id      = parseInt(req.body.id, 10);
-      let lsItem  = await FS.FSGetAllItem();
+      let id                    = parseInt(req.body.id, 10);
+      let [lsItem, partitions]  = await Promise.all([
+        FS.FSGetAllItem(),
+        FS.FSGetPartition()
+      ]);
 
-      //TODO: check idItem is exist in list partition. if exist throw error
-
-      if (isNaN(id) || lsItem === null || lsItem === undefined) {
+      if (isNaN(id) || lsItem === null || lsItem === undefined      ||
+          setupFunc.chkItemExistInPartition(partitions['data'], id) === true) {
         throw `delete item failed ${id}!`;
       }
 

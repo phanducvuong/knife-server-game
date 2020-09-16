@@ -61,7 +61,7 @@
 	
   <section class="content">
     <div style="background-color: white;">
-      <table id="tableItem" class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
+      <table id="tablePartition" class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
 
 				<thead>
 					<tr style="font-weight: bolder;">
@@ -97,9 +97,9 @@
 								<td><%= e['pos'] %></td>
 								<td class="text-right">
 									<div class="btn-group">
-											<a href="#" class="edtPartition" data-id="<%= e['id'] %>" data-toggle="modal"
-													data-target="#modalEditItem">Edit</a>
-											<a href="#" class="deletePartition" data-id="<%= e['id'] %>"
+											<a href="#" class="edtPartition" data-id="<%= e['pos'] %>" data-toggle="modal"
+													data-target="#modalAddPartition">Edit</a>
+											<a href="#" class="deletePartition" data-id="<%= e['pos'] %>"
 													style="margin-left: 20px">Delete</a>
 									</div>
 							</td>
@@ -123,7 +123,7 @@
 
 							<!-- Modal Header -->
 							<div class="modal-header">
-									<h4 class="modal-title" style="font-weight: bolder">ADD PARTITION</h4>
+									<h4 class="modal-title" id="title-modal" style="font-weight: bolder">ADD PARTITION</h4>
 									<button type="button" class="close" data-dismiss="modal">&times;</button>
 							</div>
 
@@ -205,6 +205,8 @@
 
 		clearValueInModal();
 		addPartition();
+		deletePartition();
+		editPartition();
 
 	});
 
@@ -212,9 +214,12 @@
 
 		let lsItem 		= [];
 		let lsRegion	= [];
+
 		//get all item
 		$('#btnAdd').click(() => {
-			
+			$('#title-modal').text('ADD PARTITION');
+			$('#btnAddPartition').text('ADD');
+
 			$.ajax({
 				url					: 'http://' + window.location.host + '/api/v1/admin/setup/data/get-all-item',
 				method			: 'GET'
@@ -226,11 +231,19 @@
 						return;
 					}
 
-					lsItem.push(...data['lsItem']);
-					lsRegion.push(...data['lsRegion']);
+					lsItem 		= [];
+					lsRegion 	= [];
 
-					setDataIdToSelectIdItemTag(lsItem);
-					setDataRegionToUlTag(lsRegion);
+					// lsItem.push(...data['lsItem']);
+					// lsRegion.push(...data['lsRegion']);
+
+					window.lsItem 	= [];
+					window.lsRegion = [];
+					window.lsItem.push(...lsItem);
+					window.lsRegion.push(...lsRegion);
+
+					setDataIdToSelectIdItemTag(data['lsItem'], -1);
+					setDataRegionToUlTag(data['lsRegion']);
 
 				})
 					.fail(() => {
@@ -242,7 +255,7 @@
 		//event change #addSelectIdPartition
 		$('#addSelectIdPartition').on('change', () => {
 			let id 				= parseInt($('#addSelectIdPartition').val(), 10);
-			let itemFind	= lsItem.find(e => { return e['id'] === id });
+			let itemFind	= window.lsItem.find(e => { return e['id'] === id });
 			
 			let name			= (itemFind === null || itemFind === undefined) ? '' : itemFind['name'];
 			$('#addNamePartition').text(name);
@@ -278,9 +291,12 @@
 						return;
 					}
 
+					$('#modalAddPartition').modal('hide');
+					updateTablePatition(data['lsPartition']);
+
 				})
 				.fail(() => {
-
+					console.log('Call ajax failed!');
 				});
 		});
 
@@ -307,11 +323,114 @@
 		});
 	}
 
+	function updateTablePatition(lsPartition) {
+		$('#tablePartition tbody').remove();
+
+		let markup = '<tbody>';
+		for (let e of lsPartition) {
+			let findSrc = findSrcImgAndNameRegion(e['region']);
+			markup += `<tr>
+									<td>${e['id']}</td>
+									<td>${e['name']}</td>
+									<td><img src="${findSrc['src']}" alt="" srcset=""></td>
+									<td>${e['pos']}</td>
+									<td class="text-right">
+										<div class="btn-group">
+											<a href="#" class="edtPartition" data-id="${e['pos']}" data-toggle="modal"
+													data-target="#modalAddPartition">Edit</a>
+											<a href="#" class="deletePartition" data-id="${e['pos']}"
+													style="margin-left: 20px">Delete</a>
+										</div>
+									</td>
+								 </tr>`;
+		}
+		markup += '</tbody>';
+		$('#tablePartition').append(markup);
+	}
+
+	function deletePartition() {
+		$('body').delegate('.deletePartition', 'click', (event) => {
+			let pos = event.currentTarget.attributes.getNamedItem('data-id').value;
+			if (pos === '') {
+				alert('id is not exist');
+				return;
+			}
+
+			$.ajax({
+				url					: 'http://' + window.location.host + '/api/v1/admin/setup/delete-partition',
+				method			: 'POST',
+				contentType	: 'application/json; charset=utf-8',
+				data				: JSON.stringify({ pos	: pos })
+			})
+				.done((data) => {
+					
+					if (data['status_code'] !== 2000) {
+						alert(data['error']);
+						return;
+					}
+
+					updateTablePatition(data['lsPartitionUpdate']);
+
+				})
+				.fail(() => {
+
+				});
+		});
+	}
+
+	function editPartition() {
+		$('body').delegate('.edtPartition', 'click', (event) => {
+			$('#title-modal').text('EDIT PARTITION');
+			$('#btnAddPartition').text('UPDATE');
+
+			let pos = event.currentTarget.attributes.getNamedItem('data-id').value;
+			console.log(pos);
+			if (pos === '') {
+				alert('Pos is empty');
+				return;
+			}
+
+			$.ajax({
+				url					: 'http://' + window.location.host + '/api/v1/admin/setup/get-partition-by-id',
+				method			: 'POST',
+				contentType	: 'application/json; charset=utf-8',
+				data				: JSON.stringify({ pos	: pos })
+			})
+				.done((data) => {
+
+					if (data['status_code'] !== 2000) {
+						alert(data['error']);
+						return;
+					}
+
+					setDataIdToSelectIdItemTag(data['lsItem'], data['partition']['id']);
+					setDataRegionToUlTag(data['lsRegion']);
+
+					$('#addNamePartition').text(data['partition']['name']);
+					$('#addPosPartition').val(data['partition']['pos']);
+
+					let src			= `/public/regions/${data['partition']['region']}.png`;
+					let markup 	= `<li value="${data['partition']['region']}">
+														<span>${data['partition']['name']}</span>
+														<img src="${src}" alt="" srcset="">
+													</li>`;
+					$('#btn-select-region').html(markup);
+					$('#btn-select-region').val('Tv');
+
+				})
+				.fail(() => {
+
+				});
+		});
+	}
+
 	function clearValueInModal() {
 		$(".modal").on("hidden.bs.modal", () => {
 			$('#addSelectIdPartition option').remove();
 			$('#addNamePartition').text('');
 			$('#addPosPartition').val('');
+			$('#ul-region li').remove();
+			$('#bound-region').css('display', 'none');
 
 			let markup 	= `<li value="Tv">
 											<span>Tivi</span>
@@ -322,10 +441,15 @@
 		});
 	}
 	
-	function setDataIdToSelectIdItemTag(lsItem) {
+	function setDataIdToSelectIdItemTag(lsItem, idSelect) {
 		let markup = '<option value="-1">Choose ID Item</option>';
 		for (e of lsItem) {
-			markup += `<option value="${e['id']}">${e['id']}</option>`;
+			if (e['id'] === idSelect) {
+				markup += `<option selected value="${e['id']}">${e['id']}</option>`;
+			}
+			else {
+				markup += `<option value="${e['id']}">${e['id']}</option>`;
+			}
 		}
 		$('#addSelectIdPartition').append(markup);
 	}

@@ -129,8 +129,8 @@
                       <label class="col-md-4 control-label">SPECIAL ITEM</label>
                       <div class="col-md-12">
                         <select id="specialItem">
-                          <option selected value="1">TRUE</option>
-                          <option value="0">FALSE</option>
+                          <option value="1">TRUE</option>
+                          <option selected value="0">FALSE</option>
                         </select>
                       </div>
                     </div>
@@ -309,14 +309,14 @@
         $('#maximumItem').val('');
         $('#percentItem').val('');
         $('#saveItem').val('1');
-        $('#specialItem').val('1');
+        $('#specialItem').val('0');
       });
     }
 
     function updateTableItem(data) {
       $('#tableItem tbody').remove();
       let markup = '<tbody>';
-      for (e of data) {
+      for (let e of data) {
         markup += `
           <tr>
             <td>${e['id']}</td>

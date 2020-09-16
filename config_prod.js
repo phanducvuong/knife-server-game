@@ -21,7 +21,9 @@ exports.PARTITIONS                = {
   data              : []
 }
 
+exports.TOTAL_PERCENT             = 0;
 exports.ARR_ITEM                  = [];
+exports.ITEM_FILTER               = [];     //danh sách item có trong list partition
 exports.ARR_ID_ITEM_BL            = [];     //danh sách id item dành cho user nằm trong blacklist
 exports.BLACK_LIST                = [];
 

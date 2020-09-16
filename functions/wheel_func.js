@@ -10,15 +10,14 @@ else {
 }
 
 exports.getRndItem = async (totalPercent) => {
+  if (config.ITEM_FILTER.length <= 0) return null;
 
-  //TODO: lọc mảng item có trong danh sách partitions. Tính total_percent
-  //TODO: random item dựa trên danh sách item vừa lọc ra.
-
-  let rnd     = Math.round(Math.random() * totalPercent) + 1;
+  let rnd     = Math.round(Math.random() * config.TOTAL_PERCENT) + 1;
   let percent = 0;
 
-  let tmpItem = config.ARR_ITEM.find(e => { return e.maximum <= 0 });
-  for (let item of config.ARR_ITEM) {
+  // let tmpItem = config.ITEM_FILTER.find(e => { return e.maximum <= 0 });
+  let tmpItem;
+  for (item of config.ITEM_FILTER) {
     percent += item.percent;
     if (rnd <= percent) {
       tmpItem = item;
@@ -27,6 +26,7 @@ exports.getRndItem = async (totalPercent) => {
   }
 
   if (tmpItem === null || tmpItem === undefined) return null;
+  if (tmpItem['maximum'] <= -1) return tmpItem;
 
   let amountItem = await redisClient.getAmountItem(tmpItem['id']);
   if (amountItem === null || amountItem === undefined) {
@@ -35,13 +35,13 @@ exports.getRndItem = async (totalPercent) => {
     amountItem = itemFS['amount'];
   }
 
-  if (amountItem >= tmpItem['maximum'] && tmpItem['maximum'] > 0) {
-    tmpItem = config.ARR_ITEM.find(e => { return e['id'] === 3 });
+  if (amountItem >= tmpItem['maximum']) {
+    tmpItem = config.ARR_ITEM.find(e => { return e['maximum'] === -1 });
   }
 
   return tmpItem;
 }
 
 exports.getItemUnlimit = () => {
-  return config.ARR_ITEM.find(e => { return e['id'] === 3 });
+  return config.ARR_ITEM.find(e => { return e['maximum'] === -1 });
 }

@@ -10,14 +10,14 @@ else {
 }
 
 exports.scheDataGlobal = () => {
-  setInterval(() => {
-    updatePartition();
-  }, 3000);
+  setInterval(async () => {
+    await updatePartition();
+  }, 10000);
 }
 
 async function updatePartition() {
   //update partition
-  let partitions = JSON.parse(await redisClient.getPartition());
+  let partitions = await FS.FSGetPartition();
   if (partitions !== null && partitions !== undefined) {
     config.PARTITIONS['distane_ani_board']  = partitions['distane_ani_board'];
     config.PARTITIONS['dura_ani_board']     = partitions['dura_ani_board'];
@@ -25,5 +25,27 @@ async function updatePartition() {
     config.PARTITIONS['partition']          = partitions['partition'];
     config.PARTITIONS['veloc']              = partitions['veloc'];
     config.PARTITIONS['data']               = partitions['data'];
+  }
+
+  let arrItem = await FS.FSGetAllItem();
+  if (arrItem !== null && arrItem !== undefined) {
+    config.ARR_ITEM = [];
+    config.ARR_ITEM.push(...arrItem);
+
+    filterItemHaveInListPartition(config.PARTITIONS['data'], config.ARR_ITEM);
+  }
+}
+
+function filterItemHaveInListPartition(lsPartition, lsItem) {
+  config.ITEM_FILTER    = [];
+  config.TOTAL_PERCENT  = 0;
+
+  for (let par of lsPartition) {
+    let tmp = config.ITEM_FILTER.find(e => { return e['id'] === par['id'] });
+    if (tmp === null || tmp === undefined) {
+      let item = lsItem.find(ee => { return ee['id'] === par['id'] });
+      config.ITEM_FILTER.push(item);
+      config.TOTAL_PERCENT += item['percent'];
+    }
   }
 }

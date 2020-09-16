@@ -22,6 +22,21 @@ exports.deleteItemBy = (lsItem, idDel) => {
   };
 }
 
+exports.deletePartitionBy = (lsPartition, posDel) => {
+  for (let i=0; i<lsPartition.length; i++) {
+    if (lsPartition[i]['pos'] === posDel) {
+      lsPartition.splice(i, 1);
+      return {
+        status              : true,
+        lsPartitionUpdate   : lsPartition
+      };
+    }
+  }
+  return {
+    status  : false
+  };
+}
+
 exports.findItemAndIndex = (lsItem, idChk) => {
   for (let i=0; i<lsItem.length; i++) {
     if (lsItem[i]['id'] === idChk) {
@@ -34,9 +49,31 @@ exports.findItemAndIndex = (lsItem, idChk) => {
   return null;
 }
 
+exports.findPartitionAndIndex = (lsPartition, pos) => {
+  for (let i=0; i<lsPartition.length; i++) {
+    if (lsPartition[i]['pos'] === pos) {
+      return {
+        item  : lsPartition[i],
+        index : i
+      }
+    }
+  }
+  return null;
+}
+
 exports.posIsExistInLsRegion = (lsRegion, pos) => {
   for (let e of lsRegion) {
     if (e['pos'] === pos) {
+      return true;
+    }
+  }
+  return false;
+}
+
+exports.chkItemExistInPartition = (lsPartition, idItem) => {
+  if (lsPartition === null || lsPartition === undefined || lsPartition.length <= 0) return false;
+  for (let e of lsPartition) {
+    if (e['id'] === idItem) {
       return true;
     }
   }

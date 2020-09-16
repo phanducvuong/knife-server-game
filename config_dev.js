@@ -1,12 +1,12 @@
-exports.URL_VALID_TOKEN           = 'https://5f51af2d5e98480016123c64.mockapi.io/api/v1/verify-token';
+  exports.URL_VALID_TOKEN           = 'https://5f51af2d5e98480016123c64.mockapi.io/api/v1/verify-token';
 
 exports.LENGTH_REDIS              = 1;
 exports.initLsRedis = () => {
   let lsRedis = [];
   lsRedis.push({
     port  : 6379,
-    // host  : '127.0.0.1'
-    host  : '54.151.144.72'
+    host  : '127.0.0.1'
+    // host  : '54.151.144.72'
   });
 
   return lsRedis;
@@ -22,7 +22,9 @@ exports.PARTITIONS                = {
   data              : []
 }
 
+exports.TOTAL_PERCENT             = 0;
 exports.ARR_ITEM                  = [];
+exports.ITEM_FILTER               = [];     //danh sách item có trong list partition
 exports.ARR_ID_ITEM_BL            = [];     //danh sách id item dành cho user nằm trong blacklist
 exports.BLACK_LIST                = [];
 
