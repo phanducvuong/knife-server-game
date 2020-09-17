@@ -13,23 +13,53 @@ else {
 const setupRoute = async (app, opt) => {
 
   //setup partition
-  app.post('/partition', async (req, rep) => {
+  app.post('/update-board', async (req, rep) => {
     try {
 
-      const dataPartition = req.body.data;
-      FS.FSUpdatePartition(dataPartition);
-      redisClient.updatePartition(JSON.stringify(dataPartition));
+      let partition     = parseInt(req.body.partition, 10);
+      let veloc         = parseInt(req.body.veloc, 10);
+      let duraKnifeFly  = parseFloat(req.body.dura_knife_fly, 10);
+      let duraInimBoard = parseFloat(req.body.dura_ani_board, 10);
+      let disAnimBoard  = parseInt(req.body.distane_ani_board, 10);
 
+      if (isNaN(partition) || isNaN(veloc) || isNaN(duraKnifeFly) || isNaN(duraInimBoard) || isNaN(disAnimBoard)) {
+        throw 'Check info board!';
+      }
+
+      let partitions = await FS.FSGetPartition();
+      if (partitions === null || partitions === undefined) {
+        let tmpPartition = {
+          partition           : partition,
+          veloc               : veloc,
+          dura_knife_fly      : duraKnifeFly,
+          dura_ani_board      : duraInimBoard,
+          distane_ani_board   : disAnimBoard,
+          data                : []
+        }
+
+        FS.FSUpdatePartition(tmpPartition);
+        rep.send({
+          status_code : 2000
+        });
+
+        return;
+      }
+
+      partitions['partition']         = partition;
+      partitions['veloc']             = veloc;
+      partitions['dura_knife_fly']    = duraKnifeFly;
+      partitions['dura_ani_board']    = duraInimBoard;
+      partitions['distane_ani_board'] = disAnimBoard;
+
+      FS.FSUpdatePartition(partitions);
       rep.send({
-        status_code : 2000,
-        result      : 'success'
+        status_code : 2000
       });
 
     }
     catch(err) {
 
       console.log(err);
-
       rep.send({
         status_code : 3000,
         error       : err
@@ -38,17 +68,17 @@ const setupRoute = async (app, opt) => {
     }
   });
 
-  app.get('/get-partition', async (req, rep) => {
+  app.get('/get-config-partition', async (req, rep) => {
     try {
 
       let dataPartition = await FS.FSGetPartition();
       if (dataPartition === null || dataPartition === undefined) {
         dataPartition = {
-          distane_ani_board : 50,
-          dura_ani_board    : 0.1,
-          dura_knife_fly    : 0.1,
-          partition         : 12,
-          veloc             : 3000,
+          distane_ani_board : 0,
+          dura_ani_board    : 0,
+          dura_knife_fly    : 0,
+          partition         : 0,
+          veloc             : 0,
           data              : []
         }
       }
@@ -269,8 +299,7 @@ const setupRoute = async (app, opt) => {
       ]);
 
       if (partitions['data']  === null || partitions['data']  === undefined ||
-          lsItem              === null || lsItem              === undefined ||
-          setupFunc.idExistIn(lsItem, id) === false || setupFunc.posIsExistInLsRegion(partitions['data'], pos)) {
+          lsItem              === null || lsItem              === undefined) {
         throw `Update partition failed!`;
       }
 
@@ -278,15 +307,15 @@ const setupRoute = async (app, opt) => {
       if (parAtPos === null || parAtPos === undefined) throw `Partition is not exist!`;
 
       parAtPos['item']['id']      = id;
-      parAtPos['item']['pos']     = pos;
       parAtPos['item']['name']    = name;
       parAtPos['item']['region']  = region;
 
       partitions['data'][`${parAtPos['index']}`] = parAtPos['item'];
 
+      FS.FSUpdatePartition(partitions);
       rep.send({
-        status_code       : 2000,
-        lsPartitionUpdate : partitions['data']
+        status_code     : 2000,
+        lsPartition     : partitions['data']
       });
     }
     catch(err) {
@@ -301,7 +330,7 @@ const setupRoute = async (app, opt) => {
   });
 
   //setup item
-  app.get('/get-all-item', async (req, rep) => {
+  app.get('/get-config-item', async (req, rep) => {
     try {
 
       let data = await FS.FSGetAllItem();
@@ -324,7 +353,7 @@ const setupRoute = async (app, opt) => {
     }
   });
 
-  app.get('/data/get-all-item', async (req, rep) => {
+  app.get('/get-all-item', async (req, rep) => {
     try {
 
       let lsItem = await FS.FSGetAllItem();

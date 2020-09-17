@@ -33,6 +33,17 @@ const globalRoute = async (app, opt) => {
 
   });
 
+  app.get('/get-partitiion', async (req, rep) => {
+    rep.send(config.PARTITIONS);
+  });
+
+  app.get('/get-config', async (req, rep) => {
+    rep.send({
+      total_percent : config.TOTAL_PERCENT,
+      item_filter   : config.ITEM_FILTER
+    });
+  });
+
   app.post('/set-turn-user', async (req, rep) => {
     const megaID  = req.body.megaID;
     const turn    = req.body.turn;

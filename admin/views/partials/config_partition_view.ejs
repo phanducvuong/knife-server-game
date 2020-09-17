@@ -12,49 +12,62 @@
       <div id="tab-1" class="tab-pane active">
           <div class="panel-body" style="background-color: white;">
             <% if (data === null || data === undefined) { %>
-                <div class="form-group row"><label class="col-sm-2 col-form-label">Partition(số cửa):</label>
-                    <div class="col-sm-10"><input type="text" class="form-control" placeholder="10" name="partition"></div>
+                <div class="form-group row"><label class="col-sm-2 col-form-label">Partition:</label>
+                  <div class="col-sm-10">
+										<input type="text" id="board-partition" class="form-control" placeholder="Số Cửa (12 - 16 - 20)" name="partition">
+									</div>
                 </div>
-                <div class="form-group row"><label class="col-sm-2 col-form-label">Velocity(vận tốc xoay):</label>
-                    <div class="col-sm-10"><input type="text" class="form-control" placeholder="1000" name="product_price"></div>
+                <div class="form-group row"><label class="col-sm-2 col-form-label">Velocity:</label>
+                  <div class="col-sm-10">
+										<input type="text" id="board-velocity" class="form-control" placeholder="Vận Tốc Xoay (3000)" name="product_price">
+									</div>
                 </div>
-                <div class="form-group row"><label class="col-sm-2 col-form-label">Dura_Fly_Knife(vận tốc tiêu bay):</label>
-                    <div class="col-sm-10"><input type="text" class="form-control" placeholder="0.1" name="product_price"></div>
+                <div class="form-group row"><label class="col-sm-2 col-form-label">Dura_Fly_Knife:</label>
+                  <div class="col-sm-10">
+										<input type="text" id="board-veloc-dart" class="form-control" placeholder="Vận Tốc Phi Tiêu Bay (0.1)" name="product_price">
+									</div>
                 </div>
-                <div class="form-group row"><label class="col-sm-2 col-form-label">Dura_ani_board(vận tốc thớt bay):</label>
-                    <div class="col-sm-10"><input type="text" class="form-control" placeholder="0.1" name="product_price"></div>
+                <div class="form-group row"><label class="col-sm-2 col-form-label">Dura_ani_board:</label>
+                  <div class="col-sm-10">
+										<input type="text" id="board-dura-board-fly" class="form-control" placeholder="Thời Gian Thớt Bay (0.1)" name="product_price">
+									</div>
                 </div>
-                <div class="form-group row"><label class="col-sm-2 col-form-label">distane_ani_board(khoảng cách thớt bay):</label>
-                    <div class="col-sm-10"><input type="text" class="form-control" placeholder="50" name="product_price"></div>
+                <div class="form-group row"><label class="col-sm-2 col-form-label">distane_ani_board:</label>
+                  <div class="col-sm-10">
+										<input type="text" id="board-distance-board" class="form-control" placeholder="Khoảng Cách Thớt Di Chuyển Khi Phóng Phi Tiêu (50)" name="product_price">
+									</div>
                 </div>
             <% } else { %>
-                <div class="form-group row"><label class="col-sm-2 col-form-label">Partition(số cửa):</label>
+                <div class="form-group row"><label class="col-sm-2 col-form-label">Partition:</label>
                     <div class="col-sm-10">
-                        <input type="number" class="form-control" placeholder="10" name="partition" value="<%= data['partition'] %>">
+                      <input type="number" id="board-partition" class="form-control" placeholder="Số Cửa (12 - 16 - 20)" name="partition" value="<%= data['partition'] %>">
                     </div>
                 </div>
-                <div class="form-group row"><label class="col-sm-2 col-form-label">Velocity(vận tốc xoay):</label>
+                <div class="form-group row"><label class="col-sm-2 col-form-label">Velocity:</label>
                     <div class="col-sm-10">
-                        <input type="number" class="form-control" placeholder="1000" name="product_price" value="<%= data['veloc'] %>">
+                      <input type="number" id="board-velocity" class="form-control" placeholder="Vận Tốc Xoay (3000)" name="product_price" value="<%= data['veloc'] %>">
                     </div>
                 </div>
-                <div class="form-group row"><label class="col-sm-2 col-form-label">Dura_Fly_Knife(vận tốc tiêu bay):</label>
+                <div class="form-group row"><label class="col-sm-2 col-form-label">Dura_Fly_Knife:</label>
                     <div class="col-sm-10">
-                        <input type="number" step="0.01" class="form-control" placeholder="0.1" name="product_price" value="<%= data['dura_knife_fly'] %>">
+                      <input type="number" id="board-veloc-dart" step="0.01" class="form-control" placeholder="Vận Tốc Phi Tiêu Bay (0.1)" name="product_price" value="<%= data['dura_knife_fly'] %>">
                     </div>
                 </div>
-                <div class="form-group row"><label class="col-sm-2 col-form-label">Dura_ani_board(vận tốc thớt bay):</label>
+                <div class="form-group row"><label class="col-sm-2 col-form-label">Dura_ani_board:</label>
                     <div class="col-sm-10">
-                        <input type="number" step="0.01" class="form-control" placeholder="0.1" name="product_price" value="<%= data['dura_ani_board'] %>">
+                      <input type="number" id="board-dura-board-fly" step="0.01" class="form-control" placeholder="Thời Gian Thớt Bay (0.1)" name="product_price" value="<%= data['dura_ani_board'] %>">
                     </div>
                 </div>
-                <div class="form-group row"><label class="col-sm-2 col-form-label">distane_ani_board(khoảng cách thớt bay):</label>
+                <div class="form-group row"><label class="col-sm-2 col-form-label">distane_ani_board:</label>
                     <div class="col-sm-10">
-                        <input type="number" class="form-control" placeholder="50" name="product_price" value="<%= data['distane_ani_board'] %>">
+                      <input type="number" id="board-distance-board" class="form-control" placeholder="Khoảng Cách Thớt Di Chuyển Khi Phóng Phi Tiêu (50)" name="product_price" value="<%= data['distane_ani_board'] %>">
                     </div>
                 </div>
             <% } %>
-          </div>
+					</div>
+					<div style="text-align: center; margin-top: 10px;">
+						<button type="button" id="btn-update-board" class="btn btn-primary">CẬP NHẬT</button>
+					</div>
       </div>
   	</div>
 	</section>
@@ -183,6 +196,7 @@
 							<div class="form-group">
 									<div class="col-md-12" style="text-align: center;">
 										<button id="btnAddPartition" type="submit" name="singlebutton" class="btn btn-success">ADD</button>
+										<button id="btnEditPartition" type="submit" name="singlebutton" class="btn btn-success">UPDATE</button>
 									</div>
 							</div>
 						</div>
@@ -192,9 +206,9 @@
 		</div>
   </section>
 
-  <div style="text-align: center; margin-bottom: 10%;">
+  <!-- <div style="text-align: center; margin-bottom: 10%;">
     <button type="button" id="btnUpdatePartition" class="btn btn-primary">CẬP NHẬT</button>
-  </div>
+  </div> -->
   
   <br>
 </div>
@@ -203,25 +217,38 @@
 
 	$(document).ready(() => {
 
+		window.lsItem 	= [];
+		window.lsRegion = [];
+
 		clearValueInModal();
+		selectRegion();
+		updateBoardGame();
 		addPartition();
 		deletePartition();
 		editPartition();
+
+		//event change #addSelectIdPartition
+		$('#addSelectIdPartition').on('change', () => {
+
+			let id 				= parseInt($('#addSelectIdPartition').val(), 10);
+			let itemFind	= window.lsItem.find(e => { return e['id'] === id });
+
+			let name			= (itemFind === null || itemFind === undefined) ? '' : itemFind['name'];
+			$('#addNamePartition').text(name);
+		});
 
 	});
 
 	function addPartition() {
 
-		let lsItem 		= [];
-		let lsRegion	= [];
-
 		//get all item
 		$('#btnAdd').click(() => {
 			$('#title-modal').text('ADD PARTITION');
-			$('#btnAddPartition').text('ADD');
+			$('#btnAddPartition').css('display', 'inline');
+			$('#btnEditPartition').css('display', 'none');
 
 			$.ajax({
-				url					: 'http://' + window.location.host + '/api/v1/admin/setup/data/get-all-item',
+				url					: 'http://' + window.location.host + '/api/v1/admin/setup/get-all-item',
 				method			: 'GET'
 			})
 				.done((data) => {
@@ -231,16 +258,8 @@
 						return;
 					}
 
-					lsItem 		= [];
-					lsRegion 	= [];
-
-					// lsItem.push(...data['lsItem']);
-					// lsRegion.push(...data['lsRegion']);
-
-					window.lsItem 	= [];
-					window.lsRegion = [];
-					window.lsItem.push(...lsItem);
-					window.lsRegion.push(...lsRegion);
+					window.lsItem.push(...data['lsItem']);
+					window.lsRegion.push(...data['lsRegion']);
 
 					setDataIdToSelectIdItemTag(data['lsItem'], -1);
 					setDataRegionToUlTag(data['lsRegion']);
@@ -252,54 +271,14 @@
 
 		});
 
-		//event change #addSelectIdPartition
-		$('#addSelectIdPartition').on('change', () => {
-			let id 				= parseInt($('#addSelectIdPartition').val(), 10);
-			let itemFind	= window.lsItem.find(e => { return e['id'] === id });
-			
-			let name			= (itemFind === null || itemFind === undefined) ? '' : itemFind['name'];
-			$('#addNamePartition').text(name);
-		});
-
 		//add new partition by item
 		$('#btnAddPartition').click(() => {
-			let id 			= $('#addSelectIdPartition option:selected').val();
-			let name		= $('#addNamePartition').text();
-			let region	= $('#btn-select-region').val();
-			let pos			= $('#addPosPartition').val();
-
-			if (id === '' || name === '' || region === '' || pos === '') {
-				alert('Add partition failed!');
-				return;
-			}
-
-			$.ajax({
-				url					: 'http://' + window.location.host + '/api/v1/admin/setup/add-partition',
-				method			: 'POST',
-				contentType	: 'application/json; charset=utf-8',
-				data				: JSON.stringify({
-					id			: id,
-					name		: name,
-					region	: region,
-					pos			: pos
-				})
-			})
-				.done((data) => {
-
-					if (data['status_code'] !== 2000) {
-						alert(data['error']);
-						return;
-					}
-
-					$('#modalAddPartition').modal('hide');
-					updateTablePatition(data['lsPartition']);
-
-				})
-				.fail(() => {
-					console.log('Call ajax failed!');
-				});
+			let url = 'http://' + window.location.host + '/api/v1/admin/setup/add-partition';
+			addOrEditPartition(url);
 		});
+	}
 
+	function selectRegion() {
 		//get value in li tag
 		$('body').delegate('#ul-region li', 'click', (event) => {
 			let value		= event.currentTarget.attributes.getNamedItem('value').value.split('_');
@@ -381,10 +360,10 @@
 	function editPartition() {
 		$('body').delegate('.edtPartition', 'click', (event) => {
 			$('#title-modal').text('EDIT PARTITION');
-			$('#btnAddPartition').text('UPDATE');
+			$('#btnAddPartition').css('display', 'none');
+			$('#btnEditPartition').css('display', 'inline');
 
 			let pos = event.currentTarget.attributes.getNamedItem('data-id').value;
-			console.log(pos);
 			if (pos === '') {
 				alert('Pos is empty');
 				return;
@@ -403,11 +382,18 @@
 						return;
 					}
 
+					window.lsItem 	= [];
+					window.lsRegion	= [];
+
+					window.lsItem.push(...data['lsItem']);
+					window.lsRegion.push(...data['lsRegion']);
+
 					setDataIdToSelectIdItemTag(data['lsItem'], data['partition']['id']);
 					setDataRegionToUlTag(data['lsRegion']);
 
 					$('#addNamePartition').text(data['partition']['name']);
 					$('#addPosPartition').val(data['partition']['pos']);
+					$('#addPosPartition').attr('disabled', 'disabled');
 
 					let src			= `/public/regions/${data['partition']['region']}.png`;
 					let markup 	= `<li value="${data['partition']['region']}">
@@ -422,6 +408,53 @@
 
 				});
 		});
+
+		//update partitio by pos
+		$('#btnEditPartition').click(() => {
+			let url = 'http://' + window.location.host + '/api/v1/admin/setup/update-partition';
+			addOrEditPartition(url);
+		});
+	}
+
+	function updateBoardGame() {
+		$('#btn-update-board').click(() => {
+			let partition							= $('#board-partition').val();
+			let velocity							= $('#board-velocity').val();
+			let duraKnifeFly					= $('#board-veloc-dart').val();
+			let duraBoardFly					= $('#board-dura-board-fly').val();
+			let distanceAnimBoard			= $('#board-distance-board').val();
+
+			if (partition === '' || partition === '' || duraKnifeFly === '' || duraBoardFly === '' || distanceAnimBoard === '') {
+				alert('Check info board!');
+				return;
+			}
+
+			$.ajax({
+				url					: 'http://' + window.location.host + '/api/v1/admin/setup/update-board',
+				method			: 'POST',
+				contentType	: 'application/json; charset=utf-8',
+				data				: JSON.stringify({
+					partition					: partition,
+					veloc							: velocity,
+					dura_knife_fly		: duraKnifeFly,
+					dura_ani_board		: duraBoardFly,
+					distane_ani_board	: distanceAnimBoard
+				})
+			})
+				.done((data) => {
+
+					if (data['status_code'] !== 2000) {
+						alert(data['error']);
+						return;
+					}
+
+					alert('success');
+
+				})
+				.fail(() => {
+
+				});
+		});
 	}
 
 	function clearValueInModal() {
@@ -429,6 +462,7 @@
 			$('#addSelectIdPartition option').remove();
 			$('#addNamePartition').text('');
 			$('#addPosPartition').val('');
+			$('#addPosPartition').removeAttr('disabled');
 			$('#ul-region li').remove();
 			$('#bound-region').css('display', 'none');
 
@@ -445,10 +479,10 @@
 		let markup = '<option value="-1">Choose ID Item</option>';
 		for (e of lsItem) {
 			if (e['id'] === idSelect) {
-				markup += `<option selected value="${e['id']}">${e['id']}</option>`;
+				markup += `<option selected value="${e['id']}">${e['id']} - ${e['name']}</option>`;
 			}
 			else {
-				markup += `<option value="${e['id']}">${e['id']}</option>`;
+				markup += `<option value="${e['id']}">${e['id']} - ${e['name']}</option>`;
 			}
 		}
 		$('#addSelectIdPartition').append(markup);
@@ -528,6 +562,44 @@
 				region	: '5Tr'
 			};
 		}
+	}
+
+	function addOrEditPartition(url) {
+		let id 			= $('#addSelectIdPartition option:selected').val();
+		let name		= $('#addNamePartition').text();
+		let region	= $('#btn-select-region').val();
+		let pos			= $('#addPosPartition').val();
+
+		if (id === '' || name === '' || region === '' || pos === '') {
+			alert('Add partition failed!');
+			return;
+		}
+
+		$.ajax({
+			url					: url,
+			method			: 'POST',
+			contentType	: 'application/json; charset=utf-8',
+			data				: JSON.stringify({
+				id			: id,
+				name		: name,
+				region	: region,
+				pos			: pos
+			})
+		})
+			.done((data) => {
+
+				if (data['status_code'] !== 2000) {
+					alert(data['error']);
+					return;
+				}
+
+				$('#modalAddPartition').modal('hide');
+				updateTablePatition(data['lsPartition']);
+
+			})
+			.fail(() => {
+				console.log('Call ajax failed!');
+			});
 	}
 
 </script>
