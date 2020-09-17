@@ -11,11 +11,12 @@ else {
 
 exports.scheDataGlobal = () => {
   setInterval(async () => {
-    await updatePartition();
+    await this.updatePartition();
   }, 10000);
 }
 
-async function updatePartition() {
+exports.updatePartition = async () => {
+  console.log('aaa');
   //update partition
   let partitions = await FS.FSGetPartition();
   if (partitions !== null && partitions !== undefined) {

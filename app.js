@@ -2,7 +2,6 @@ const fastify     = require('fastify');
 const app         = fastify({ logger: false });
 const logger      = require('fluent-logger');
 const path        = require('path');
-const dataGlobal  = require('./utils/load_data');
 const schedule    = require('./utils/schedule');
 
 var config;
@@ -78,10 +77,7 @@ schedule.scheDataGlobal();
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', async (err, address) => {
 
-  const result = await dataGlobal.loadDataGlobal();
-  if (!result) {
-    console.log('please setup data');
-  }
+  schedule.updatePartition();
 
   console.log(`app listening on port ${PORT}`);
   if (err) {
