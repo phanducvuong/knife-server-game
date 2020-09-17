@@ -63,6 +63,11 @@ exports.getPartition = () => {
   });
 }
 
+exports.delKeyItem = (key) => {
+  const index = parseInt(key, 10) % config.LENGTH_REDIS;
+  insLsRedis[index].del(`${key}`);
+}
+
 exports.updateArrItem = (data) => {
   const index = getIndex('items');
   insLsRedis[index].set('items', data);

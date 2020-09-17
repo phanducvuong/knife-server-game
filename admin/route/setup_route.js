@@ -425,6 +425,7 @@ const setupRoute = async (app, opt) => {
 
       lsItem.push(itemJs);
 
+      redisClient.initItemBy(id);
       redisClient.updateArrItem(JSON.stringify(lsItem));
       FS.FSUpdateARRItemBy(id, itemJs);
 
@@ -463,6 +464,7 @@ const setupRoute = async (app, opt) => {
       if (lsItemUpdate['status'] === false) throw `${id} is not exist!`;
 
       FS.FSDeleteItemBy(id);
+      redisClient.delKeyItem(id);
       redisClient.updateArrItem(JSON.stringify(lsItemUpdate['lsItemUpdate']));
 
       rep.send({
