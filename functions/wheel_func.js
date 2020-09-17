@@ -39,6 +39,8 @@ exports.getRndItem = async (totalPercent) => {
     tmpItem = config.ARR_ITEM.find(e => { return e['maximum'] === -1 });
   }
 
+  redisClient.incrItemBy(tmpItem['id']);
+  FS.FSIncrAmountItem(tmpItem, 1);
   return tmpItem;
 }
 

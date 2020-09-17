@@ -16,7 +16,6 @@ exports.scheDataGlobal = () => {
 }
 
 exports.updatePartition = async () => {
-  console.log('aaa');
   //update partition
   let partitions = await FS.FSGetPartition();
   if (partitions !== null && partitions !== undefined) {
@@ -45,8 +44,10 @@ function filterItemHaveInListPartition(lsPartition, lsItem) {
     let tmp = config.ITEM_FILTER.find(e => { return e['id'] === par['id'] });
     if (tmp === null || tmp === undefined) {
       let item = lsItem.find(ee => { return ee['id'] === par['id'] });
-      config.ITEM_FILTER.push(item);
-      config.TOTAL_PERCENT += item['percent'];
+      if (item !== null && item !== undefined) {
+        config.ITEM_FILTER.push(item);
+        config.TOTAL_PERCENT += item['percent'];
+      }
     }
   }
 }

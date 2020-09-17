@@ -69,8 +69,13 @@ exports.updateArrItem = (data) => {
 }
 
 exports.initItemBy = (key) => {
-  const index = getIndex(`${key}`);
+  const index = parseInt(key, 10) % config.LENGTH_REDIS;
   insLsRedis[index].set(`${key}`, 0);
+}
+
+exports.updateAmountItemBy = (key, amount) => {
+  const index = parseInt(key, 10) % config.LENGTH_REDIS;
+  insLsRedis[index].set(`${key}`, amount);
 }
 
 exports.incrItemBy = (key) => {
@@ -80,7 +85,7 @@ exports.incrItemBy = (key) => {
 
 exports.getAmountItem = (key) => {
   return new Promise((resv, rej) => {
-    const index = getIndex(`${key}`);
+    const index = parseInt(key, 10) % config.LENGTH_REDIS;
     insLsRedis[index].get(`${key}`, (err, reply) => {
       if (err) return rej('can not get amount item');
       return resv(parseInt(reply, 10));

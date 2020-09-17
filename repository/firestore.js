@@ -136,3 +136,12 @@ exports.FSGetAllItem = async () => {
     return null;
   }
 }
+
+exports.FSIncrAmountItem = (item, incr) => {
+  const itemRef = db.collection('items').doc(`${item['id']}`);
+  itemRef.update({
+    'amount' : admin.firestore.FieldValue.increment(incr)
+  })
+  .then(result => {})
+  .catch(err => {});
+}

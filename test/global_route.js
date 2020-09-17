@@ -28,7 +28,6 @@ const globalRoute = async (app, opt) => {
 
   app.get('/get-all-item', async (req, rep) => {
 
-    const data = await FS.FSGetAllItem();
     rep.send(config.ARR_ITEM);
 
   });
@@ -40,6 +39,7 @@ const globalRoute = async (app, opt) => {
   app.get('/get-config', async (req, rep) => {
     rep.send({
       total_percent : config.TOTAL_PERCENT,
+      size          : config.ITEM_FILTER.length,
       item_filter   : config.ITEM_FILTER
     });
   });

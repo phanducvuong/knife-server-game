@@ -38,6 +38,8 @@ const setupRoute = async (app, opt) => {
         }
 
         FS.FSUpdatePartition(tmpPartition);
+        redisClient.updatePartition(JSON.stringify(tmpPartition));
+
         rep.send({
           status_code : 2000
         });
@@ -52,6 +54,8 @@ const setupRoute = async (app, opt) => {
       partitions['distane_ani_board'] = disAnimBoard;
 
       FS.FSUpdatePartition(partitions);
+      redisClient.updatePartition(partitions);
+
       rep.send({
         status_code : 2000
       });
@@ -140,6 +144,8 @@ const setupRoute = async (app, opt) => {
         }
 
         FS.FSUpdatePartition(partitions);
+        redisClient.updatePartition(JSON.stringify(partitions));
+
         rep.send({
           status_code : 2000,
           lsPartition : data
@@ -173,6 +179,8 @@ const setupRoute = async (app, opt) => {
         }
 
         FS.FSUpdatePartition(tmpPar);
+        redisClient.updatePartition(JSON.stringify(tmpPar));
+
         rep.send({
           status_code : 2000,
           lsPartition : data
@@ -193,6 +201,8 @@ const setupRoute = async (app, opt) => {
       });
 
       FS.FSUpdatePartition(partitions);
+      redisClient.updatePartition(JSON.stringify(partitions));
+
       rep.send({
         status_code : 2000,
         lsPartition : partitions['data']
@@ -224,6 +234,7 @@ const setupRoute = async (app, opt) => {
 
       partitions['data'] = result['lsPartitionUpdate'];
       FS.FSUpdatePartition(partitions);
+      redisClient.updatePartition(JSON.stringify(partitions));
 
       rep.send({
         status_code       : 2000,
@@ -313,6 +324,8 @@ const setupRoute = async (app, opt) => {
       partitions['data'][`${parAtPos['index']}`] = parAtPos['item'];
 
       FS.FSUpdatePartition(partitions);
+      redisClient.updatePartition(JSON.stringify(partitions));
+
       rep.send({
         status_code     : 2000,
         lsPartition     : partitions['data']
@@ -392,7 +405,7 @@ const setupRoute = async (app, opt) => {
       if (isNaN(id) || isNaN(maximum) || isNaN(percent) || typeof save !== "boolean" || typeof special !== "boolean" ||
         name === '' || name === null || name === undefined || save === null || save === undefined || special === null || special === undefined ||
           id < 0    || maximum < 0    || percent < 0) {
-        throw `Add item failed!`;
+        throw 'Add item failed!';
       }
 
       let lsItem = await FS.FSGetAllItem();
@@ -403,6 +416,7 @@ const setupRoute = async (app, opt) => {
       let itemJs = {
         id            : id,
         name          : name,
+        amount        : 0,
         maximum       : maximum,
         percent       : percent,
         save          : save,
@@ -532,6 +546,39 @@ const setupRoute = async (app, opt) => {
       rep.send({
         status_code   : 2000,
         lsItemUpdate  : lsItem
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/recovery-data', async (req, rep) => {
+    try {
+
+      let partitions = await FS.FSGetPartition();
+      if (partitions === null || partitions === undefined) throw 'recovery data failed!';
+      redisClient.updatePartition(JSON.stringify(partitions));
+
+      let lsItem = await FS.FSGetAllItem();
+      if (lsItem === null || lsItem === undefined) throw 'recovery data failed!';
+
+      redisClient.updateArrItem(JSON.stringify(lsItem));
+      for (e of lsItem) {
+        redisClient.updateAmountItemBy(e['id'], e['amount']);
+      }
+
+      //TODO: recovery all data global
+
+      rep.send({
+        status_code : 2000
       });
 
     }
