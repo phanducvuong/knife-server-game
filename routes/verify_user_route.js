@@ -13,6 +13,7 @@ else {
 const dataInitUser = {
   inven: [],
   turn: 0,
+  total_turned: 0,
   token:'',
   lucky_code: [],
   phone: '',

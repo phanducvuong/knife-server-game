@@ -57,8 +57,9 @@ const wheelRoute = async (app, opt) => {
       if (item === null || item === undefined) throw 'item is not exist';
 
       //TODO: update data user and incr amount item
-      dataUser['turn'] -= 1;
-      dataUser['inven'] = profileUserFunc.updateInventory(dataUser['inven'], item);
+      dataUser['turn']          -= 1;
+      dataUser['total_turned']  += 1;
+      dataUser['inven']          = profileUserFunc.updateInventory(dataUser['inven'], item);
 
       //TODO: nếu user xoay trúng được mã cơ hội => gen mã lưu lại trong lucky_code
 

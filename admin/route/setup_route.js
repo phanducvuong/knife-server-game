@@ -54,7 +54,7 @@ const setupRoute = async (app, opt) => {
       partitions['distane_ani_board'] = disAnimBoard;
 
       FS.FSUpdatePartition(partitions);
-      redisClient.updatePartition(partitions);
+      redisClient.updatePartition(JSON.stringify(partitions));
 
       rep.send({
         status_code : 2000
@@ -396,14 +396,15 @@ const setupRoute = async (app, opt) => {
     try {
 
       let id      = parseInt(req.body.id, 10);
+      let type    = parseInt(req.body.type, 10);
       let name    = req.body.name;
       let maximum = parseInt(req.body.maximum, 10);
       let percent = parseInt(req.body.percent, 10);
       let save    = req.body.save;
       let special = req.body.special;
 
-      if (isNaN(id) || isNaN(maximum) || isNaN(percent) || typeof save !== "boolean" || typeof special !== "boolean" ||
-        name === '' || name === null || name === undefined || save === null || save === undefined || special === null || special === undefined ||
+      if (isNaN(id) || isNaN(maximum) || isNaN(percent) || isNaN(type) || typeof save !== "boolean" || typeof special !== "boolean" ||
+          name === '' || name === null || name === undefined || save === null || save === undefined || special === null || special === undefined ||
           id < 0    || maximum < 0    || percent < 0) {
         throw 'Add item failed!';
       }
@@ -415,6 +416,7 @@ const setupRoute = async (app, opt) => {
 
       let itemJs = {
         id            : id,
+        type          : type,
         name          : name,
         amount        : 0,
         maximum       : maximum,
@@ -520,11 +522,9 @@ const setupRoute = async (app, opt) => {
       let name    = req.body.name;
       let maximum = parseInt(req.body.maximum, 10);
       let percent = parseInt(req.body.percent, 10);
-      let save    = req.body.save;
-      let special = req.body.special;
 
-      if (isNaN(id) || isNaN(maximum) || isNaN(percent) || typeof save !== "boolean" || typeof special !== "boolean" ||
-        name === '' || name === null || name === undefined || save === null || save === undefined || special === null || special === undefined ||
+      if (isNaN(id) || isNaN(maximum) || isNaN(percent)       ||
+          name === '' || name === null || name === undefined  ||
           id < 0    || maximum < 0    || percent < 0) {
         throw `Edit item failed!`;
       }
@@ -538,8 +538,6 @@ const setupRoute = async (app, opt) => {
       tmp['item']['name']         = name;
       tmp['item']['maximum']      = maximum;
       tmp['item']['percent']      = percent;
-      tmp['item']['save']         = save;
-      tmp['item']['special_item'] = special;
       lsItem[tmp['index']]        = tmp['item'];
 
       FS.FSUpdateARRItemBy(id, tmp['item']);
@@ -590,6 +588,23 @@ const setupRoute = async (app, opt) => {
       rep.send({
         status_code : 3000,
         error       : err
+      });
+
+    }
+  });
+
+  //setup mission
+  app.post('/get-config-mission', async (req, rep) => {
+    try {
+
+
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.view('/partials/error_view.ejs', {
+        title_error : err
       });
 
     }

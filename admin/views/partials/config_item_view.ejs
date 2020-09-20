@@ -13,6 +13,7 @@
           <thead>
             <tr style="font-weight: bolder;">
               <td style="font-weight: bolder;">ID</td>
+              <td style="font-weight: bolder;">TYPE ITEM</td>
               <td style="font-weight: bolder;">NAME</td>
               <td style="font-weight: bolder;">MAXIMUM</td>
               <td style="font-weight: bolder;">PERCENT</td>
@@ -25,6 +26,15 @@
             <% for (e of data) { %>
               <tr>
                   <td><%= e['id'] %></td>
+                  <td>
+                    <% if (e['type'] === 0) { %>
+                      Quà
+                    <% }else if (e['type'] === 1) { %>
+                      Thẻ Cào
+                    <% }else { %>
+                      NONE
+                    <% } %>
+                  </td>
                   <td>
                     <p><%= e['name'] %></p>
                   </td>
@@ -81,6 +91,19 @@
                           <input  id="idItem" placeholder="ID Item (unique)"
                                   class="form-control input-md" type="number"
                                   step="0" min="0">
+                      </div>
+                    </div>
+
+                    <!-- TYPE ITEM -->
+                    <div class="form-group">
+                      <label class="col-md-4 control-label">TYPE ITEM</label>
+                      <div class="col-md-12">
+                        <select id="type-item">
+                          <option value="choose">Choose Type Item</option>
+                          <option value="-1">NONE</option>
+                          <option value="0">Thẻ Cào</option>
+                          <option value="1">Quà</option>
+                        </select>
                       </div>
                     </div>
 
@@ -171,6 +194,14 @@
                     </div>
                   </div>
 
+                  <!-- TYPE ITEM -->
+                  <div class="form-group">
+                    <label class="col-md-4 control-label">TYPE ITEM</label>
+                    <div class="col-md-12">
+                      <p id="edtTypeItem">Quà</p>
+                    </div>
+                  </div>
+
                   <!-- NAME-->
                   <div class="form-group">
                       <label class="col-md-12 control-label" for="product_name_fr">NAME ITEM</label>
@@ -204,10 +235,11 @@
                   <div class="form-group">
                     <label class="col-md-4 control-label">SAVE ITEM</label>
                     <div class="col-md-12">
-                      <select id="edtSaveItem">
+                      <!-- <select id="edtSaveItem">
                         <option selected value="1">TRUE</option>
                         <option value="0">FALSE</option>
-                      </select>
+                      </select> -->
+                      <p id="edtSaveItem"></p>
                     </div>
                   </div>
 
@@ -215,10 +247,11 @@
                   <div class="form-group">
                     <label class="col-md-4 control-label">SPECIAL ITEM</label>
                     <div class="col-md-12">
-                      <select id="edtSpecialItem">
+                      <!-- <select id="edtSpecialItem">
                         <option selected value="1">TRUE</option>
                         <option value="0">FALSE</option>
-                      </select>
+                      </select> -->
+                      <p id="edtSpecialItem"></p>
                     </div>
                   </div>
 
@@ -237,10 +270,7 @@
         </div>
     </div>
     </section>
-  
-    <!-- <div style="text-align: center; margin-bottom: 10%;">
-      <button type="button" id="btnUpdate" class="btn btn-primary">CẬP NHẬT</button>
-    </div> -->
+
   </div>
 
   <script>
@@ -258,19 +288,21 @@
     function addItem() {
       $('#btnAddItem').click(() => {
         let id            = $('#idItem').val();
+        let type          = $('#type-item').val();
         let name          = $('#nameItem').val().trim();
         let maximum       = $('#maximumItem').val();
         let percent       = $('#percentItem').val();
         let save          = $('#saveItem').val() === '1' ? true : false;
         let special       = $('#specialItem').val() === '1' ? true : false;
 
-        if (id === '' || name === '' || maximum === '' || percent === '') {
+        if (id === '' || name === '' || maximum === '' || percent === '' || type === '') {
           alert('Add item failed!');
           return;
         }
 
         let dataJson = {
           id      : id,
+          type    : type,
           name    : name,
           maximum : maximum,
           percent : percent,
@@ -305,6 +337,7 @@
     function clearValueInModal() {
       $(".modal").on("hidden.bs.modal", () => {
         $('#idItem').val('');
+        $('#type-item').val('choose');
         $('#nameItem').val('');
         $('#maximumItem').val('');
         $('#percentItem').val('');
@@ -317,9 +350,20 @@
       $('#tableItem tbody').remove();
       let markup = '<tbody>';
       for (let e of data) {
+        let strType = 'NONE';
+        if (e['type'] === 0) {
+          strType = 'Quà';
+        }
+        else {
+          strType = 'Thẻ Cào';
+        }
+
         markup += `
           <tr>
             <td>${e['id']}</td>
+            <td>
+              <p>${strType}</p>
+            </td>
             <td>
               <p>${e['name']}</p>
             </td>
@@ -400,18 +444,17 @@
             $('#edtMaximumItem').val(itemUpdate['maximum']);
             $('#edtPercentItem').val(itemUpdate['percent']);
 
-            if (itemUpdate['save'] === true) {
-              $('#edtSaveItem').val('1');
-            }
-            else {
-              $('#edtSaveItem').val('0');
-            }
+            itemUpdate['save']          === true ? $('#edtSaveItem').text('TRUE') : $('#edtSaveItem').text('FALSE');
+            itemUpdate['special_item']  === true ? $('#edtSpecialItem').text('TRUE') : $('#edtSpecialItem').text('FALSE');
 
-            if (itemUpdate['special_item'] === true) {
-              $('#edtSpecialItem').val('1');
+            if (itemUpdate['type'] === 0) {
+              $('#edtTypeItem').text('Quà');
+            }
+            else if (itemUpdate['type'] === 1) {
+              $('#edtTypeItem').text('Thẻ Cào');
             }
             else {
-              $('#edtSpecialItem').val('0');
+              $('#edtTypeItem').text('NONE');
             }
 
           })
@@ -428,8 +471,6 @@
         let name        = $('#edtNameItem').val();
         let maximum     = $('#edtMaximumItem').val();
         let percent     = $('#edtPercentItem').val();
-        let save        = $('#edtSaveItem').val() === '1' ? true : false;
-        let special     = $('#edtSpecialItem').val() === '1' ? true : false;
 
         if (id === '' || name === '' || maximum === '' || percent === '') {
           alert('Edit item failed!');
@@ -444,9 +485,7 @@
             id        : id,
             name      : name,
             maximum   : maximum,
-            percent   : percent,
-            save      : save,
-            special   : special
+            percent   : percent
           })
         })
           .done((data) => {

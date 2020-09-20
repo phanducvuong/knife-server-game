@@ -5,8 +5,8 @@ exports.initLsRedis = () => {
   let lsRedis = [];
   lsRedis.push({
     port  : 6379,
-    // host  : '127.0.0.1'
-    host  : '54.151.144.72'
+    host  : '127.0.0.1'
+    // host  : '54.151.144.72'
   });
 
   return lsRedis;
@@ -21,6 +21,12 @@ exports.PARTITIONS                = {
   veloc             : 3000,
   data              : []
 }
+
+/**
+ * @param type in items
+ * 0 -> quà
+ * 1 -> thẻ cào
+ */
 
 exports.TOTAL_PERCENT             = 0;
 exports.ARR_ITEM                  = [];
