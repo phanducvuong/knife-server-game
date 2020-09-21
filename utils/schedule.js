@@ -12,7 +12,7 @@ else {
 exports.scheDataGlobal = () => {
   setInterval(async () => {
     await this.updatePartition();
-  }, 10000);
+  }, 6000000);
 }
 
 exports.updatePartition = async () => {
@@ -25,6 +25,12 @@ exports.updatePartition = async () => {
     config.PARTITIONS['partition']          = partitions['partition'];
     config.PARTITIONS['veloc']              = partitions['veloc'];
     config.PARTITIONS['data']               = partitions['data'];
+  }
+
+  let lsSupportingItem = await FS.FSGetSupportItem();
+  if (lsSupportingItem !== null && lsSupportingItem !== undefined) {
+    config.SUPPORTING_ITEM = [];
+    config.SUPPORTING_ITEM.push(...lsSupportingItem);
   }
 
   let arrItem = await FS.FSGetAllItem();

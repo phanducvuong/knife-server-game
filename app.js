@@ -58,7 +58,7 @@ app.register(require('point-of-view'), {
 app.register(require('fastify-static'), {
   root: path.join(__dirname, './admin/public'),
   prefix: '/public/', // optional: default '/'
-})
+});
 
 app.register(require('./routes/config_route'),      { prefix: '/api/v1/config/get-partition' });
 app.register(require('./routes/verify_user_route'), { prefix: '/api/v1/user' });
@@ -74,14 +74,15 @@ app.register(require('./test/global_route'), { prefix: '/api/v1/test' });
 //schedule
 schedule.scheDataGlobal();
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', async (err, address) => {
-
-  schedule.updatePartition();
-
-  console.log(`app listening on port ${PORT}`);
-  if (err) {
-    console.log(err);
-    process.exit(1);
-  }
-});
+schedule.updatePartition()
+        .then(() => {
+          const PORT = process.env.PORT || 3000;
+          app.listen(PORT, '0.0.0.0', async (err, address) => {
+          
+            console.log(`app listening on port ${PORT}`);
+            if (err) {
+              console.log(err);
+              process.exit(1);
+            }
+          });
+        });

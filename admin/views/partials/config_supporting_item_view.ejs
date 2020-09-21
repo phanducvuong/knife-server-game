@@ -1,0 +1,132 @@
+<%- include('../layouts/header') %>
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>SUPPORTING ITEM</h1>
+    </section>
+    
+    <section class="content">
+      <div style="background-color: white;">
+        <table id="table-supporting-item" class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
+
+          <thead>
+            <tr style="font-weight: bolder;">
+              <td style="font-weight: bolder;">ID</td>
+              <td style="font-weight: bolder;">DESCRIPTION</td>
+              <td style="font-weight: bolder;">BONUS</td>
+              <td style="font-weight: bolder;">STATUS</td>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% for (e of data) { %>
+              <tr>
+                  <td><%= e['id'] %></td>
+                  <td><%= e['description'] %></td>
+                  <td><%= e['bonus'] %></td>
+                  <td>
+                    <input class="input-status" data-id="<%= e['id'] %>" type="number" value="<%= e['status'] %>">
+                  </td>
+                  <td class="text-right">
+                    <div class="btn-group">
+                        <a href="#" class="update-supporting-item" data-id="<%= e['id'] %>">Update</a>
+                    </div>
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+
+          <tfoot>
+              <!-- <tr>
+                  <td colspan="6" style="text-align: center;">
+                      <button type="button" data-toggle="modal" data-target="#modalAddItem" class="btn btn-success">ADD</button>
+                  </td>
+              </tr> -->
+          </tfoot>
+      </table>
+    </div>
+    </section>
+</div>
+
+<script>
+
+  $(document).ready(() => {
+
+    $('body').delegate('.update-supporting-item', 'click', (event) => {
+      let id      = event.currentTarget.attributes.getNamedItem('data-id').value;
+      let status  = 1;
+
+      $('.input-status').each((i, ele) => {
+        
+        let idInput = ele.attributes.getNamedItem('data-id').value;
+        if (idInput === id) {
+          status = ele.attributes.getNamedItem('value').value;
+          return false;
+        }
+
+      });
+
+      if (id === '' || status === '') {
+        alert('Update support item failed!');
+        return;
+      }
+
+      $.ajax({
+        url           : 'http://' + window.location.host + '/api/v1/admin/setup/update-support-item',
+        method        : 'POST',
+        contentType   : 'application/json; charset=utf-8',
+        data          : JSON.stringify({
+          id          : id,
+          status      : status
+        })
+      })
+        .done((data) => {
+
+          if (data['status_code'] !== 2000) {
+            alert(data['error']);
+            return;
+          }
+
+          updateTableSupportingItem(data['lsSupportItemUpdate']);
+
+        })
+        .fail(() => {
+
+        });
+    });
+
+    $('body').delegate('input.input-status', 'keyup', (event) => {
+      let value = event.currentTarget.value;
+      event.currentTarget.setAttribute('value', value);
+    });
+
+  });
+
+  function updateTableSupportingItem(data) {
+    $('#table-supporting-item tbody').remove();
+    let markup = '<tbody>';
+    for (e of data) {
+      markup += `
+      <tr>
+        <td>${e['id']}</td>
+        <td>${e['description']}</td>
+        <td>${e['bonus']}</td>
+        <td>
+          <input class="input-status" data-id="${e['id']}" type="number" value="${e['status']}">
+        </td>
+        <td class="text-right">
+          <div class="btn-group">
+            <a href="#" class="update-supporting-item" data-id="${e['id']}">Update</a>
+          </div>
+        </td>
+      </tr>
+      `;
+    }
+    markup += '</tbody>';
+    $('#table-supporting-item').append(markup);
+  }
+
+</script>
+
+<%- include('../layouts/footer') %>

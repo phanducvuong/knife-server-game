@@ -28,3 +28,12 @@ exports.ARR_ID_ITEM_BL            = [];     //danh sách id item dành cho user 
 exports.BLACK_LIST                = [];
 
 exports.REGIONS                   = ['Tv', 'Matluot', 'Macohoi', '5Tr', 'Ip11', '15Tr', '10k', '20k', '50k', '100k', '200k', '500k'];
+
+exports.SUPPORTING_ITEM           = [
+  {
+    id          : 0,
+    description : 'Vật Phẩm Bỏ Ô',
+    bonus       : 1,
+    status      : 1
+  }
+]

@@ -88,6 +88,31 @@ exports.FSGetPartition = async () => {
   }
 }
 
+exports.FSUpdateSupportItem = (data) => {
+  try {
+    db.collection('admin')
+      .doc('supporting_item')
+      .set({ support_item: data });
+  }
+  catch(err) {
+    console.log(err);
+  }
+}
+
+exports.FSGetSupportItem = async () => {
+  try {
+    const admin = db.collection('admin').doc('supporting_item');
+    const data  = await admin.get();
+
+    if (!data.exists) return null;
+    return data.data()['support_item'];
+  }
+  catch(err) {
+    console.log(err);
+    return null;
+  }
+}
+
 exports.FSGetItemBy = async (keyDoc) => {
   try {
     const admin = db.collection('items').doc(`${keyDoc}`);

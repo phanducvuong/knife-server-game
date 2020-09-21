@@ -596,10 +596,12 @@ const setupRoute = async (app, opt) => {
   });
 
   //setup mission
-  app.post('/get-config-mission', async (req, rep) => {
+  app.get('/get-config-mission', async (req, rep) => {
     try {
 
-
+      rep.view('/partials/config_mission_view.ejs', {
+        data  : []
+      });
 
     }
     catch(err) {
@@ -611,6 +613,76 @@ const setupRoute = async (app, opt) => {
 
     }
   });
+
+  app.get('/get-supporting-item', async (req, rep) => {
+    try {
+
+      let lsSupportItem = await FS.FSGetSupportItem();
+      if (lsSupportItem === null || lsSupportItem === undefined) {
+        lsSupportItem = config.SUPPORTING_ITEM;
+      }
+
+      rep.view('/partials/config_supporting_item_view.ejs', {
+        data  : lsSupportItem
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.view('/partials/error_view.ejs', {
+        title_error : err
+      });
+
+    }
+  });
+
+  app.post('/update-support-item', async (req, rep) => {
+    try {
+
+      let id      = parseInt(req.body.id, 10);
+      let status  = parseInt(req.body.status, 10);
+
+      if (isNaN(id) || isNaN(status)) throw `Update support item failed!`;
+
+      let lsSupportItem = await FS.FSGetSupportItem();
+      if (lsSupportItem === null || lsSupportItem === undefined) {
+        let itemFind = config.SUPPORTING_ITEM.find(e => { return e['id'] === id });
+        if (itemFind === null || itemFind === undefined) throw `${id} support item is not exist!`;
+
+        itemFind['status'] = status;
+        FS.FSUpdateSupportItem(config.SUPPORTING_ITEM);
+
+        rep.send({
+          status_code : 2000,
+          lsSupportItemUpdate : config.SUPPORTING_ITEM
+        });
+      }
+      else {
+        let itemFind = lsSupportItem.find(e => { return e['id'] === id });
+        if (itemFind === null || itemFind === undefined) throw `${id} support item is not exist!`;
+
+        itemFind['status'] = status;
+        FS.FSUpdateSupportItem(lsSupportItem);
+
+        rep.send({
+          status_code : 2000,
+          lsSupportItemUpdate : lsSupportItem
+        });
+      }
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
 }
 
 module.exports = setupRoute;

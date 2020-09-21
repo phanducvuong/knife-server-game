@@ -1,0 +1,77 @@
+<%- include('../layouts/header') %>
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1></h1>
+    </section>
+    
+    <section class="content">
+      <div style="background-color: white;">
+        <table id="tableItem" class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
+
+          <thead>
+            <tr style="font-weight: bolder;">
+              <td style="font-weight: bolder;">ID</td>
+              <td style="font-weight: bolder;">TYPE ITEM</td>
+              <td style="font-weight: bolder;">NAME</td>
+              <td style="font-weight: bolder;">MAXIMUM</td>
+              <td style="font-weight: bolder;">PERCENT</td>
+              <td style="font-weight: bolder;">SAVE</td>
+              <td style="font-weight: bolder;">SPECIAL ITEM</td>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% for (e of data) { %>
+              <tr>
+                  <td><%= e['id'] %></td>
+                  <td>
+                    <% if (e['type'] === 0) { %>
+                      Quà
+                    <% }else if (e['type'] === 1) { %>
+                      Thẻ Cào
+                    <% }else { %>
+                      NONE
+                    <% } %>
+                  </td>
+                  <td>
+                    <p><%= e['name'] %></p>
+                  </td>
+                  <td>
+                    <%= e['maximum'] %>
+                  </td>
+                  <td>
+                    <%= e['percent'] %>
+                  </td>
+                  <td>
+                    <p><%= e['save'] %></p>
+                  </td>
+                  <td>
+                    <p><%= e['special_item'] %></p>
+                  </td>
+                  <td class="text-right">
+                    <div class="btn-group">
+                        <a href="#" class="editItem" data-id="<%= e['id'] %>" data-toggle="modal"
+                            data-target="#modalEditItem">Edit</a>
+                        <a href="#" class="deleteItem" data-id="<%= e['id'] %>"
+                            style="margin-left: 20px">Delete</a>
+                    </div>
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+
+          <tfoot>
+              <tr>
+                  <td colspan="6" style="text-align: center;">
+                      <button type="button" data-toggle="modal" data-target="#modalAddItem" class="btn btn-success">ADD</button>
+                  </td>
+              </tr>
+          </tfoot>
+      </table>
+    </div>
+    </section>
+</div>
+
+<%- include('../layouts/footer') %>
