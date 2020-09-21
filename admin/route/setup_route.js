@@ -457,9 +457,11 @@ const setupRoute = async (app, opt) => {
         FS.FSGetPartition()
       ]);
 
-      if (isNaN(id) || lsItem === null || lsItem === undefined      ||
+      if (partitions !== null && partitions !== undefined) {
+        if (isNaN(id) || lsItem === null || lsItem === undefined      ||
           setupFunc.chkItemExistInPartition(partitions['data'], id) === true) {
-        throw `delete item failed ${id}!`;
+          throw `delete item failed ${id}!`;
+        }
       }
 
       let lsItemUpdate = setupFunc.deleteItemBy(lsItem, id);
