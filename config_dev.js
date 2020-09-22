@@ -40,13 +40,23 @@ exports.SUPPORTING_ITEM           = [
   {
     id          : 0,
     description : 'Vật Phẩm Bỏ Ô',
+    bonus       : 1
+  }
+]
+
+exports.MISSIONS                  = [
+  {
+    id          : 0,
+    description : 'Đăng Nhập Vào Game Mỗi Ngày',
     bonus       : 1,
+    id_sp_item  : null,
     status      : 1
   },
   {
     id          : 1,
-    description : 'Vật Phẩm Thêm Lượt',
-    bonus       : 1,
+    description : 'Mời 5 Bạn Mới Thành Công',
+    bonus       : -1,
+    id_sp_item  : 0,
     status      : 1
   }
 ]

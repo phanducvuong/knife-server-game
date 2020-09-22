@@ -599,8 +599,22 @@ const setupRoute = async (app, opt) => {
   app.get('/get-config-mission', async (req, rep) => {
     try {
 
+      let lsMission = await FS.FSGetDataAdminBy('missions');
+      if (lsMission === null || lsMission === undefined) {
+        lsMission = [];
+        lsMission.push(...config.MISSIONS);
+      }
+
+      let lsSupportItem = await FS.FSGetSupportItem();
+      if (lsSupportItem === null || lsSupportItem === undefined) {
+        lsSupportItem = [];
+        lsSupportItem.push(...SUPPORTING_ITEM);
+      }
+
+      let missionFilter = setupFunc.filterLsMission(lsMission, lsSupportItem);
+
       rep.view('/partials/config_mission_view.ejs', {
-        data  : []
+        data  : missionFilter
       });
 
     }
@@ -609,6 +623,66 @@ const setupRoute = async (app, opt) => {
       console.log(err);
       rep.view('/partials/error_view.ejs', {
         title_error : err
+      });
+
+    }
+  });
+
+  app.post('/get-config-mission-by-id', async (req, rep) => {
+    try {
+
+      let id = parseInt(req.body.id, 10);
+      if (isNaN(id)) throw 'Can not get misson!';
+
+      let lsMission = await FS.FSGetDataAdminBy('missions');
+      if (lsMission === null || lsMission === undefined) {
+        lsMission = [];
+        lsMission.push(...config.MISSIONS);
+      }
+
+      let lsSpItem = await FS.FSGetSupportItem();
+      if (lsSpItem === null || lsSpItem === undefined) {
+        lsSpItem = [];
+        lsSpItem.push(...config.SUPPORTING_ITEM);
+      }
+
+      let itemMission = lsMission.find(e => { return e['id'] === id });
+      if (itemMission === null || itemMission === undefined) throw `${id} is not exist!`;
+
+      if (itemMission['id_sp_item'] !== null) {
+        let tmpSp = lsSpItem.find(e => { return e['id'] === itemMission['id_sp_item'] });
+        if (tmpSp === null || tmpSp === undefined) throw 'Edit mission failed!';
+
+        rep.send({
+          status_code   : 2000,
+          item_mission  : {
+            id          : itemMission['id'],
+            description : itemMission['description'],
+            sp_item     : tmpSp,
+            status      : itemMission['status']
+          }
+        });
+      }
+      else {
+        rep.send({
+          status_code   : 2000,
+          item_mission  : {
+            id          : itemMission['id'],
+            description : itemMission['description'],
+            bonus       : itemMission['bonus'],
+            sp_item     : null,
+            status      : itemMission['status']
+          }
+        });
+      }
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
       });
 
     }
@@ -641,16 +715,16 @@ const setupRoute = async (app, opt) => {
     try {
 
       let id      = parseInt(req.body.id, 10);
-      let status  = parseInt(req.body.status, 10);
+      let bonus   = parseInt(req.body.bonus, 10);
 
-      if (isNaN(id) || isNaN(status)) throw `Update support item failed!`;
+      if (isNaN(id) || isNaN(bonus)) throw `Update support item failed!`;
 
       let lsSupportItem = await FS.FSGetSupportItem();
       if (lsSupportItem === null || lsSupportItem === undefined) {
         let itemFind = config.SUPPORTING_ITEM.find(e => { return e['id'] === id });
         if (itemFind === null || itemFind === undefined) throw `${id} support item is not exist!`;
 
-        itemFind['status'] = status;
+        itemFind['bonus'] = bonus;
         FS.FSUpdateSupportItem(config.SUPPORTING_ITEM);
 
         rep.send({
@@ -662,7 +736,7 @@ const setupRoute = async (app, opt) => {
         let itemFind = lsSupportItem.find(e => { return e['id'] === id });
         if (itemFind === null || itemFind === undefined) throw `${id} support item is not exist!`;
 
-        itemFind['status'] = status;
+        itemFind['bonus'] = bonus;
         FS.FSUpdateSupportItem(lsSupportItem);
 
         rep.send({

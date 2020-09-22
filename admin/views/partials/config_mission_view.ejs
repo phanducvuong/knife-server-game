@@ -13,12 +13,10 @@
           <thead>
             <tr style="font-weight: bolder;">
               <td style="font-weight: bolder;">ID</td>
-              <td style="font-weight: bolder;">TYPE ITEM</td>
-              <td style="font-weight: bolder;">NAME</td>
-              <td style="font-weight: bolder;">MAXIMUM</td>
-              <td style="font-weight: bolder;">PERCENT</td>
-              <td style="font-weight: bolder;">SAVE</td>
-              <td style="font-weight: bolder;">SPECIAL ITEM</td>
+              <td style="font-weight: bolder;">DESCRIPTION</td>
+              <td style="font-weight: bolder;">BONUS</td>
+              <td style="font-weight: bolder;">SUPPORTING ITEM</td>
+              <td style="font-weight: bolder;">STATUS</td>
             </tr>
           </thead>
 
@@ -26,52 +24,136 @@
             <% for (e of data) { %>
               <tr>
                   <td><%= e['id'] %></td>
-                  <td>
-                    <% if (e['type'] === 0) { %>
-                      Quà
-                    <% }else if (e['type'] === 1) { %>
-                      Thẻ Cào
-                    <% }else { %>
-                      NONE
-                    <% } %>
-                  </td>
-                  <td>
-                    <p><%= e['name'] %></p>
-                  </td>
-                  <td>
-                    <%= e['maximum'] %>
-                  </td>
-                  <td>
-                    <%= e['percent'] %>
-                  </td>
-                  <td>
-                    <p><%= e['save'] %></p>
-                  </td>
-                  <td>
-                    <p><%= e['special_item'] %></p>
-                  </td>
+                  <td><%= e['description'] %></td>
+
+                  <% if (e['id_sp_item'] !== null) { %>
+                    <td><%= e['sp_item']['bonus'] %></td>
+                    <td><%= e['sp_item']['description'] %></td>
+                  <% }else { %>
+                    <td><%= e['bonus'] %></td>
+                    <td>NONE</td>
+                  <% } %>
+
+                  <td><%= e['status'] %></td>
                   <td class="text-right">
                     <div class="btn-group">
-                        <a href="#" class="editItem" data-id="<%= e['id'] %>" data-toggle="modal"
-                            data-target="#modalEditItem">Edit</a>
-                        <a href="#" class="deleteItem" data-id="<%= e['id'] %>"
-                            style="margin-left: 20px">Delete</a>
+                      <a href="#" class="edt-misison" data-id="<%= e['id'] %>" data-toggle="modal"
+                        data-target="#modal-edit-mission">Edit</a>
                     </div>
                 </td>
               </tr>
             <% } %>
           </tbody>
 
-          <tfoot>
+          <!-- <tfoot>
               <tr>
                   <td colspan="6" style="text-align: center;">
                       <button type="button" data-toggle="modal" data-target="#modalAddItem" class="btn btn-success">ADD</button>
                   </td>
               </tr>
-          </tfoot>
+          </tfoot> -->
       </table>
     </div>
+
+    <!-- THE MODAL ADD ITEM -->
+    <div class="modal" id="modal-edit-mission">
+      <div class="modal-dialog">
+          <div class="modal-content">
+
+              <!-- Modal Header -->
+              <div class="modal-header">
+                  <h4 class="modal-title" style="font-weight: bolder">EDIT MISSION</h4>
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+              </div>
+
+              <!-- Modal body -->
+              <div class="modal-body">
+                <!-- ID-->
+                <div class="form-group">
+                  <label class="col-md-4 control-label">ID</label>
+                  <div class="col-md-12">
+                    <p id="p-id-misison"></p>
+                  </div>
+                </div>
+
+                <!-- DESCRIPTION -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label">DESCRIPTION</label>
+                  <div class="col-md-12">
+                    <p id="p-des-mission"></p>
+                  </div>
+                </div>
+
+                <!-- BONUS-->
+                <div class="form-group">
+                    <label class="col-md-12 control-label" for="product_name_fr">BONUS</label>
+                    <div class="col-md-12">
+                      <p id="p-bonus-mission"></p>
+                    </div>
+                </div>
+
+                <!-- MAXIMUM -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label">MAXIMUM</label>
+                  <div class="col-md-12">
+                      <input  id="maximumItem" placeholder="Maximum"
+                              class="form-control input-md" type="number"
+                              step="0" min="0">
+                  </div>
+                </div>
+
+              <br>
+              <br>
+
+              <!-- Button -->
+              <div class="form-group">
+                <div class="col-md-12" style="text-align: center;">
+                  <button id="btn-update-mission" type="submit" name="singlebutton" class="btn btn-success">UPDATE</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
     </section>
 </div>
+
+<script>
+
+  $(document).ready(() => {
+
+    $('body').delegate('.edt-misison', 'click', (event) => {
+      let dataID = event.currentTarget.attributes.getNamedItem('data-id').value;
+      if (dataID === '') {
+        alert('Edit mission failed!');
+        return;
+      }
+
+      $.ajax({
+        url           : 'http://' + window.location.host + '/api/v1/admin/setup/get-config-mission-by-id',
+        method        : 'POST',
+        contentType   : 'application/json; charset=utf-8',
+        data          : JSON.stringify({
+          id          : dataID
+        })
+      })
+        .done((data) => {
+
+          if (data['status_code'] !== 2000) {
+            alert(data['error']);
+            return;
+          }
+
+          console.log(data);
+
+        })
+        .fail(() => {});
+    });
+
+  });
+
+</script>
 
 <%- include('../layouts/footer') %>

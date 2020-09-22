@@ -170,3 +170,28 @@ exports.FSIncrAmountItem = (item, incr) => {
   .then(result => {})
   .catch(err => {});
 }
+
+exports.FSGetDataAdminBy = async (keyDoc) => {
+  try {
+    const admin = db.collection('admin').doc(`${keyDoc}`);
+    const data  = await admin.get();
+
+    if (!data.exists) return null;
+    return data.data()[`${keyDoc}`];
+  }
+  catch(err) {
+    console.log(err);
+    return null;
+  }
+}
+
+exports.FSUpdateMisison = (keyDoc, data) => {
+  try {
+    db.collection('admin')
+      .doc(`${keyDoc}`)
+      .set({ missions : data });
+  }
+  catch(err) {
+    console.log(err);
+  }
+}

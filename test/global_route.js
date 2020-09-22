@@ -44,6 +44,10 @@ const globalRoute = async (app, opt) => {
     });
   });
 
+  app.get('/get-supporting-item', async (req, rep) => {
+    rep.send(config.SUPPORTING_ITEM);
+  });
+
   app.post('/set-turn-user', async (req, rep) => {
     const megaID  = req.body.megaID;
     const turn    = req.body.turn;

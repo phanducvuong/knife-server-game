@@ -15,7 +15,7 @@
               <td style="font-weight: bolder;">ID</td>
               <td style="font-weight: bolder;">DESCRIPTION</td>
               <td style="font-weight: bolder;">BONUS</td>
-              <td style="font-weight: bolder;">STATUS</td>
+              <!-- <td style="font-weight: bolder;">STATUS</td> -->
             </tr>
           </thead>
 
@@ -24,10 +24,12 @@
               <tr>
                   <td><%= e['id'] %></td>
                   <td><%= e['description'] %></td>
-                  <td><%= e['bonus'] %></td>
                   <td>
-                    <input class="input-status" data-id="<%= e['id'] %>" type="number" value="<%= e['status'] %>">
+                    <input class="input-bonus" data-id="<%= e['id'] %>" type="number" value="<%= e['bonus'] %>">
                   </td>
+                  <!-- <td>
+                    <input class="input-status" data-id="<%= e['id'] %>" type="number" value="<%= e['status'] %>">
+                  </td> -->
                   <td class="text-right">
                     <div class="btn-group">
                         <a href="#" class="update-supporting-item" data-id="<%= e['id'] %>">Update</a>
@@ -55,19 +57,19 @@
 
     $('body').delegate('.update-supporting-item', 'click', (event) => {
       let id      = event.currentTarget.attributes.getNamedItem('data-id').value;
-      let status  = 1;
+      let bonus   = 1;
 
-      $('.input-status').each((i, ele) => {
+      $('.input-bonus').each((i, ele) => {
         
         let idInput = ele.attributes.getNamedItem('data-id').value;
         if (idInput === id) {
-          status = ele.attributes.getNamedItem('value').value;
+          bonus = ele.attributes.getNamedItem('value').value;
           return false;
         }
 
       });
 
-      if (id === '' || status === '') {
+      if (id === '' || bonus === '') {
         alert('Update support item failed!');
         return;
       }
@@ -78,7 +80,7 @@
         contentType   : 'application/json; charset=utf-8',
         data          : JSON.stringify({
           id          : id,
-          status      : status
+          bonus       : bonus
         })
       })
         .done((data) => {
@@ -89,6 +91,7 @@
           }
 
           updateTableSupportingItem(data['lsSupportItemUpdate']);
+          alert('Update Success!');
 
         })
         .fail(() => {
@@ -96,7 +99,7 @@
         });
     });
 
-    $('body').delegate('input.input-status', 'keyup', (event) => {
+    $('body').delegate('input.input-bonus', 'keyup', (event) => {
       let value = event.currentTarget.value;
       event.currentTarget.setAttribute('value', value);
     });
@@ -111,9 +114,8 @@
       <tr>
         <td>${e['id']}</td>
         <td>${e['description']}</td>
-        <td>${e['bonus']}</td>
         <td>
-          <input class="input-status" data-id="${e['id']}" type="number" value="${e['status']}">
+          <input class="input-bonus" data-id="${e['id']}" type="number" value="${e['bonus']}">
         </td>
         <td class="text-right">
           <div class="btn-group">

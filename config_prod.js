@@ -37,3 +37,18 @@ exports.SUPPORTING_ITEM           = [
     status      : 1
   }
 ]
+
+exports.MISSIONS                  = [
+  {
+    id          : 0,
+    description : 'Đăng Nhập Vào Game Mỗi Ngày',
+    bonus       : 1,
+    sp_item     : null
+  },
+  {
+    id          : 0,
+    description : 'Đăng Nhập Vào Game Mỗi Ngày',
+    bonus       : 1,
+    sp_item     : null
+  }
+]
