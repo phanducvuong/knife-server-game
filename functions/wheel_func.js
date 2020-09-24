@@ -1,4 +1,5 @@
 const FS            = require('../repository/firestore');
+const DS            = require('../repository/datastore');
 const redisClient   = require('../redis/redis_client');
 
 var config;
@@ -26,13 +27,16 @@ exports.getRndItem = async (totalPercent) => {
   }
 
   if (tmpItem === null || tmpItem === undefined) return null;
-  if (tmpItem['maximum'] <= -1) return tmpItem;
+  if (tmpItem['maximum'] <= -1) {
+    DS.DSIncreaseAmountItem(tmpItem['id']);
+    return tmpItem;
+  }
 
   let amountItem = await redisClient.getAmountItem(tmpItem['id']);
   if (amountItem === null || amountItem === undefined) {
-    let itemFS = await FS.FSGetItemBy(tmpItem['id']);
-    if (itemFS === null || itemFS === undefined) return null;
-    amountItem = itemFS['amount'];
+    let itemDS = await DS.DSGetDataGlobal('items', tmpItem['id']);
+    if (itemDS === null || itemFS === undefined) return null;
+    amountItem = itemDS['amount'];
   }
 
   if (amountItem >= tmpItem['maximum']) {
@@ -40,7 +44,7 @@ exports.getRndItem = async (totalPercent) => {
   }
 
   redisClient.incrItemBy(tmpItem['id']);
-  FS.FSIncrAmountItem(tmpItem, 1);
+  DS.DSIncreaseAmountItem(tmpItem['id']);
   return tmpItem;
 }
 

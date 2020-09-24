@@ -17,29 +17,29 @@ exports.scheDataGlobal = () => {
 
 exports.updatePartition = async () => {
   //update partition
-  let partitions = await FS.FSGetPartition();
-  if (partitions !== null && partitions !== undefined) {
-    config.PARTITIONS['distane_ani_board']  = partitions['distane_ani_board'];
-    config.PARTITIONS['dura_ani_board']     = partitions['dura_ani_board'];
-    config.PARTITIONS['dura_knife_fly']     = partitions['dura_knife_fly'];
-    config.PARTITIONS['partition']          = partitions['partition'];
-    config.PARTITIONS['veloc']              = partitions['veloc'];
-    config.PARTITIONS['data']               = partitions['data'];
-  }
+  // let partitions = await FS.FSGetPartition();
+  // if (partitions !== null && partitions !== undefined) {
+  //   config.PARTITIONS['distane_ani_board']  = partitions['distane_ani_board'];
+  //   config.PARTITIONS['dura_ani_board']     = partitions['dura_ani_board'];
+  //   config.PARTITIONS['dura_knife_fly']     = partitions['dura_knife_fly'];
+  //   config.PARTITIONS['partition']          = partitions['partition'];
+  //   config.PARTITIONS['veloc']              = partitions['veloc'];
+  //   config.PARTITIONS['data']               = partitions['data'];
+  // }
 
-  let lsSupportingItem = await FS.FSGetSupportItem();
-  if (lsSupportingItem !== null && lsSupportingItem !== undefined) {
-    config.SUPPORTING_ITEM = [];
-    config.SUPPORTING_ITEM.push(...lsSupportingItem);
-  }
+  // let lsSupportingItem = await FS.FSGetSupportItem();
+  // if (lsSupportingItem !== null && lsSupportingItem !== undefined) {
+  //   config.SUPPORTING_ITEM = [];
+  //   config.SUPPORTING_ITEM.push(...lsSupportingItem);
+  // }
 
-  let arrItem = await FS.FSGetAllItem();
-  if (arrItem !== null && arrItem !== undefined) {
-    config.ARR_ITEM = [];
-    config.ARR_ITEM.push(...arrItem);
+  // let arrItem = await FS.FSGetAllItem();
+  // if (arrItem !== null && arrItem !== undefined) {
+  //   config.ARR_ITEM = [];
+  //   config.ARR_ITEM.push(...arrItem);
 
-    filterItemHaveInListPartition(config.PARTITIONS['data'], config.ARR_ITEM);
-  }
+  //   filterItemHaveInListPartition(config.PARTITIONS['data'], config.ARR_ITEM);
+  // }
 }
 
 function filterItemHaveInListPartition(lsPartition, lsItem) {

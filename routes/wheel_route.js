@@ -1,4 +1,5 @@
 const FS                    = require('../repository/firestore');
+const DS                    = require('../repository/datastore');
 const redisClient           = require('../redis/redis_client');
 const util                  = require('../utils/util');
 const wheelFunc             = require('../functions/wheel_func');
@@ -32,7 +33,7 @@ const wheelRoute = async (app, opt) => {
         lsPartition = JSON.parse(strPartition);
       }
       else {
-        lsPartition = await FS.FSGetPartition();
+        lsPartition = await DS.DSGetDataGlobal('admin', 'partitions');
         if (lsPartition === null || lsPartition === undefined) throw 'please setup data!';
       }
 
@@ -40,7 +41,7 @@ const wheelRoute = async (app, opt) => {
 
       let dataUser = JSON.parse(strDataUser);
       if (dataUser === null || dataUser === undefined) {
-        dataUser = await FS.FSGetTurnAndInven(megaID);
+        dataUser = await DS.DSGetDataUser(megaID, 'turn_inven');
         if (dataUser === null || dataUser === undefined) throw `user is not exist`;
       } //get dataUser from redis. if user redis is not exist => get it from fs.
 
@@ -70,8 +71,8 @@ const wheelRoute = async (app, opt) => {
       redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
       redisClient.updateHistoryUser(megaID, strHis);
 
-      FS.FSInitDataUser(megaID, 'turn_inven', dataUser);
-      FS.FSUpdateHistoryUser(megaID, strHis);
+      DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
+      DS.DSUpdateHistoryUser(megaID, strHis);
 
       let region = lsPartition['data'].find(e => { return e['id'] === item['id'] });
       if (region === null || region === undefined) throw `Can not get region by ${item['id']}`;

@@ -1,4 +1,5 @@
 const FS                = require('../../repository/firestore');
+const DS                = require('../../repository/datastore');
 const redisClient       = require('../../redis/redis_client');
 const setupFunc         = require('../functions/setup_func');
 
@@ -75,7 +76,7 @@ const setupRoute = async (app, opt) => {
   app.get('/get-config-partition', async (req, rep) => {
     try {
 
-      let dataPartition = await FS.FSGetPartition();
+      let dataPartition = await DS.DSGetDataGlobal('admin', 'partitions');
       if (dataPartition === null || dataPartition === undefined) {
         dataPartition = {
           distane_ani_board : 0,
@@ -116,8 +117,8 @@ const setupRoute = async (app, opt) => {
       }
 
       let [partitions, items] = await Promise.all([
-        FS.FSGetPartition(),
-        FS.FSGetAllItem()
+        DS.DSGetDataGlobal('admin', 'partitions'),
+        DS.DSGetAllItem()
       ]);
 
       if (items         === null  || items                           === undefined       ||
@@ -143,7 +144,7 @@ const setupRoute = async (app, opt) => {
           data              : data
         }
 
-        FS.FSUpdatePartition(partitions);
+        DS.DSUpdateDataGlobal('admin', 'partitions', partitions);
         redisClient.updatePartition(JSON.stringify(partitions));
 
         rep.send({
@@ -346,7 +347,7 @@ const setupRoute = async (app, opt) => {
   app.get('/get-config-item', async (req, rep) => {
     try {
 
-      let data = await FS.FSGetAllItem();
+      let data = await DS.DSGetAllItem();
       if (data === null || data === undefined) {
         data = [];
       }
@@ -369,7 +370,7 @@ const setupRoute = async (app, opt) => {
   app.get('/get-all-item', async (req, rep) => {
     try {
 
-      let lsItem = await FS.FSGetAllItem();
+      let lsItem = await DS.DSGetAllItem();
       if (lsItem === null || lsItem === undefined) {
         lsItem = [];
       }
@@ -409,7 +410,7 @@ const setupRoute = async (app, opt) => {
         throw 'Add item failed!';
       }
 
-      let lsItem = await FS.FSGetAllItem();
+      let lsItem = await DS.DSGetAllItem();
       if (setupFunc.idExistIn(lsItem, id) === true) {
         throw `id ${id} already exist!`;
       }
@@ -429,7 +430,7 @@ const setupRoute = async (app, opt) => {
 
       redisClient.initItemBy(id);
       redisClient.updateArrItem(JSON.stringify(lsItem));
-      FS.FSUpdateARRItemBy(id, itemJs);
+      DS.DSUpdateDataGlobal('items', id, itemJs);
 
       rep.send({
         status_code : 2000,
@@ -453,8 +454,8 @@ const setupRoute = async (app, opt) => {
 
       let id                    = parseInt(req.body.id, 10);
       let [lsItem, partitions]  = await Promise.all([
-        FS.FSGetAllItem(),
-        FS.FSGetPartition()
+        DS.DSGetAllItem(),
+        DS.DSGetDataGlobal('admin', 'partitions')
       ]);
 
       if (partitions !== null && partitions !== undefined) {
@@ -467,7 +468,7 @@ const setupRoute = async (app, opt) => {
       let lsItemUpdate = setupFunc.deleteItemBy(lsItem, id);
       if (lsItemUpdate['status'] === false) throw `${id} is not exist!`;
 
-      FS.FSDeleteItemBy(id);
+      DS.DSDeleteItemBy('items', id);
       redisClient.delKeyItem(id);
       redisClient.updateArrItem(JSON.stringify(lsItemUpdate['lsItemUpdate']));
 
@@ -494,15 +495,12 @@ const setupRoute = async (app, opt) => {
       let id = parseInt(req.body.id, 10);
       if (isNaN(id)) throw `Id is not a number`;
 
-      let lsItem = await FS.FSGetAllItem();
-      if (lsItem === null || lsItem === undefined) throw `List item is not exist`;
-
-      let itemUpdate = lsItem.find(e => { return e['id'] === id });
-      if (itemUpdate === null || itemUpdate === undefined) throw 'item is not exsit';
+      let item = await DS.DSGetDataGlobal('items', id);
+      if (item === null || item === undefined) throw `${id} is not exist in list item!`;
 
       rep.send({
         status_code : 2000,
-        item        : itemUpdate
+        item        : item
       });
 
     }
@@ -531,7 +529,7 @@ const setupRoute = async (app, opt) => {
         throw `Edit item failed!`;
       }
 
-      let lsItem = await FS.FSGetAllItem();
+      let lsItem = await DS.DSGetAllItem();
       if (lsItem === null || lsItem === undefined) throw `List item is not exist!`;
 
       let tmp = setupFunc.findItemAndIndex(lsItem, id);
@@ -542,7 +540,7 @@ const setupRoute = async (app, opt) => {
       tmp['item']['percent']      = percent;
       lsItem[tmp['index']]        = tmp['item'];
 
-      FS.FSUpdateARRItemBy(id, tmp['item']);
+      DS.DSUpdateDataGlobal('items', id, tmp['item']);
       redisClient.updateArrItem(JSON.stringify(lsItem));
 
       rep.send({
@@ -565,11 +563,11 @@ const setupRoute = async (app, opt) => {
   app.post('/recovery-data', async (req, rep) => {
     try {
 
-      let partitions = await FS.FSGetPartition();
+      let partitions = await DS.DSGetDataGlobal('admin', 'partitions');
       if (partitions === null || partitions === undefined) throw 'recovery data failed!';
       redisClient.updatePartition(JSON.stringify(partitions));
 
-      let lsItem = await FS.FSGetAllItem();
+      let lsItem = await DS.DSGetAllItem();
       if (lsItem === null || lsItem === undefined) throw 'recovery data failed!';
 
       redisClient.updateArrItem(JSON.stringify(lsItem));

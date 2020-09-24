@@ -5,12 +5,13 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "NODE_ENV=dev node app.js",
+    "dev": "NODE_ENV=dev GOOGLE_APPLICATION_CREDENTIALS=./datastore-account.json node app.js",
     "prod": "NODE_ENV=production node app.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/datastore": "^6.1.1",
     "ejs": "^3.1.5",
     "fastify": "^3.2.1",
     "fastify-cors": "^4.1.0",

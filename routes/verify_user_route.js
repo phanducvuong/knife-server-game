@@ -1,6 +1,7 @@
 const verifyTokenFunc     = require('../functions/verify_user_func');
 const redisClient         = require('../redis/redis_client');
 const FS                  = require('../repository/firestore');
+const DS                  = require('../repository/datastore');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -35,28 +36,26 @@ const verifyUserRoute = async (app, opt) => {
 
       let dataUser = JSON.parse(await redisClient.getTurnAndInvenUser(`${result.mega1_code}`));
       if (dataUser === null || dataUser === undefined) {
-        dataUser = await FS.FSGetTurnAndInven(`${result.mega1_code}`);
+        dataUser = await DS.DSGetDataUser(`${result.mega1_code}`, 'turn_inven');
         if (dataUser === null || dataUser === undefined) {
           dataInitUser.token  = token;
           dataInitUser.phone  = result.phone;
           dataInitUser.userID = result.user_id;
           redisClient.updateTurnAndInvenUser(`${result.mega1_code}`, JSON.stringify(dataInitUser));
-          FS.FSInitDataUser(`${result.mega1_code}`, 'turn_inven', dataInitUser);
+          DS.DSUpdateDataUser(`${result.mega1_code}`, 'turn_inven', dataInitUser);
         }
         else {
           dataUser.token  = token;
           dataUser.phone  = result.phone;
           dataUser.userID = result.user_id;
           redisClient.updateTurnAndInvenUser(`${result.mega1_code}`, JSON.stringify(dataUser));
-          FS.FSUpdateTokenUser(`${result.mega1_code}`, token);
+          DS.DSUpdateDataUser(`${result.mega1_code}`, 'turn_inven', dataUser);
         }
       }
       else {
         dataUser.token  = token;
-        dataUser.phone  = result.phone;
-        dataUser.userID = result.user_id;
         redisClient.updateTurnAndInvenUser(`${result.mega1_code}`, JSON.stringify(dataUser));
-        FS.FSUpdateTokenUser(`${result.mega1_code}`, token);
+        DS.DSUpdateDataUser(`${result.mega1_code}`, 'turn_inven', dataUser);
       }
 
       rep.send({

@@ -1,4 +1,5 @@
 const FS            = require('../repository/firestore');
+const DS            = require('../repository/datastore');
 const redisClient   = require('../redis/redis_client');
 
 var config;
@@ -60,6 +61,12 @@ const globalRoute = async (app, opt) => {
 
     rep.send('success');
 
+  });
+
+  app.get('/insert', async (req, rep) => {
+    // DS.DSUpdateDataGlobal('items', '1', { id: 1, name: 'def' });
+    let result = await DS.DSGetAllItem();
+    rep.send(result);
   });
 
 }

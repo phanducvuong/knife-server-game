@@ -93,3 +93,4 @@ typings/
 .vscode-test
 
 knife-service-account.json
+datastore-account.json
