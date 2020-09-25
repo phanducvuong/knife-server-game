@@ -709,10 +709,14 @@ const setupRoute = async (app, opt) => {
   app.get('/get-supporting-item', async (req, rep) => {
     try {
 
-      let supportItem   = await DS.DSGetDataGlobal('admin', 'supporting_item');
-      let lsSupportItem = supportItem.supporting_item;
-      if (lsSupportItem === null || lsSupportItem === undefined) {
+      let supportItem = await DS.DSGetDataGlobal('admin', 'supporting_item');
+      let lsSupportItem;
+      if (supportItem === null || supportItem === undefined) {
+        lsSupportItem = [];
         lsSupportItem = config.SUPPORTING_ITEM;
+      }
+      else {
+        lsSupportItem = supportItem.supporting_item;
       }
 
       rep.view('/partials/config_supporting_item_view.ejs', {
@@ -738,9 +742,9 @@ const setupRoute = async (app, opt) => {
 
       if (isNaN(id) || isNaN(bonus)) throw `Update support item failed!`;
 
-      let supportItem   = await DS.DSGetDataGlobal('admin', 'supporting_item');
-      let lsSupportItem = supportItem.supporting_item;
-      if (lsSupportItem === null || lsSupportItem === undefined) {
+      let supportItem = await DS.DSGetDataGlobal('admin', 'supporting_item');
+      let lsSupportItem;
+      if (supportItem === null || supportItem === undefined) {
         let itemFind = config.SUPPORTING_ITEM.find(e => { return e['id'] === id });
         if (itemFind === null || itemFind === undefined) throw `${id} support item is not exist!`;
 
@@ -753,7 +757,8 @@ const setupRoute = async (app, opt) => {
         });
       }
       else {
-        let itemFind = lsSupportItem.find(e => { return e['id'] === id });
+        lsSupportItem = supportItem.supporting_item;
+        let itemFind  = lsSupportItem.find(e => { return e['id'] === id });
         if (itemFind === null || itemFind === undefined) throw `${id} support item is not exist!`;
 
         itemFind['bonus'] = bonus;
