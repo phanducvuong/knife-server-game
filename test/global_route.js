@@ -64,8 +64,7 @@ const globalRoute = async (app, opt) => {
   });
 
   app.get('/insert', async (req, rep) => {
-    // DS.DSUpdateDataGlobal('items', '1', { id: 1, name: 'def' });
-    let result = await DS.DSGetAllItem();
+    let result = await DS.DSGetDataGlobal('admin', 'supporting_item');
     rep.send(result);
   });
 

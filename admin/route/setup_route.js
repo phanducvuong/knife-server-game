@@ -27,7 +27,7 @@ const setupRoute = async (app, opt) => {
         throw 'Check info board!';
       }
 
-      let partitions = await FS.FSGetPartition();
+      let partitions = await DS.DSGetDataGlobal('admin', 'patitions');
       if (partitions === null || partitions === undefined) {
         let tmpPartition = {
           partition           : partition,
@@ -38,7 +38,7 @@ const setupRoute = async (app, opt) => {
           data                : []
         }
 
-        FS.FSUpdatePartition(tmpPartition);
+        DS.DSUpdateDataGlobal('admin', 'partitions', tmpPartition);
         redisClient.updatePartition(JSON.stringify(tmpPartition));
 
         rep.send({
@@ -54,7 +54,7 @@ const setupRoute = async (app, opt) => {
       partitions['dura_ani_board']    = duraInimBoard;
       partitions['distane_ani_board'] = disAnimBoard;
 
-      FS.FSUpdatePartition(partitions);
+      DS.DSUpdateDataGlobal('admin', 'partitions', partitions);
       redisClient.updatePartition(JSON.stringify(partitions));
 
       rep.send({
@@ -179,7 +179,7 @@ const setupRoute = async (app, opt) => {
           data              : data
         }
 
-        FS.FSUpdatePartition(tmpPar);
+        DS.DSUpdateDataGlobal('admin', 'partitions', tmpPar);
         redisClient.updatePartition(JSON.stringify(tmpPar));
 
         rep.send({
@@ -201,7 +201,7 @@ const setupRoute = async (app, opt) => {
         pos     : pos
       });
 
-      FS.FSUpdatePartition(partitions);
+      DS.DSUpdateDataGlobal('admin', 'partitions', partitions);
       redisClient.updatePartition(JSON.stringify(partitions));
 
       rep.send({
@@ -227,18 +227,19 @@ const setupRoute = async (app, opt) => {
       let pos = parseInt(req.body.pos, 10);
       if (isNaN(pos)) throw `pos is NaN!`;
 
-      let partitions = await FS.FSGetPartition();
+      let partitions = await DS.DSGetDataGlobal('admin', 'partitions');
       if (partitions['data'] === null || partitions['data'] === undefined) throw `Delete partition failed!`;
 
       let result = setupFunc.deletePartitionBy(partitions['data'], pos);
       if (result['status'] === false) throw `${pos} is not exist in list partition!`;
 
       partitions['data'] = result['lsPartitionUpdate'];
-      FS.FSUpdatePartition(partitions);
+      DS.DSUpdateDataGlobal('admin', 'partitions', partitions);
       redisClient.updatePartition(JSON.stringify(partitions));
 
       rep.send({
         status_code       : 2000,
+        message           : 'Delete partition success',
         lsPartitionUpdate : result['lsPartitionUpdate']
       });
 
@@ -261,8 +262,8 @@ const setupRoute = async (app, opt) => {
       if (isNaN(pos)) throw `pos is NaN!`;
 
       let [partitions, lsItem] = await Promise.all([
-        FS.FSGetPartition(),
-        FS.FSGetAllItem()
+        DS.DSGetDataGlobal('admin', 'partitions'),
+        DS.DSGetAllItem()
       ]);
 
       if (partitions['data']  === null || partitions['data']  === undefined ||
@@ -306,8 +307,8 @@ const setupRoute = async (app, opt) => {
       }
 
       let [partitions, lsItem] = await Promise.all([
-        FS.FSGetPartition(),
-        FS.FSGetAllItem()
+        DS.DSGetDataGlobal('admin', 'partitions'),
+        DS.DSGetAllItem()
       ]);
 
       if (partitions['data']  === null || partitions['data']  === undefined ||
@@ -324,7 +325,7 @@ const setupRoute = async (app, opt) => {
 
       partitions['data'][`${parAtPos['index']}`] = parAtPos['item'];
 
-      FS.FSUpdatePartition(partitions);
+      DS.DSUpdateDataGlobal('admin', 'partitions', partitions);
       redisClient.updatePartition(JSON.stringify(partitions));
 
       rep.send({
@@ -597,16 +598,27 @@ const setupRoute = async (app, opt) => {
   app.get('/get-config-mission', async (req, rep) => {
     try {
 
-      let lsMission = await FS.FSGetDataAdminBy('missions');
-      if (lsMission === null || lsMission === undefined) {
+      let [missionDS, supportItem] = await Promise.all([
+        DS.DSGetDataGlobal('admin', 'missions'),
+        DS.DSGetDataGlobal('admin', 'supporting_item')
+      ]);
+
+      let lsMission;
+      if (missionDS === null || missionDS === undefined) {
         lsMission = [];
         lsMission.push(...config.MISSIONS);
       }
+      else {
+        lsMission = missionDS.missions;
+      }
 
-      let lsSupportItem = await FS.FSGetSupportItem();
-      if (lsSupportItem === null || lsSupportItem === undefined) {
+      let lsSupportItem;
+      if (supportItem === null || supportItem === undefined) {
         lsSupportItem = [];
-        lsSupportItem.push(...SUPPORTING_ITEM);
+        lsSupportItem.push(...config.SUPPORTING_ITEM);
+      }
+      else {
+        lsSupportItem = supportItem.supporting_item;
       }
 
       let missionFilter = setupFunc.filterLsMission(lsMission, lsSupportItem);
@@ -632,16 +644,24 @@ const setupRoute = async (app, opt) => {
       let id = parseInt(req.body.id, 10);
       if (isNaN(id)) throw 'Can not get misson!';
 
-      let lsMission = await FS.FSGetDataAdminBy('missions');
-      if (lsMission === null || lsMission === undefined) {
+      let missionDS = await DS.DSGetDataGlobal('admin', 'missions');
+      let lsMission;
+      if (missionDS === null || missionDS === undefined) {
         lsMission = [];
         lsMission.push(...config.MISSIONS);
       }
+      else {
+        lsMission = missionDS.missions;
+      }
 
-      let lsSpItem = await FS.FSGetSupportItem();
-      if (lsSpItem === null || lsSpItem === undefined) {
+      let supportItem = await DS.DSGetDataGlobal('admin', 'supporting_item');
+      let lsSpItem;
+      if (supportItem === null || supportItem === undefined) {
         lsSpItem = [];
         lsSpItem.push(...config.SUPPORTING_ITEM);
+      }
+      else {
+        lsSpItem = supportItem.supporting_item;
       }
 
       let itemMission = lsMission.find(e => { return e['id'] === id });
@@ -689,7 +709,8 @@ const setupRoute = async (app, opt) => {
   app.get('/get-supporting-item', async (req, rep) => {
     try {
 
-      let lsSupportItem = await FS.FSGetSupportItem();
+      let supportItem   = await DS.DSGetDataGlobal('admin', 'supporting_item');
+      let lsSupportItem = supportItem.supporting_item;
       if (lsSupportItem === null || lsSupportItem === undefined) {
         lsSupportItem = config.SUPPORTING_ITEM;
       }
@@ -717,13 +738,14 @@ const setupRoute = async (app, opt) => {
 
       if (isNaN(id) || isNaN(bonus)) throw `Update support item failed!`;
 
-      let lsSupportItem = await FS.FSGetSupportItem();
+      let supportItem   = await DS.DSGetDataGlobal('admin', 'supporting_item');
+      let lsSupportItem = supportItem.supporting_item;
       if (lsSupportItem === null || lsSupportItem === undefined) {
         let itemFind = config.SUPPORTING_ITEM.find(e => { return e['id'] === id });
         if (itemFind === null || itemFind === undefined) throw `${id} support item is not exist!`;
 
         itemFind['bonus'] = bonus;
-        FS.FSUpdateSupportItem(config.SUPPORTING_ITEM);
+        DS.DSUpdateDataGlobal('admin', 'supporting_item', { supporting_item: config.SUPPORTING_ITEM });
 
         rep.send({
           status_code : 2000,
@@ -735,7 +757,7 @@ const setupRoute = async (app, opt) => {
         if (itemFind === null || itemFind === undefined) throw `${id} support item is not exist!`;
 
         itemFind['bonus'] = bonus;
-        FS.FSUpdateSupportItem(lsSupportItem);
+        DS.DSUpdateDataGlobal('admin', 'supporting_item', { supporting_item: lsSupportItem });
 
         rep.send({
           status_code : 2000,
