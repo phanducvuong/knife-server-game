@@ -13,7 +13,7 @@ else {
 exports.scheDataGlobal = () => {
   setInterval(async () => {
     await this.updatePartition();
-  }, 6000000);
+  }, 10000);
 }
 
 exports.updatePartition = async () => {
