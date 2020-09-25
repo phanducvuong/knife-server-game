@@ -744,9 +744,32 @@ const setupRoute = async (app, opt) => {
       let itemMissionFind = lsMission.find(e => { return e['id'] === id });
       if (itemMissionFind === null || itemMissionFind === undefined) throw `${id} mission is not exsit!`;
 
-      if (itemMissionFind['id_sp_item'] !== null) {
-        
-      }
+      if (itemMissionFind['id_sp_item'] !== null && itemMissionFind['id_sp_item'] !== undefined) {
+        itemMissionFind['description']  = description;
+        itemMissionFind['status']       = status;
+
+        let spItemFind = lsSupportItem.find(e => { return e['id'] === itemMissionFind['id_sp_item'] });
+        if (spItemFind === null || spItemFind === undefined) throw 'Edit sp item failed!';
+
+        spItemFind['description'] = desSpItem;
+        spItemFind['bonus']       = bonus;
+
+        DS.DSUpdateDataGlobal('admin', 'missions', { missions: lsMission });
+        DS.DSUpdateDataGlobal('admin', 'supporting_item', { supporting_item: lsSupportItem });
+      }// mission thuộc dạng có support item
+      else {
+        itemMissionFind['description']  = description;
+        itemMissionFind['bonus']        = bonus;
+        itemMissionFind['status']       = status;
+
+        DS.DSUpdateDataGlobal('admin', 'missions', { missions: lsMission });
+      }// mission free
+
+      let missionFilter = setupFunc.filterLsMission(lsMission, lsSupportItem);
+      rep.send({
+        status_code : 2000,
+        lsMissionUpdate : missionFilter
+      });
 
     }
     catch(err) {
