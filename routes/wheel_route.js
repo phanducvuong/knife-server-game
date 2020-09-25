@@ -19,32 +19,20 @@ const wheelRoute = async (app, opt) => {
 
     try {
 
-      const token     = req.body.token.toString().trim();
-      const partition = parseInt(req.body.partition, 10);
-      const megaID    = req.body.megaID.toString().trim();
+      const token       = req.body.token.toString().trim();
+      const partition   = parseInt(req.body.partition, 10);
+      const megaID      = req.body.megaID.toString().trim();
 
-      let [strPartition, strDataUser] = await Promise.all([
-        redisClient.getPartition(),
-        redisClient.getTurnAndInvenUser(megaID)
-      ]);
+      if (partition !== config.PARTITIONS['partition']) throw `please reload game to update config!`;
 
-      let lsPartition;
-      if (strPartition !== null && strPartition !== undefined) {
-        lsPartition = JSON.parse(strPartition);
-      }
-      else {
-        lsPartition = await DS.DSGetDataGlobal('admin', 'partitions');
-        if (lsPartition === null || lsPartition === undefined) throw 'please setup data!';
-      }
-
-      if (partition !== lsPartition['partition']) throw `please reload game to update config!`;
-
-      let dataUser = JSON.parse(strDataUser);
+      let dataUser = JSON.parse(await redisClient.getTurnAndInvenUser(megaID));
       if (dataUser === null || dataUser === undefined) {
         dataUser = await DS.DSGetDataUser(megaID, 'turn_inven');
         if (dataUser === null || dataUser === undefined) throw `user is not exist`;
       } //get dataUser from redis. if user redis is not exist => get it from fs.
 
+      console.log(dataUser);
+      console.log(`token: ${token}`);
       if (dataUser['token'] !== token || dataUser['turn'] <= 0) throw 'unvalid token or turn is zero';
 
       let item;
@@ -52,7 +40,7 @@ const wheelRoute = async (app, opt) => {
         item = wheelFunc.getItemUnlimit();
       } //user is have in blacklist
       else {
-        item = await wheelFunc.getRndItem(lsPartition['total_percent']);
+        item = await wheelFunc.getRndItem(config.PARTITIONS['total_percent']);
       }
 
       if (item === null || item === undefined) throw 'item is not exist';
@@ -74,7 +62,7 @@ const wheelRoute = async (app, opt) => {
       DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
       DS.DSUpdateHistoryUser(megaID, strHis);
 
-      let region = lsPartition['data'].find(e => { return e['id'] === item['id'] });
+      let region = config.PARTITIONS['data'].find(e => { return e['id'] === item['id'] });
       if (region === null || region === undefined) throw `Can not get region by ${item['id']}`;
 
       rep.send({
