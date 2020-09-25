@@ -31,7 +31,6 @@ const wheelRoute = async (app, opt) => {
         if (dataUser === null || dataUser === undefined) throw `user is not exist`;
       } //get dataUser from redis. if user redis is not exist => get it from fs.
 
-      console.log(dataUser);
       console.log(`token: ${token}`);
       if (dataUser['token'] !== token || dataUser['turn'] <= 0) throw 'unvalid token or turn is zero';
 
@@ -64,6 +63,8 @@ const wheelRoute = async (app, opt) => {
 
       let region = config.PARTITIONS['data'].find(e => { return e['id'] === item['id'] });
       if (region === null || region === undefined) throw `Can not get region by ${item['id']}`;
+
+      console.log(dataUser);
 
       rep.send({
         status_code : 2000,

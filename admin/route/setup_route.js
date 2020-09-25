@@ -27,7 +27,8 @@ const setupRoute = async (app, opt) => {
         throw 'Check info board!';
       }
 
-      let partitions = await DS.DSGetDataGlobal('admin', 'patitions');
+      let partitions = await DS.DSGetDataGlobal('admin', 'partitions');
+      console.log(partitions);
       if (partitions === null || partitions === undefined) {
         let tmpPartition = {
           partition           : partition,
@@ -692,6 +693,59 @@ const setupRoute = async (app, opt) => {
             status      : itemMission['status']
           }
         });
+      }
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/update-mission', async (req, rep) => {
+    try {
+
+      let id          = parseInt(req.body.id, 10);
+      let description = req.body.description.toString().trim();
+      let bonus       = parseInt(req.body.bonus, 10);
+      let desSpItem   = req.body.des_sp_item.toString().trim();
+      let status      = parseInt(req.body.status, 10);
+
+      if (isNaN(id) || isNaN(bonus) || isNaN(status) || description === '') {
+        throw 'Edit mission failed! Please check info mission!';
+      }
+
+      let [missions, supportItem] = await Promise.all([
+        DS.DSGetDataGlobal('admin', 'missions'),
+        DS.DSGetDataGlobal('admin', 'supporting_item')
+      ]);
+
+      let lsMission;
+      if (missions === null || missions === undefined) {
+        lsMission = config.MISSIONS;
+      }
+      else {
+        lsMission = missions['missions'];
+      }
+
+      let lsSupportItem;
+      if (supportItem === null || supportItem === undefined) {
+        lsSupportItem = config.SUPPORTING_ITEM;
+      }
+      else {
+        lsSupportItem = supportItem['supporting_item'];
+      }
+
+      let itemMissionFind = lsMission.find(e => { return e['id'] === id });
+      if (itemMissionFind === null || itemMissionFind === undefined) throw `${id} mission is not exsit!`;
+
+      if (itemMissionFind['id_sp_item'] !== null) {
+        
       }
 
     }

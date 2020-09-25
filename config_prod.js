@@ -8,6 +8,14 @@ exports.initLsRedis = () => {
     host  : '127.0.0.1'
   });
 
+  /**add redis config in here
+   * lsRedis.push({
+   *  port  : //port redis,
+   *  host  : //host redis
+   * })
+   */
+
+  this.LENGTH_REDIS = lsRedis.length;
   return lsRedis;
 }
 

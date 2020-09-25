@@ -1,4 +1,4 @@
-  exports.URL_VALID_TOKEN           = 'https://5f51af2d5e98480016123c64.mockapi.io/api/v1/verify-token';
+exports.URL_VALID_TOKEN           = 'https://5f51af2d5e98480016123c64.mockapi.io/api/v1/verify-token';
 
 exports.LENGTH_REDIS              = 1;
 exports.initLsRedis = () => {
@@ -9,6 +9,14 @@ exports.initLsRedis = () => {
     host  : '54.151.144.72'
   });
 
+  /**add redis config in here
+   * lsRedis.push({
+   *  port  : //port redis,
+   *  host  : //host redis
+   * })
+   */
+
+  this.LENGTH_REDIS = lsRedis.length;
   return lsRedis;
 }
 

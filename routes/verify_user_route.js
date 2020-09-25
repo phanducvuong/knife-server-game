@@ -30,6 +30,7 @@ const verifyUserRoute = async (app, opt) => {
       const token   = req.body.token.toString().trim();
       const result  = await verifyTokenFunc.verifyTokenUser(token);
 
+      console.log(`verify token user: ${token}`);
       if (result === null || result === undefined || token === null || token === undefined) {
         throw 'unvalid token';
       }

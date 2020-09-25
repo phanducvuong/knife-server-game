@@ -80,7 +80,8 @@
                 <div class="form-group">
                   <label class="col-md-4 control-label">DESCRIPTION</label>
                   <div class="col-md-12">
-                    <p id="p-des-mission"></p>
+                    <input  id="input-description-mission" placeholder="DESCRIPTION"
+                              class="form-control input-md" type="text">
                   </div>
                 </div>
 
@@ -88,17 +89,27 @@
                 <div class="form-group">
                     <label class="col-md-12 control-label" for="product_name_fr">BONUS</label>
                     <div class="col-md-12">
-                      <p id="p-bonus-mission"></p>
+                      <input  id="input-bonus-mission" placeholder="BONUS"
+                              class="form-control input-md" type="number"
+                              step="0" min="0">
                     </div>
                 </div>
 
-                <!-- MAXIMUM -->
-                <div class="form-group">
-                  <label class="col-md-4 control-label">MAXIMUM</label>
+                <!-- SUPPORTING ITEM -->
+                <div class="form-group" id="div-supporting-item">
+                  <label class="col-md-4 control-label">SUPPORTING ITEM</label>
                   <div class="col-md-12">
-                      <input  id="maximumItem" placeholder="Maximum"
-                              class="form-control input-md" type="number"
-                              step="0" min="0">
+                    <input id="input-supporting-item" placeholder="SUPPORTING ITEM"
+                              class="form-control input-md" type="text">
+                  </div>
+                </div>
+
+                <!-- STATUS MISSION -->
+                <div class="form-group">
+                  <label class="col-md-12 control-label" for="product_name_fr">STATUS</label>
+                  <div class="col-md-12">
+                    <input  id="input-status-mission" placeholder="STATUS"
+                            class="form-control input-md" type="number">
                   </div>
                 </div>
 
@@ -124,6 +135,8 @@
 
   $(document).ready(() => {
 
+    resetModalEditMission();
+
     $('body').delegate('.edt-misison', 'click', (event) => {
       let dataID = event.currentTarget.attributes.getNamedItem('data-id').value;
       if (dataID === '') {
@@ -146,13 +159,86 @@
             return;
           }
 
-          console.log(data);
+          setDataModalEditMission(data['item_mission']);
 
         })
         .fail(() => {});
     });
 
+    //update mission
+    $('#btn-update-mission').click(() => {
+
+      let id          = $('#p-id-misison').text();
+      let description = $('#input-description-mission').val();
+      let bonus       = $('#input-bonus-mission').val();
+      let desSpItem   = $('#input-supporting-item').val();
+      let status      = $('#input-status-mission').val();
+
+      if (id === '' || description === '' || bonus === '' || status === '') {
+        alert('Edit mission failed!');
+        return;
+      }
+
+      $.ajax({
+        url             : 'http://' + window.location.host + '/api/v1/admin/setup/update-mission',
+        method          : 'POST',
+        contentType     : 'application/json; charset=utf-8',
+        data            : JSON.stringify({
+          id            : id,
+          description   : description,
+          bonus         : bonus,
+          des_sp_item   : desSpItem,
+          status        : status
+        })
+      })
+        .done((data) => {
+
+          if (data['status_code'] !== 2000) {
+            alert(data['error']);
+            return;
+          }
+
+          $('#modal-edit-mission').modal('hide');
+          updateTableMission(data['lsMissionUpdate']);
+
+        })
+        .fail(() => {})
+
+    });
+
   });
+
+  function setDataModalEditMission(data) {
+
+    if (data['sp_item'] === null) {
+      $('#div-supporting-item').css('display', 'none');
+      $('#input-bonus-mission').val(data['bonus']);
+    }
+    else {
+      $('#div-supporting-item').css('display', 'inline');
+      $('#input-supporting-item').val(data['sp_item']['description']);
+      $('#input-bonus-mission').val(data['sp_item']['bonus']);
+    }
+
+    $('#p-id-misison').text(data['id']);
+    $('#input-description-mission').val(data['description']);
+    $('#input-status-mission').val(data['status']);
+
+  }
+
+  function updateTableMission(data) {
+
+  }
+
+  function resetModalEditMission() {
+    $(".modal").on("hidden.bs.modal", () => {
+      $('#input-bonus-mission').val('');
+      $('#input-supporting-item').val('');
+      $('#p-id-misison').text('');
+      $('#input-description-mission').val('');
+      $('#input-status-mission').val('');
+    });
+  }
 
 </script>
 
