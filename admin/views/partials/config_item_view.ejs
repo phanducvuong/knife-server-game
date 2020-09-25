@@ -354,8 +354,11 @@
         if (e['type'] === 0) {
           strType = 'Quà';
         }
-        else {
+        else if (e['type'] === 1) {
           strType = 'Thẻ Cào';
+        }
+        else {
+          strType = 'NONE';
         }
 
         markup += `
