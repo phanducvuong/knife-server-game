@@ -17,6 +17,8 @@ const dataInitUser = {
   total_turned: 0,
   token:'',
   lucky_code: [],
+  sp_item: [],
+  mission: [],
   phone: '',
   userID: ''
 }
@@ -30,7 +32,6 @@ const verifyUserRoute = async (app, opt) => {
       const token   = req.body.token.toString().trim();
       const result  = await verifyTokenFunc.verifyTokenUser(token);
 
-      console.log(`verify token user: ${token}`);
       if (result === null || result === undefined || token === null || token === undefined) {
         throw 'unvalid token';
       }
@@ -44,6 +45,8 @@ const verifyUserRoute = async (app, opt) => {
           dataInitUser.userID = result.user_id;
           redisClient.updateTurnAndInvenUser(`${result.mega1_code}`, JSON.stringify(dataInitUser));
           DS.DSUpdateDataUser(`${result.mega1_code}`, 'turn_inven', dataInitUser);
+
+          dataUser = dataInitUser;
         }
         else {
           dataUser.token  = token;
@@ -70,7 +73,6 @@ const verifyUserRoute = async (app, opt) => {
     catch(err) {
 
       console.log(err);
-
       rep.send({
         status_code : 3000,
         error       : err

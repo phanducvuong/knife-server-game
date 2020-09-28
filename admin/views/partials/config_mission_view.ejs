@@ -8,7 +8,7 @@
     
     <section class="content">
       <div style="background-color: white;">
-        <table id="tableItem" class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
+        <table id="table-mission" class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
 
           <thead>
             <tr style="font-weight: bolder;">
@@ -227,7 +227,42 @@
   }
 
   function updateTableMission(data) {
+    $('#table-mission tbody').remove();
+    let markup = '<tbody>';
 
+    for (let e of data) {
+      markup += `
+        <tr>
+          <td>${e['id']}</td>
+          <td>${e['description']}</td>
+        `;
+
+      if (e['id_sp_item'] !== null) {
+        markup += `
+          <td>${e['sp_item']['bonus']}</td>
+          <td>${e['sp_item']['description']}</td>
+        `;
+      }
+      else {
+        markup += `
+          <td>${e['bonus']}</td>
+          <td>NONE</td>
+        `;
+      }
+
+      markup += `
+          <td>${e['status']}</td>
+          <td class="text-right">
+            <div class="btn-group">
+              <a href="#" class="edt-misison" data-id="${e['id']}" data-toggle="modal"
+                data-target="#modal-edit-mission">Edit</a>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+    markup += '</tbody>';
+    $('#table-mission').append(markup);
   }
 
   function resetModalEditMission() {

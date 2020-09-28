@@ -63,6 +63,7 @@ app.register(require('fastify-static'), {
 app.register(require('./routes/config_route'),      { prefix: '/api/v1/config/get-partition' });
 app.register(require('./routes/verify_user_route'), { prefix: '/api/v1/user' });
 app.register(require('./routes/wheel_route'),       { prefix: '/api/v1/wheel' });
+app.register(require('./routes/mission_route'),     { prefix: '/api/v1/mission' });
 
 //route admin
 app.register(require('./admin/route/dashboard_route'),  { prefix: '/api/v1/admin/dashboard' });

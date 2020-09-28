@@ -37,6 +37,10 @@ const globalRoute = async (app, opt) => {
     rep.send(config.PARTITIONS);
   });
 
+  app.get('/get-mission', async (req, rep) => {
+    rep.send(config.MISSIONS);
+  });
+
   app.get('/get-config', async (req, rep) => {
     rep.send({
       total_percent : config.TOTAL_PERCENT,
@@ -66,6 +70,17 @@ const globalRoute = async (app, opt) => {
   app.get('/insert', async (req, rep) => {
     let result = await DS.DSGetDataGlobal('admin', 'supporting_item');
     rep.send(result);
+  });
+
+  app.post('/empty-mission', async (req, rep) => {
+    let megaID          = req.body.megaID;
+    let dataUser        = JSON.parse(await redisClient.getTurnAndInvenUser(megaID));
+    dataUser['mission'] = [];
+
+    DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
+    redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
+
+    rep.send('ok');
   });
 
 }

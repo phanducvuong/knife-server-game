@@ -29,7 +29,7 @@ exports.updatePartition = async () => {
   }
 
   let supportingItem = await DS.DSGetDataGlobal('admin', 'supporting_item');
-  if (supportingItem['supporting_item'] !== null && supportingItem['supporting_item'] !== undefined) {
+  if (supportingItem !== null && supportingItem !== undefined) {
     config.SUPPORTING_ITEM = [];
     config.SUPPORTING_ITEM.push(...supportingItem['supporting_item']);
   }
@@ -40,6 +40,12 @@ exports.updatePartition = async () => {
     config.ARR_ITEM.push(...arrItem);
 
     filterItemHaveInListPartition(config.PARTITIONS['data'], config.ARR_ITEM);
+  }
+
+  let missions = await DS.DSGetDataGlobal('admin', 'missions');
+  if (missions !== null && missions !== undefined) {
+    config.MISSIONS = [];
+    config.MISSIONS.push(...missions['missions']);
   }
 }
 

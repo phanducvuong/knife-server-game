@@ -49,6 +49,11 @@ exports.SUPPORTING_ITEM           = [
     id          : 0,
     description : 'Vật Phẩm Bỏ Ô',
     bonus       : 1
+  },
+  {
+    id          : 1,
+    description : 'Vật Phẩm Thêm Ô',
+    bonus       : 1
   }
 ]
 
@@ -65,6 +70,13 @@ exports.MISSIONS                  = [
     description : 'Mời 5 Bạn Mới Thành Công',
     bonus       : -1,
     id_sp_item  : 0,
+    status      : 1
+  },
+  {
+    id          : 2,
+    description : 'Mời 2 Bạn Mới Thành Công',
+    bonus       : -1,
+    id_sp_item  : 1,
     status      : 1
   }
 ]
