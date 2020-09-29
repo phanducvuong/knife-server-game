@@ -21,7 +21,7 @@ const missionRoute = async (app, opt) => {
       let filterMission = missionFunc.filterMisisonWithSpItem(dataUser['mission']);
       rep.send({
         status_code : 2000,
-        misisons    : filterMission
+        missions    : filterMission
       });
 
     }
@@ -64,7 +64,8 @@ const missionRoute = async (app, opt) => {
         status_code   : 2000,
         missionUpdate : missionFilter,
         bonus         : bonusFromMission['bonus'],
-        description   : bonusFromMission['description']
+        description   : bonusFromMission['description'],
+        turn          : bonusFromMission['dataUserUpdate']['turn']
       });
 
     }

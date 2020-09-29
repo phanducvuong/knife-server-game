@@ -78,5 +78,47 @@ exports.MISSIONS                  = [
     bonus       : -1,
     id_sp_item  : 1,
     status      : 1
+  },
+  {
+    id          : 3,
+    description : 'ABC',
+    bonus       : 1,
+    id_sp_item  : null,
+    status      : 1
+  },
+  {
+    id          : 4,
+    description : 'DEF',
+    bonus       : 1,
+    id_sp_item  : null,
+    status      : 1
   }
 ]
+
+exports.EVENT                     = {
+  start     : '29/9/2020',
+  end       : '10/10/2020',
+  data      : [
+    {
+      id          : 0,
+      description : 'Đăng Nhập Vào Game Mỗi Ngày',
+      bonus       : 1,
+      id_sp_item  : null,
+      status      : 1
+    },
+    {
+      id          : 1,
+      description : 'Mời 5 Bạn Mới Thành Công',
+      bonus       : -1,
+      id_sp_item  : 0,
+      status      : 1
+    },
+    {
+      id          : 2,
+      description : 'Mời 2 Bạn Mới Thành Công',
+      bonus       : -1,
+      id_sp_item  : 1,
+      status      : 1
+    }
+  ]
+}

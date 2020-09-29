@@ -525,9 +525,9 @@ const setupRoute = async (app, opt) => {
       let maximum = parseInt(req.body.maximum, 10);
       let percent = parseInt(req.body.percent, 10);
 
-      if (isNaN(id) || isNaN(maximum) || isNaN(percent)       ||
-          name === '' || name === null || name === undefined  ||
-          id < 0    || maximum < 0    || percent < 0) {
+      if (isNaN(id)   || isNaN(maximum) || isNaN(percent)       ||
+          name === '' || name === null  || name === undefined   ||
+          id < 0      || percent < 0) {
         throw `Edit item failed!`;
       }
 

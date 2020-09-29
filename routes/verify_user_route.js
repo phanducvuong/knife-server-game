@@ -5,7 +5,7 @@ const DS                  = require('../repository/datastore');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
-  config = require('../config_pro');
+  config = require('../config_prod');
 }
 else {
   config = require('../config_dev');

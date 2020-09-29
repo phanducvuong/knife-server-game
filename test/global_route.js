@@ -17,20 +17,19 @@ const globalRoute = async (app, opt) => {
   });
 
   app.post('/init-item', async (req, rep) => {
-
     const data = req.body.data;
     for (e of data) {
       FS.FSUpdateARRItemBy(e['id'], e);
     }
-
     rep.send('ok');
-
   });
 
   app.get('/get-all-item', async (req, rep) => {
-
     rep.send(config.ARR_ITEM);
+  });
 
+  app.get('/get-filter-item', async (req, rep) => {
+    rep.send(config.ITEM_FILTER);
   });
 
   app.get('/get-partitiion', async (req, rep) => {
@@ -60,7 +59,7 @@ const globalRoute = async (app, opt) => {
     let dataUser      = JSON.parse(await redisClient.getTurnAndInvenUser(megaID));
     dataUser['turn']  = turn;
 
-    FS.FSInitDataUser(megaID, 'turn_inven', dataUser);
+    DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
     redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
 
     rep.send('success');
@@ -79,6 +78,27 @@ const globalRoute = async (app, opt) => {
 
     DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
     redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
+
+    rep.send('ok');
+  });
+
+  app.post('/update-sp-item', async (req, rep) => {
+    let megaID    = req.body.megaID;
+    let idSpItem  = req.body.idSpItem;
+    let amount    = req.body.amount;
+    let dataUser  = await DS.DSGetDataUser(megaID, 'turn_inven');
+
+    for (let i=0; i<dataUser['sp_item'].length; i++) {
+      let tmpStr = dataUser['sp_item'][i].split('_');
+      if (tmpStr[0] === idSpItem) {
+        tmpStr[1] = amount;
+        dataUser['sp_item'][i] = `${tmpStr[0]}_${tmpStr[1]}`;
+        break;
+      }
+    }
+
+    redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
+    DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
 
     rep.send('ok');
   });

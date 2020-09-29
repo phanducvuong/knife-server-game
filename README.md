@@ -9,6 +9,6 @@
 - ## FILE CONFIG
 
      ```bash
-    -  file ./config_pro.js : dev config enviroment
+    -  file ./config_prod.js : dev config enviroment
     -  file ./config_dev.js : production config enviroment
     ``` 

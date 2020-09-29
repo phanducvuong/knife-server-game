@@ -23,3 +23,29 @@ exports.updateInventory = (inventory, item) => {
 exports.updateLsLuckyCode = (lsLuckyCode) => {
 
 }
+
+exports.updateLsSpItemUser = (lsSpItem, idSpItem) => {
+  for (let i=0; i<lsSpItem.length; i++) {
+    let tmpStr  = lsSpItem[i].split('_');
+    let id      = parseInt(tmpStr[0], 10);
+    let amount  = parseInt(tmpStr[1], 10);
+
+    if (isNaN(id) || isNaN(amount) || amount <= 0) {
+      return {
+        status  : false,
+        msg     : 'Can not get sp item in list user or amount = 0!'
+      }
+    }
+
+    if (id === idSpItem) {
+      amount      -= 1;
+      lsSpItem[i]  = `${id}_${amount}`;
+      break;
+    }
+  }
+
+  return {
+    status          : true,
+    lsSpItemUpdate  : lsSpItem
+  }
+}

@@ -22,8 +22,11 @@ const wheelRoute = async (app, opt) => {
       const token       = req.body.token.toString().trim();
       const partition   = parseInt(req.body.partition, 10);
       const megaID      = req.body.megaID.toString().trim();
+      const idItemRm    = req.body.idItemRm;
 
-      if (partition !== config.PARTITIONS['partition']) throw `please reload game to update config!`;
+      if (partition !== config.PARTITIONS['partition'] || config.PARTITIONS['data'].length !== config.PARTITIONS['partition']) {
+        throw `please reload game to update config!`;
+      }
 
       let dataUser = JSON.parse(await redisClient.getTurnAndInvenUser(megaID));
       if (dataUser === null || dataUser === undefined) {
@@ -31,13 +34,30 @@ const wheelRoute = async (app, opt) => {
         if (dataUser === null || dataUser === undefined) throw `user is not exist`;
       } //get dataUser from redis. if user redis is not exist => get it from fs.
 
-      console.log(`token: ${token}`);
       if (dataUser['token'] !== token || dataUser['turn'] <= 0) throw 'unvalid token or turn is zero';
 
       let item;
       if (util.chkUserInBlackList(megaID, config.BLACK_LIST) === true) {
         item = wheelFunc.getItemUnlimit();
       } //user is have in blacklist
+      if (idItemRm !== null && idItemRm !== undefined) {
+
+        let tmpIdRm = parseInt(idItemRm, 10);
+        if (isNaN(idItemRm)) throw `${idItemRm} remove box is not a number!`;
+
+        let resultUpdateLsSpItem = profileUserFunc.updateLsSpItemUser(dataUser['sp_item'], 0);
+        if (resultUpdateLsSpItem['status'] === false) {
+          rep.send({
+            status_code : 2500,
+            msg         : resultUpdateLsSpItem['msg']
+          });
+          return;
+        }
+
+        dataUser['sp_item'] = resultUpdateLsSpItem['lsSpItemUpdate'];
+        item                = await wheelFunc.getItemWithRmBox(tmpIdRm);
+
+      } //remove item on box case
       else {
         item = await wheelFunc.getRndItem(config.PARTITIONS['total_percent']);
       }
@@ -63,8 +83,6 @@ const wheelRoute = async (app, opt) => {
 
       let region = config.PARTITIONS['data'].find(e => { return e['id'] === item['id'] });
       if (region === null || region === undefined) throw `Can not get region by ${item['id']}`;
-
-      console.log(dataUser);
 
       rep.send({
         status_code : 2000,
