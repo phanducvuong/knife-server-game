@@ -27,3 +27,14 @@ exports.chkItemExistInInven = (inventory, idItem) => {
   }
   return null;
 }
+
+exports.chkTimeEvent = (start, end) => {
+  let time  = new Date();
+  let timeS = new Date(start);
+  let timeE = new Date(end);
+
+  if (time.getTime() >= timeS.getTime() && time <= timeE.getTime()) {
+    return true;
+  }
+  return false;
+}

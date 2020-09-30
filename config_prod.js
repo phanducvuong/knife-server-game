@@ -87,3 +87,31 @@ exports.MISSIONS                  = [
     status      : 1
   }
 ]
+
+exports.EVENTS                    = {
+  start     : '29/9/2020',
+  end       : '10/10/2020',
+  data      : [
+    {
+      id          : 0,
+      description : 'ABC Event',
+      bonus       : 1,
+      id_sp_item  : null,
+      status      : 1
+    },
+    {
+      id          : 1,
+      description : 'DEF Event',
+      bonus       : -1,
+      id_sp_item  : 0,
+      status      : 1
+    },
+    {
+      id          : 2,
+      description : 'GHI Event',
+      bonus       : -1,
+      id_sp_item  : 1,
+      status      : 1
+    }
+  ]
+}

@@ -60,24 +60,26 @@ app.register(require('fastify-static'), {
   prefix: '/public/', // optional: default '/'
 });
 
-app.register(require('./routes/config_route'),      { prefix: '/api/v1/config/get-partition' });
-app.register(require('./routes/verify_user_route'), { prefix: '/api/v1/user' });
-app.register(require('./routes/wheel_route'),       { prefix: '/api/v1/wheel' });
-app.register(require('./routes/mission_route'),     { prefix: '/api/v1/mission' });
+app.register(require('./routes/config_route'),            { prefix: '/api/v1/config/get-partition' });
+app.register(require('./routes/verify_user_route'),       { prefix: '/api/v1/user' });
+app.register(require('./routes/wheel_route'),             { prefix: '/api/v1/wheel' });
+app.register(require('./routes/mission_route'),           { prefix: '/api/v1/mission' });
+app.register(require('./routes/event_route'),             { prefix: '/api/v1/event' });
+app.register(require('./routes/profile_user_route'),      { prefix: '/api/v1/profile' });
 
 //route admin
-app.register(require('./admin/route/dashboard_route'),  { prefix: '/api/v1/admin/dashboard' });
-app.register(require('./admin/route/setup_route'),      { prefix: '/api/v1/admin/setup' });
+app.register(require('./admin/route/dashboard_route'),    { prefix: '/api/v1/admin/dashboard' });
+app.register(require('./admin/route/setup_route'),        { prefix: '/api/v1/admin/setup' });
 
 //route test
-app.register(require('./test/global_route'), { prefix: '/api/v1/test' });
+app.register(require('./test/global_route'),              { prefix: '/api/v1/test' });
 
 //schedule
 schedule.scheDataGlobal();
 
 schedule.updatePartition()
         .then(() => {
-          const PORT = process.env.PORT || 3000;
+          const PORT = process.env.PORT || 8080;
           app.listen(PORT, '0.0.0.0', async (err, address) => {
           
             console.log(`app listening on port ${PORT}`);

@@ -20,7 +20,8 @@ const dataInitUser = {
   sp_item: [],
   mission: [],
   phone: '',
-  userID: ''
+  userID: '',
+  name: ''
 }
 
 const verifyUserRoute = async (app, opt) => {
@@ -43,6 +44,7 @@ const verifyUserRoute = async (app, opt) => {
           dataInitUser.token  = token;
           dataInitUser.phone  = result.phone;
           dataInitUser.userID = result.user_id;
+          dataInitUser.name   = result.name;
           redisClient.updateTurnAndInvenUser(`${result.mega1_code}`, JSON.stringify(dataInitUser));
           DS.DSUpdateDataUser(`${result.mega1_code}`, 'turn_inven', dataInitUser);
 
@@ -52,12 +54,14 @@ const verifyUserRoute = async (app, opt) => {
           dataUser.token  = token;
           dataUser.phone  = result.phone;
           dataUser.userID = result.user_id;
+          dataUser.name   = result.name;
           redisClient.updateTurnAndInvenUser(`${result.mega1_code}`, JSON.stringify(dataUser));
           DS.DSUpdateDataUser(`${result.mega1_code}`, 'turn_inven', dataUser);
         }
       }
       else {
         dataUser.token  = token;
+        dataUser.name   = result.name;
         redisClient.updateTurnAndInvenUser(`${result.mega1_code}`, JSON.stringify(dataUser));
         DS.DSUpdateDataUser(`${result.mega1_code}`, 'turn_inven', dataUser);
       }

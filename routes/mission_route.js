@@ -59,7 +59,7 @@ const missionRoute = async (app, opt) => {
       let missionFilter = missionFunc.filterMisisonWithSpItem(bonusFromMission['dataUserUpdate']['mission']);
       DS.DSUpdateDataUser(megaID, 'turn_inven', bonusFromMission['dataUserUpdate']);
       redis.updateTurnAndInvenUser(megaID, JSON.stringify(bonusFromMission['dataUserUpdate']));
-
+      
       rep.send({
         status_code   : 2000,
         missionUpdate : missionFilter,

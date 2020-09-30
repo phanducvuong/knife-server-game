@@ -5,8 +5,8 @@ exports.initLsRedis = () => {
   let lsRedis = [];
   lsRedis.push({
     port  : 6379,
-    host  : '127.0.0.1'
-    // host  : '54.151.144.72'
+    // host  : '127.0.0.1'
+    host  : '54.151.144.72'
   });
 
   /**add redis config in here
@@ -95,27 +95,27 @@ exports.MISSIONS                  = [
   }
 ]
 
-exports.EVENT                     = {
-  start     : '29/9/2020',
-  end       : '10/10/2020',
+exports.EVENTS                    = {
+  start     : '9/29/2020',
+  end       : '10/30/2020',
   data      : [
     {
       id          : 0,
-      description : 'Đăng Nhập Vào Game Mỗi Ngày',
+      description : 'ABC Event',
       bonus       : 1,
       id_sp_item  : null,
       status      : 1
     },
     {
       id          : 1,
-      description : 'Mời 5 Bạn Mới Thành Công',
+      description : 'DEF Event',
       bonus       : -1,
       id_sp_item  : 0,
       status      : 1
     },
     {
       id          : 2,
-      description : 'Mời 2 Bạn Mới Thành Công',
+      description : 'GHI Event',
       bonus       : -1,
       id_sp_item  : 1,
       status      : 1

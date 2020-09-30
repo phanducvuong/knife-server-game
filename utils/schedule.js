@@ -1,4 +1,3 @@
-const FS              = require('../repository/firestore');
 const DS              = require('../repository/datastore');
 const redisClient     = require('../redis/redis_client');
 
@@ -46,6 +45,14 @@ exports.updatePartition = async () => {
   if (missions !== null && missions !== undefined) {
     config.MISSIONS = [];
     config.MISSIONS.push(...missions['missions']);
+  }
+
+  let events = await DS.DSGetDataGlobal('admin', 'events');
+  if (events !== null && events !== undefined) {
+    config.EVENTS.start = events['start'];
+    config.EVENTS.end   = events['end'];
+    config.EVENTS.data  = [];
+    config.EVENTS.data.push(...events['data']);
   }
 }
 
