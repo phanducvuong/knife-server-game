@@ -1,6 +1,7 @@
 const FS            = require('../repository/firestore');
 const DS            = require('../repository/datastore');
 const redisClient   = require('../redis/redis_client');
+const strGenerate   = require('../utils/generate_string');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -11,6 +12,11 @@ else {
 }
 
 const globalRoute = async (app, opt) => {
+
+  app.get('/microsecond', async (req, rep) => {
+    let micro = strGenerate.getStringGenerate();
+    rep.send(micro);
+  });
 
   app.get('/partition', async (req, rep) => {
     rep.send(config.PARTITIONS);

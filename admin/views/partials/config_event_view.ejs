@@ -11,12 +11,12 @@
         <div id="tab-1" class="tab-pane active">
             <div class="panel-body" style="background-color: white;">
               <div class="form-group row"><label class="col-sm-2 col-form-label">Thời Gian Bắt Đầu:</label>
-                <div class="col-sm-10">
+                <div class="col-sm-6">
                   <input type="date" id="start-time-event" class="form-control" placeholder="">
                 </div>
               </div>
               <div class="form-group row"><label class="col-sm-2 col-form-label">Thời Gian Kết Thúc:</label>
-                <div class="col-sm-10">
+                <div class="col-sm-6">
                   <input type="date" id="end-time-event" class="form-control" placeholder="">
                 </div>
               </div>
@@ -292,16 +292,28 @@
         </div>
     </div>
     </section>
-
   </div>
 
   <script>
 
     $(document.body).ready(() => {
 
-      
+      getTimeFromInputDate();
       
     });
+
+    function getTimeFromInputDate() {
+      $('#btn-update-time-event').click(() => {
+        let today = $('#start-time-event').val();
+        console.log(today);
+
+        // let time = new Date(1601545477607);
+        let time = new Date('2020-12-25');
+        console.log(`${time.getFullYear()}   ${time.getMonth()}   ${time.getDate()}    time: ${time.toString()}`);
+
+        $('#end-time-event').val('2020-12-25');
+      });
+    }
 
   </script>
 

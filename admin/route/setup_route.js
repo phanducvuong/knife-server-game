@@ -404,9 +404,9 @@ const setupRoute = async (app, opt) => {
       let save    = req.body.save;
       let special = req.body.special;
 
-      if (isNaN(id) || isNaN(maximum) || isNaN(percent) || isNaN(type) || typeof save !== "boolean" || typeof special !== "boolean" ||
-          name === '' || name === null || name === undefined || save === null || save === undefined || special === null || special === undefined ||
-          id < 0    || maximum < 0    || percent < 0) {
+      if (isNaN(id)   || isNaN(maximum) || isNaN(percent)     || isNaN(type)    || typeof save !== "boolean" || typeof special !== "boolean"  ||
+          name === '' || name === null  || name === undefined || save === null  || save        === undefined || special        === null       || special === undefined ||
+          id < 0      || percent < 0) {
         throw 'Add item failed!';
       }
 
