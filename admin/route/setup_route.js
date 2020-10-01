@@ -1,4 +1,3 @@
-const FS                = require('../../repository/firestore');
 const DS                = require('../../repository/datastore');
 const redisClient       = require('../../redis/redis_client');
 const setupFunc         = require('../functions/setup_func');
@@ -28,7 +27,6 @@ const setupRoute = async (app, opt) => {
       }
 
       let partitions = await DS.DSGetDataGlobal('admin', 'partitions');
-      console.log(partitions);
       if (partitions === null || partitions === undefined) {
         let tmpPartition = {
           partition           : partition,
@@ -854,6 +852,50 @@ const setupRoute = async (app, opt) => {
       rep.send({
         status_code : 3000,
         error       : err
+      });
+
+    }
+  });
+
+  //setup event
+  app.get('/get-config-event', async (req, rep) => {
+    try {
+
+      let [events, supportItem] = await Promise.all([
+        DS.DSGetDataGlobal('admin', 'events'),
+        DS.DSGetDataGlobal('admin', 'supporting_item')
+      ]);
+
+      let lsEvent;
+      if (events === null || events === undefined) {
+        lsEvent = [];
+        lsEvent.push(...config.EVENTS.data);
+      }
+      else {
+        lsEvent = events.data;
+      }
+
+      let lsSupportItem;
+      if (supportItem === null || supportItem === undefined) {
+        lsSupportItem = [];
+        lsSupportItem.push(...config.SUPPORTING_ITEM);
+      }
+      else {
+        lsSupportItem = supportItem.supporting_item;
+      }
+
+      let eventFilter = setupFunc.filterLsEvent(lsEvent, lsSupportItem);
+
+      rep.view('/partials/config_event_view.ejs', {
+        data  : eventFilter
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.view('/partials/error_view.ejs', {
+        title_error : err
       });
 
     }

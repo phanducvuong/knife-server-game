@@ -106,3 +106,9 @@ exports.filterLsMission = (lsMission, lsSupportItem) => {
   }
   return filters;
 }
+
+exports.filterLsEvent = (lsEvent, lsSupportingItem) => {
+  let filter = [];
+
+  return filter;
+}
