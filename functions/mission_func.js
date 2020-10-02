@@ -74,7 +74,8 @@ exports.getBonusFromMission = (idMission, dataUser) => {
           status          : true,
           dataUserUpdate  : dataUser,
           bonus           : tmpSpItem['bonus'],
-          description     : tmpSpItem['description']
+          description     : tmpSpItem['description'],
+          free            : false
         };
       }
     }
@@ -86,7 +87,8 @@ exports.getBonusFromMission = (idMission, dataUser) => {
       status          : true,
       dataUserUpdate  : dataUser,
       bonus           : tmpSpItem['bonus'],
-      description     : tmpSpItem['description']
+      description     : tmpSpItem['description'],
+      free            : false
     }
   } //mission is not free
   else {
@@ -96,7 +98,8 @@ exports.getBonusFromMission = (idMission, dataUser) => {
       status          : true,
       dataUserUpdate  : dataUser,
       bonus           : tmpMission['bonus'],
-      description     : tmpMission['description']
+      description     : tmpMission['description'],
+      free            : true
     }
   } //mission is free
 }

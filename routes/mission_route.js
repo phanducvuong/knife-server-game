@@ -65,7 +65,8 @@ const missionRoute = async (app, opt) => {
         missionUpdate : missionFilter,
         bonus         : bonusFromMission['bonus'],
         description   : bonusFromMission['description'],
-        turn          : bonusFromMission['dataUserUpdate']['turn']
+        turn          : bonusFromMission['dataUserUpdate']['turn'],
+        free          : bonusFromMission['free']
       });
 
     }

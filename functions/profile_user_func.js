@@ -71,6 +71,12 @@ exports.filterHistory = (lsInventory) => {
       if (tmpItem !== null && tmpItem !== undefined) {
 
         let tmpP    = config.PARTITIONS.data.find(ee => { return ee['id'] === tmpItem['id']});
+        if (tmpP === null || tmpP === undefined) {
+          return {
+            lsGift  : lsGift,
+            lsCard  : lsCard
+          };
+        }
         switch(tmpItem['type']) {
           case 0: {
             lsGift.push({
@@ -79,7 +85,7 @@ exports.filterHistory = (lsInventory) => {
               amount      : amount,
               region      : tmpP['region']
             });
-            break
+            break;
           }
           case 1: {
             lsCard.push({
@@ -88,7 +94,7 @@ exports.filterHistory = (lsInventory) => {
               amount      : amount,
               region      : tmpP['region']
             });
-            break
+            break;
           }
         }
         

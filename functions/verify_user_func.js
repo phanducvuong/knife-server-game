@@ -25,7 +25,7 @@ exports.verifyTokenUser = (token) => {
         console.log(jsonData);
         return rej('can not verify user');
       }
-      return resv(jsonData.data);
+      return resv(jsonData);
 
     });
 

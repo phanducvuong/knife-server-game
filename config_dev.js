@@ -1,12 +1,12 @@
-exports.URL_VALID_TOKEN           = 'https://5f51af2d5e98480016123c64.mockapi.io/api/v1/verify-token';
+exports.URL_VALID_TOKEN           = 'http://demo8992960.mockable.io/verify-token';
 
 exports.LENGTH_REDIS              = 1;
 exports.initLsRedis = () => {
   let lsRedis = [];
   lsRedis.push({
     port  : 6379,
-    host  : '127.0.0.1'
-    // host  : '54.151.144.72'
+    // host  : '127.0.0.1'
+    host  : '54.151.144.72'
   });
 
   /**add redis config in here
@@ -109,14 +109,14 @@ exports.EVENTS                    = {
     {
       id          : 1,
       description : 'DEF Event',
-      bonus       : -1,
+      bonus       : 1,
       id_sp_item  : 0,
       status      : 1
     },
     {
       id          : 2,
       description : 'GHI Event',
-      bonus       : -1,
+      bonus       : 1,
       id_sp_item  : 1,
       status      : 1
     }

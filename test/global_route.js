@@ -15,7 +15,11 @@ const globalRoute = async (app, opt) => {
 
   app.get('/microsecond', async (req, rep) => {
     let micro = strGenerate.getStringGenerate();
-    rep.send(micro);
+    let micro1 = strGenerate.getStringGenerate();
+    rep.send({
+      m1 : micro,
+      m2  : micro1
+    });
   });
 
   app.get('/partition', async (req, rep) => {
