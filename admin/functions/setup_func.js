@@ -109,8 +109,70 @@ exports.filterLsMission = (lsMission, lsSupportItem) => {
 
 exports.filterLsEvent = (lsEvent, lsSupportingItem) => {
   let filter = [];
-
-  
+  for (let e of lsEvent) {
+    if (e['id_sp_item'] !== null) {
+      let tmp = lsSupportingItem.find(ee => { return ee['id'] === e['id_sp_item'] });
+      if (tmp !== null && tmp !== undefined) {
+        filter.push({
+          id          : e['id'],
+          description : e['description'],
+          bonus       : e['bonus'],
+          sp_item     : tmp['description'],
+          status      : e['status']
+        });
+      }
+    }
+    else {
+      filter.push({
+        id          : e['id'],
+        description : e['description'],
+        bonus       : e['bonus'],
+        sp_item     : 'NONE',
+        status      : e['status']
+      });
+    }
+  }
 
   return filter;
+}
+
+exports.findEventById = (idEvent, lsEvent, lsSupportItem) => {
+  let eventFind = lsEvent.find(e => { return e['id'] === idEvent });
+  if (eventFind === null || eventFind === undefined) {
+    return {
+      status  : false,
+      msg     : 'Can not get event by id'
+    }
+  }
+
+  if (eventFind['id_sp_item'] !== null) {
+    let tmp = lsSupportItem.find(e => { return e['id'] === eventFind['id'] });
+    if (tmp === null || tmp === undefined) {
+      return {
+        status  : false,
+        msg     : 'Can not get sp item by id'
+      }
+    }
+    return {
+      status    : true,
+      eventById : {
+        id          : eventFind['id'],
+        description : eventFind['description'],
+        bonus       : eventFind['bonus'],
+        sp_item     : tmp['description'],
+        status      : eventFind['status']
+      }
+    }
+  }
+
+  return {
+    status    : true,
+    eventById : {
+      id          : eventFind['id'],
+      description : eventFind['description'],
+      bonus       : eventFind['bonus'],
+      sp_item     : null,
+      status      : eventFind['status']
+    }
+  }
 }

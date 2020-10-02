@@ -9,31 +9,33 @@ else {
 exports.lsEventWithSpItem = () => {
   let lsEvent = [];
   for (let e of config.EVENTS.data) {
-    if (e['id_sp_item'] !== null) {
-      let tmpSp = config.SUPPORTING_ITEM.find(ee => { return ee['id'] === e['id_sp_item'] });
-      if (tmpSp !== null && tmpSp !== undefined) {
+    if (e['status'] === 1) {
+      if (e['id_sp_item'] !== null) {
+        let tmpSp = config.SUPPORTING_ITEM.find(ee => { return ee['id'] === e['id_sp_item'] });
+        if (tmpSp !== null && tmpSp !== undefined) {
+          lsEvent.push({
+            id          : e['id'],
+            description : e['description'],
+            free        : false,
+            sp_item     : tmpSp
+          });
+        }
+      }
+      else {
         lsEvent.push({
           id          : e['id'],
           description : e['description'],
-          free        : false,
-          sp_item     : tmpSp
+          free        : true,
+          bonus       : e['bonus']
         });
       }
-    }
-    else {
-      lsEvent.push({
-        id          : e['id'],
-        description : e['description'],
-        free        : true,
-        bonus       : e['bonus']
-      });
     }
   }
   return lsEvent;
 }
 
 exports.joinEvent = (dataUser, idEvent) => {
-  let tmpEvent = config.EVENTS.data.find(e => { return e['id'] === idEvent });
+  let tmpEvent = config.EVENTS.data.find(e => { return e['id'] === idEvent && e['status'] === 1 });
   if (tmpEvent === null || tmpEvent === undefined) {
     return {
       status  : false,

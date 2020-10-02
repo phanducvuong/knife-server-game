@@ -5,8 +5,8 @@ exports.initLsRedis = () => {
   let lsRedis = [];
   lsRedis.push({
     port  : 6379,
-    // host  : '127.0.0.1'
-    host  : '54.151.144.72'
+    host  : '127.0.0.1'
+    // host  : '54.151.144.72'
   });
 
   /**add redis config in here
@@ -34,6 +34,9 @@ exports.PARTITIONS                = {
  * @param type in items
  * 0 -> quà
  * 1 -> thẻ cào
+ * 
+ * 0 -> hidden
+ * 1 -> show
  */
 
 exports.TOTAL_PERCENT             = 0;
@@ -92,6 +95,34 @@ exports.MISSIONS                  = [
     bonus       : 1,
     id_sp_item  : null,
     status      : 1
+  },
+  {
+    id          : 5,
+    description : 'GHI Event',
+    bonus       : 1,
+    id_sp_item  : 1,
+    status      : 1
+  },
+  {
+    id          : 6,
+    description : 'JKL Event',
+    bonus       : 1,
+    id_sp_item  : 1,
+    status      : 1
+  },
+  {
+    id          : 7,
+    description : 'MNO Event',
+    bonus       : 1,
+    id_sp_item  : null,
+    status      : 1
+  },
+  {
+    id          : 8,
+    description : 'PQRS Event',
+    bonus       : 1,
+    id_sp_item  : null,
+    status      : 1
   }
 ]
 
@@ -114,10 +145,17 @@ exports.EVENTS                    = {
       status      : 1
     },
     {
-      id          : 2,
+      id          : 0,
       description : 'GHI Event',
       bonus       : 1,
-      id_sp_item  : 1,
+      id_sp_item  : null,
+      status      : 1
+    },
+    {
+      id          : 1,
+      description : 'JKL Event',
+      bonus       : 1,
+      id_sp_item  : 0,
       status      : 1
     }
   ]

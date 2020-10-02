@@ -14,8 +14,10 @@ else {
 const globalRoute = async (app, opt) => {
 
   app.get('/microsecond', async (req, rep) => {
-    let micro = strGenerate.getStringGenerate();
-    let micro1 = strGenerate.getStringGenerate();
+    const hrtime1      = process.hrtime();
+    const hrtime2      = process.hrtime();
+    let micro = strGenerate.getStringGenerate(hrtime1);
+    let micro1 = strGenerate.getStringGenerate(hrtime2);
     rep.send({
       m1 : micro,
       m2  : micro1

@@ -866,6 +866,57 @@ const setupRoute = async (app, opt) => {
         DS.DSGetDataGlobal('admin', 'supporting_item')
       ]);
 
+      let tmpEvent;
+      let lsEvent;
+      if (events === null || events === undefined) {
+        tmpEvent = {
+          start : config.EVENTS.start,
+          end   : config.EVENTS.end,
+          data  : config.EVENTS.data
+        }
+      }
+      else {
+        tmpEvent = events;
+      }
+
+      let lsSupportItem;
+      if (supportItem === null || supportItem === undefined) {
+        lsSupportItem = [];
+        lsSupportItem.push(...config.SUPPORTING_ITEM);
+      }
+      else {
+        lsSupportItem = supportItem.supporting_item;
+      }
+
+      let eventFilter = setupFunc.filterLsEvent(tmpEvent['data'], lsSupportItem);
+      rep.view('/partials/config_event_view.ejs', {
+        data          : eventFilter,
+        starting_time : tmpEvent['start'],
+        ending_time   : tmpEvent['end']
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.view('/partials/error_view.ejs', {
+        title_error : err
+      });
+
+    }
+  });
+
+  app.post('/get-event-by-id', async (req, rep) => {
+    try {
+
+      let idEvent = parseInt(req.body.id_event, 10);
+      if (isNaN(idEvent)) throw 'Can not get event by id';
+
+      let [events, supportItem] = await Promise.all([
+        DS.DSGetDataGlobal('admin', 'events'),
+        DS.DSGetDataGlobal('admin', 'supporting_item')
+      ]);
+
       let lsEvent;
       if (events === null || events === undefined) {
         lsEvent = [];
@@ -884,18 +935,132 @@ const setupRoute = async (app, opt) => {
         lsSupportItem = supportItem.supporting_item;
       }
 
-      let eventFilter = setupFunc.filterLsEvent(lsEvent, lsSupportItem);
+      let result = setupFunc.findEventById(idEvent, lsEvent, lsSupportItem);
+      if (!result['status']) throw result['msg'];
 
-      rep.view('/partials/config_event_view.ejs', {
-        data  : eventFilter
+      rep.send({
+        status_code : 2000,
+        result      : result['eventById']
       });
 
     }
     catch(err) {
 
       console.log(err);
-      rep.view('/partials/error_view.ejs', {
-        title_error : err
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/update-event-by-id', async (req, rep) => {
+    try {
+
+      let id          = parseInt(req.body.id, 10);
+      let description = req.body.description.toString().trim();
+      let bonus       = parseInt(req.body.bonus, 10);
+      let status      = parseInt(req.body.status, 10);
+
+      if (id          === null || id          === undefined || isNaN(id)            ||
+          description === null || description === undefined || description  === ''  ||
+          bonus       === null || bonus       === undefined || isNaN(bonus)         ||
+          status      === null || status      === undefined || isNaN(status)) {
+        throw 'Check info event when update!';
+      }
+
+      let [events, supportItem] = await Promise.all([
+        DS.DSGetDataGlobal('admin', 'events'),
+        DS.DSGetDataGlobal('admin', 'supporting_item')
+      ]);
+
+      let tmpEvents;
+      if (events === null || events === undefined) {
+        tmpEvents = {
+          start : config.EVENTS.start,
+          end   : config.EVENTS.end,
+          data  : config.EVENTS.data
+        }
+      }
+      else {
+        tmpEvents = events;
+      }
+
+      let lsSupportItem;
+      if (supportItem === null || supportItem === undefined) {
+        lsSupportItem = [];
+        lsSupportItem.push(...config.SUPPORTING_ITEM);
+      }
+      else {
+        lsSupportItem = supportItem.supporting_item;
+      }
+
+      let eventFind = tmpEvents['data'].find(e => { return e['id'] === id });
+      if (eventFind === null || eventFind === undefined) throw `${id} is not exist!`;
+
+      eventFind['description']  = description;
+      eventFind['bonus']        = bonus;
+      eventFind['status']       = status;
+
+      DS.DSUpdateDataGlobal('admin', 'events', tmpEvents);
+      let eventFilter = setupFunc.filterLsEvent(tmpEvents['data'], lsSupportItem);
+      rep.send({
+        status_code   : 2000,
+        lsEventUpdate : eventFilter
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/update-time-event', async (req, rep) => {
+    try {
+
+      let startTime = req.body.start.toString().trim();
+      let endTime   = req.body.end.toString().trim();
+
+      let tmpS      = new Date(startTime);
+      let tmpE      = new Date(endTime);
+
+      if (isNaN(tmpS.getTime()) || isNaN(tmpE.getTime()) ||
+          tmpS.getTime() >= tmpE.getTime()) {
+        throw 'Invalid time!';
+      }
+
+      let events = await DS.DSGetDataGlobal('admin', 'events');
+      let tmpEvents;
+      if (events === null || events === undefined) {
+        tmpEvents = config.EVENTS;
+      }
+      else {
+        tmpEvents = events;
+      }
+
+      tmpEvents['start']  = startTime;
+      tmpEvents['end']    = endTime;
+      DS.DSUpdateDataGlobal('admin', 'events', tmpEvents);
+
+      rep.send({
+        status_code : 2000,
+        msg         : 'Success!'
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
       });
 
     }

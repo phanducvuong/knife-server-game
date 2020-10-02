@@ -12,12 +12,14 @@
             <div class="panel-body" style="background-color: white;">
               <div class="form-group row"><label class="col-sm-2 col-form-label">Thời Gian Bắt Đầu:</label>
                 <div class="col-sm-6">
-                  <input type="date" id="start-time-event" class="form-control" placeholder="">
+                  <input type="date" id="start-time-event" class="form-control"
+                    value="<%= starting_time %>">
                 </div>
               </div>
               <div class="form-group row"><label class="col-sm-2 col-form-label">Thời Gian Kết Thúc:</label>
                 <div class="col-sm-6">
-                  <input type="date" id="end-time-event" class="form-control" placeholder="">
+                  <input type="date" id="end-time-event" class="form-control"
+                    value="<%= ending_time %>">
                 </div>
               </div>
             </div>
@@ -30,153 +32,90 @@
     
     <section class="content">
       <div style="background-color: white;">
-        <table id="tableItem" class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
+        <table id="table-event" class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
 
           <thead>
             <tr style="font-weight: bolder;">
               <td style="font-weight: bolder;">ID</td>
-              <td style="font-weight: bolder;">TYPE ITEM</td>
-              <td style="font-weight: bolder;">NAME</td>
-              <td style="font-weight: bolder;">MAXIMUM</td>
-              <td style="font-weight: bolder;">PERCENT</td>
-              <td style="font-weight: bolder;">SAVE</td>
-              <td style="font-weight: bolder;">SPECIAL ITEM</td>
+              <td style="font-weight: bolder;">DESCRIPTION</td>
+              <td style="font-weight: bolder;">BONUS</td>
+              <td style="font-weight: bolder;">SUPPORTING ITEM</td>
+              <td style="font-weight: bolder;">STATUS</td>
             </tr>
           </thead>
 
           <tbody>
-            <!-- <% for (e of data) { %>
+            <% for (e of data) { %>
               <tr>
                   <td><%= e['id'] %></td>
-                  <td>
-                    <% if (e['type'] === 0) { %>
-                      Quà
-                    <% }else if (e['type'] === 1) { %>
-                      Thẻ Cào
-                    <% }else { %>
-                      NONE
-                    <% } %>
-                  </td>
-                  <td>
-                    <p><%= e['name'] %></p>
-                  </td>
-                  <td>
-                    <%= e['maximum'] %>
-                  </td>
-                  <td>
-                    <%= e['percent'] %>
-                  </td>
-                  <td>
-                    <p><%= e['save'] %></p>
-                  </td>
-                  <td>
-                    <p><%= e['special_item'] %></p>
-                  </td>
+                  <td><%= e['description'] %></td>
+                  <td><%= e['bonus'] %></td>
+                  <td><%= e['sp_item'] %></td>
+                  <td><%= e['status'] %></td>
                   <td class="text-right">
                     <div class="btn-group">
-                        <a href="#" class="editItem" data-id="<%= e['id'] %>" data-toggle="modal"
-                            data-target="#modalEditItem">Edit</a>
-                        <a href="#" class="deleteItem" data-id="<%= e['id'] %>"
-                            style="margin-left: 20px">Delete</a>
+                        <a href="#" class="edit-event" data-id="<%= e['id'] %>" data-toggle="modal"
+                            data-target="#modal-edit-event">Edit</a>
                     </div>
                 </td>
               </tr>
-            <% } %> -->
+            <% } %>
           </tbody>
-
-          <!-- <tfoot>
-              <tr>
-                  <td colspan="6" style="text-align: center;">
-                      <button type="button" data-toggle="modal" data-target="#modalAddItem" class="btn btn-success">ADD</button>
-                  </td>
-              </tr>
-          </tfoot> -->
       </table>
   
       <!-- THE MODAL ADD ITEM -->
-      <div class="modal" id="modalAddItem">
+      <div class="modal" id="modal-edit-event">
           <div class="modal-dialog">
               <div class="modal-content">
   
                   <!-- Modal Header -->
                   <div class="modal-header">
-                      <h4 class="modal-title" style="font-weight: bolder">ADD ITEM</h4>
+                      <h4 class="modal-title" style="font-weight: bolder">EDIT EVENT</h4>
                       <button type="button" class="close" data-dismiss="modal">&times;</button>
                   </div>
   
                   <!-- Modal body -->
                   <div class="modal-body">
+                    
                     <!-- ID-->
                     <div class="form-group">
                       <label class="col-md-4 control-label">ID</label>
                       <div class="col-md-12">
-                          <input  id="idItem" placeholder="ID Item (unique)"
-                                  class="form-control input-md" type="number"
-                                  step="0" min="0">
+                        <p id="p-id-event"></p>
                       </div>
                     </div>
 
-                    <!-- TYPE ITEM -->
+                    <!--DESCRIPTION -->
                     <div class="form-group">
-                      <label class="col-md-4 control-label">TYPE ITEM</label>
+                      <label class="col-md-4 control-label">DESCRIPTION</label>
                       <div class="col-md-12">
-                        <select id="type-item">
-                          <option value="choose">Choose Type Item</option>
-                          <option value="-1">NONE</option>
-                          <option value="0">QUÀ</option>
-                          <option value="1">Thẻ Cào</option>
-                        </select>
+                        <input type="text" class="form-control input-md" id="input-des-event" placeholder="Description event">
                       </div>
                     </div>
 
-                    <!-- NAME-->
+                    <!-- SUPPORTING ITEM -->
+                    <div class="form-group" id="div-supporting-item">
+                      <label class="col-md-4 control-label">SUPPORTING ITEM</label>
+                      <div class="col-md-12">
+                        <p id="p-sp-item-event"></p>
+                      </div>
+                    </div>
+
+                    <!-- BONUS-->
                     <div class="form-group">
-                        <label class="col-md-12 control-label" for="product_name_fr">NAME ITEM</label>
+                        <label class="col-md-12 control-label" for="product_name_fr">BONUS</label>
                         <div class="col-md-12">
-                            <input  id="nameItem" placeholder="Name item"
-                                    class="form-control input-md" type="text">
+                          <input  id="input-bonus-event" placeholder="Bonus"
+                                  class="form-control input-md" type="number" min="1" step="1">
                         </div>
                     </div>
 
-                    <!-- MAXIMUM -->
+                    <!-- STATUS -->
                     <div class="form-group">
-                      <label class="col-md-4 control-label">MAXIMUM</label>
+                      <label class="col-md-4 control-label">STATUS</label>
                       <div class="col-md-12">
-                          <input  id="maximumItem" placeholder="Maximum"
-                                  class="form-control input-md" type="number"
-                                  step="0" min="0">
-                      </div>
-                    </div>
-
-                    <!-- PERCENT -->
-                    <div class="form-group">
-                      <label class="col-md-4 control-label">PERCENT</label>
-                      <div class="col-md-12">
-                          <input  id="percentItem" placeholder="Percent"
-                                  class="form-control input-md" type="number"
-                                  step="0" min="0">
-                      </div>
-                    </div>
-
-                    <!-- SAVE -->
-                    <div class="form-group">
-                      <label class="col-md-4 control-label">SAVE ITEM</label>
-                      <div class="col-md-12">
-                        <select id="saveItem">
-                          <option selected value="1">TRUE</option>
-                          <option value="0">FALSE</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <!-- SPECIAL -->
-                    <div class="form-group">
-                      <label class="col-md-4 control-label">SPECIAL ITEM</label>
-                      <div class="col-md-12">
-                        <select id="specialItem">
-                          <option value="1">TRUE</option>
-                          <option selected value="0">FALSE</option>
-                        </select>
+                        <input  id="input-status-event" placeholder="Status"
+                                class="form-control input-md" type="number">
                       </div>
                     </div>
 
@@ -186,7 +125,7 @@
                   <!-- Button -->
                   <div class="form-group">
                       <div class="col-md-12" style="text-align: center;">
-                          <button id="btnAddItem" type="submit" name="singlebutton" class="btn btn-success">ADD</button>
+                        <button id="btn-update-event" type="submit" name="singlebutton" class="btn btn-success">UPDATE</button>
                       </div>
                   </div>
                 </div>
@@ -195,102 +134,6 @@
           </div>
       </div>
 
-      <!-- THE MODAL EDIT ITEM -->
-      <div class="modal" id="modalEditItem">
-        <div class="modal-dialog">
-            <div class="modal-content">
-
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h4 class="modal-title" style="font-weight: bolder">EDIT ITEM</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-
-                <!-- Modal body -->
-                <div class="modal-body">
-                  <!-- ID-->
-                  <div class="form-group">
-                    <label class="col-md-4 control-label">ID</label>
-                    <div class="col-md-12">
-                      <p id="edtIdItem">10</p>
-                    </div>
-                  </div>
-
-                  <!-- TYPE ITEM -->
-                  <div class="form-group">
-                    <label class="col-md-4 control-label">TYPE ITEM</label>
-                    <div class="col-md-12">
-                      <p id="edtTypeItem">Quà</p>
-                    </div>
-                  </div>
-
-                  <!-- NAME-->
-                  <div class="form-group">
-                      <label class="col-md-12 control-label" for="product_name_fr">NAME ITEM</label>
-                      <div class="col-md-12">
-                          <input  id="edtNameItem" placeholder="Name item"
-                                  class="form-control input-md" type="text">
-                      </div>
-                  </div>
-
-                  <!-- MAXIMUM -->
-                  <div class="form-group">
-                    <label class="col-md-4 control-label">MAXIMUM</label>
-                    <div class="col-md-12">
-                        <input  id="edtMaximumItem" placeholder="Maximum"
-                                class="form-control input-md" type="number"
-                                step="0" min="0">
-                    </div>
-                  </div>
-
-                  <!-- PERCENT -->
-                  <div class="form-group">
-                    <label class="col-md-4 control-label">PERCENT</label>
-                    <div class="col-md-12">
-                        <input  id="edtPercentItem" placeholder="Percent"
-                                class="form-control input-md" type="number"
-                                step="0" min="0">
-                    </div>
-                  </div>
-
-                  <!-- SAVE -->
-                  <div class="form-group">
-                    <label class="col-md-4 control-label">SAVE ITEM</label>
-                    <div class="col-md-12">
-                      <!-- <select id="edtSaveItem">
-                        <option selected value="1">TRUE</option>
-                        <option value="0">FALSE</option>
-                      </select> -->
-                      <p id="edtSaveItem"></p>
-                    </div>
-                  </div>
-
-                  <!-- SPECIAL -->
-                  <div class="form-group">
-                    <label class="col-md-4 control-label">SPECIAL ITEM</label>
-                    <div class="col-md-12">
-                      <!-- <select id="edtSpecialItem">
-                        <option selected value="1">TRUE</option>
-                        <option value="0">FALSE</option>
-                      </select> -->
-                      <p id="edtSpecialItem"></p>
-                    </div>
-                  </div>
-
-                <br>
-                <br>
-
-                <!-- Button -->
-                <div class="form-group">
-                    <div class="col-md-12" style="text-align: center;">
-                        <button id="btnEditItem" type="submit" name="singlebutton" class="btn btn-success">UPDATE</button>
-                    </div>
-                </div>
-              </div>
-
-            </div>
-        </div>
-    </div>
     </section>
   </div>
 
@@ -298,21 +141,166 @@
 
     $(document.body).ready(() => {
 
-      getTimeFromInputDate();
+      getEventById();
+      updateEvent();
+      updateTimeEvent();
       
     });
 
-    function getTimeFromInputDate() {
-      $('#btn-update-time-event').click(() => {
-        let today = $('#start-time-event').val();
-        console.log(today);
+    function getEventById() {
+      $('body').delegate('.edit-event', 'click', (event) => {
+        let idEvent = event.currentTarget.attributes.getNamedItem('data-id').value;
+        if (idEvent === null || idEvent === undefined || idEvent === '') {
+          alert('Please check info event!');
+          return;
+        }
 
-        // let time = new Date(1601545477607);
-        let time = new Date('2020-12-25');
-        console.log(`${time.getFullYear()}   ${time.getMonth()}   ${time.getDate()}    time: ${time.toString()}`);
+        $.ajax({
+          url           : 'http://' + window.location.host + '/api/v1/admin/setup/get-event-by-id',
+          method        : 'POST',
+          contentType   : 'application/json; charset=utf-8',
+          data          : JSON.stringify({
+            id_event    : idEvent
+          })
+        })
+          .done((data) => {
 
-        $('#end-time-event').val('2020-12-25');
+            if (data['status_code'] !== 2000) {
+              alert('Get event failed!');
+              return;
+            }
+
+            setDataFormEditEvent(data['result']);
+
+          })
+          .fail(() => {});
       });
+    }
+
+    function updateEvent() {
+      $('#btn-update-event').click(() => {
+
+        let id          = $('#p-id-event').text();
+        let description = $('#input-des-event').val();
+        let bonus       = $('#input-bonus-event').val();
+        let status      = $('#input-status-event').val();
+
+        if (id          === null || id          === undefined || id           === '' ||
+            description === null || description === undefined || description  === '' ||
+            bonus       === null || bonus       === undefined || bonus        === '' ||
+            status      === null || status      === undefined || status       === '') {
+        
+          alert('Check info event!');
+          return;
+        }
+
+        $.ajax({
+          url         : 'http://' + window.location.host + '/api/v1/admin/setup/update-event-by-id',
+          method      : 'POST',
+          contentType : 'application/json; charset=utf-8',
+          data        : JSON.stringify({
+            id          : id,
+            description : description,
+            bonus       : bonus,
+            status      : status
+          })
+        })
+          .done((data) => {
+
+            if (data['status_code'] !== 2000) {
+              alert(data['error']);
+              return;
+            }
+
+            console.log(data);
+
+            $('#modal-edit-event').modal('hide');
+            updateTableEvent(data['lsEventUpdate']);
+
+          })
+          .fail(() => {});
+
+      });
+    }
+
+    function updateTimeEvent() {
+      $('#btn-update-time-event').click(() => {
+
+        let startingTime  = $('#start-time-event').val();
+        let endingTime    = $('#end-time-event').val();
+        
+        let tmpTimeS      = new Date(startingTime);
+        let tmpTimeE      = new Date(endingTime);
+
+        if (isNaN(tmpTimeS.getTime()) || isNaN(tmpTimeE.getTime()) ||
+            tmpTimeS.getTime() >= tmpTimeE.getTime()) {
+          alert('Invalid time!');
+          return;
+        }
+
+        $.ajax({
+          url         : 'http://' + window.location.host + '/api/v1/admin/setup/update-time-event',
+          method      : 'POST',
+          contentType : 'application/json; charset=utf-8',
+          data        : JSON.stringify({
+            start     : startingTime,
+            end       : endingTime
+          })
+        })
+          .done((data) => {
+
+            if (data['status_code'] !== 2000) {
+              alert(data['error']);
+              return;
+            }
+            alert(data['msg']);
+
+          })
+          .fail(() => {});
+
+      });
+    }
+
+    function setDataFormEditEvent(data) {
+      $('#p-id-event').text(data['id']);
+      $('#input-des-event').val(data['description']);
+      $('#input-bonus-event').val(data['bonus']);
+      $('#input-status-event').val(data['status']);
+
+      if (data['sp_item']) {
+        $('#div-supporting-item').css('display', 'inline');
+        $('#p-sp-item-event').text(data['sp_item']);
+      }
+      else {
+        $('#div-supporting-item').css('display', 'none');
+        $('#p-sp-item-event').text('');
+      }
+    }
+
+    function updateTableEvent(data) {
+      $('#table-event tbody').remove();
+      let markup = '<tbody>';
+      
+      for (let e of data) {
+        markup += `
+        <tr>
+          <td>${e['id']}</td>
+          <td>${e['description']}</td>
+          <td>${e['bonus']}</td>
+          <td>${e['sp_item']}</td>
+          <td>${e['status']}</td>
+          <td class="text-right">
+            <div class="btn-group">
+                <a href="#" class="edit-event" data-id="${e['id']}" data-toggle="modal"
+                    data-target="#modal-edit-event">Edit</a>
+            </div>
+          </td>
+        </tr>
+        `;
+      }
+
+      markup += '</tbody>';
+      $('#table-event').append(markup);
     }
 
   </script>
