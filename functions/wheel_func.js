@@ -10,7 +10,7 @@ else {
   config = require('../config_dev');
 }
 
-exports.getRndItem = async (totalPercent) => {
+exports.getRndItem = async () => {
   if (config.ITEM_FILTER.length <= 0) return null;
 
   let rnd     = Math.round(Math.random() * config.TOTAL_PERCENT) + 1;
@@ -49,6 +49,8 @@ exports.getRndItem = async (totalPercent) => {
 }
 
 exports.getItemWithRmBox = async (idItemRm) => {
+  if (config.ITEM_FILTER.length <= 0) return null;
+
   let result = newLsItemFilterWhenRmBox(idItemRm);
   if (result['newLsFilter'].length <= 0) return null;
 
@@ -111,4 +113,15 @@ function newLsItemFilterWhenRmBox(idItemRm) {
     newLsFilter   : newLsFilter,
     totalPercent  : totalPercent
   }
+}
+
+exports.countIdItemRmInLsParition = (idItemRm) => {
+  let count = 0;
+  for (let e of config.ITEM_FILTER) {
+    if (e['id'] === idItemRm) {
+      count++;
+    }
+  }
+
+  return count;
 }

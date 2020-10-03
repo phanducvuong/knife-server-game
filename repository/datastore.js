@@ -82,6 +82,7 @@ exports.DSGetDataUser = (kind, key) => {
 
 exports.DSUpdateDataUser = (kind, key, data) => {
   try {
+    if (kind === null || kind === undefined) throw `kind is undefined ${kind}`;
     let keyEntity = dbClient.key([`${kind}`, `${key}`]);
     dbClient.save({
       key     : keyEntity,

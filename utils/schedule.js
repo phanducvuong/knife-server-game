@@ -1,5 +1,4 @@
 const DS              = require('../repository/datastore');
-const redisClient     = require('../redis/redis_client');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -27,12 +26,14 @@ exports.updatePartition = async () => {
     config.PARTITIONS['data']               = partitions['data'];
   }
 
+  //update supporting item
   let supportingItem = await DS.DSGetDataGlobal('admin', 'supporting_item');
   if (supportingItem !== null && supportingItem !== undefined) {
     config.SUPPORTING_ITEM = [];
     config.SUPPORTING_ITEM.push(...supportingItem['supporting_item']);
   }
 
+  //update array item
   let arrItem = await DS.DSGetAllItem();
   if (arrItem !== null && arrItem !== undefined) {
     config.ARR_ITEM = [];
@@ -41,12 +42,14 @@ exports.updatePartition = async () => {
     filterItemHaveInListPartition(config.PARTITIONS['data'], config.ARR_ITEM);
   }
 
+  //update mission
   let missions = await DS.DSGetDataGlobal('admin', 'missions');
   if (missions !== null && missions !== undefined) {
     config.MISSIONS = [];
     config.MISSIONS.push(...missions['missions']);
   }
 
+  //update event
   let events = await DS.DSGetDataGlobal('admin', 'events');
   if (events !== null && events !== undefined) {
     config.EVENTS.start = events['start'];
@@ -54,6 +57,9 @@ exports.updatePartition = async () => {
     config.EVENTS.data  = [];
     config.EVENTS.data.push(...events['data']);
   }
+
+  //update notifica_banner
+  
 }
 
 function filterItemHaveInListPartition(lsPartition, lsItem) {

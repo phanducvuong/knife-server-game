@@ -1,9 +1,9 @@
-const FS                    = require('../repository/firestore');
 const DS                    = require('../repository/datastore');
 const redisClient           = require('../redis/redis_client');
 const util                  = require('../utils/util');
 const wheelFunc             = require('../functions/wheel_func');
 const profileUserFunc       = require('../functions/profile_user_func');
+const generateStr           = require('../utils/generate_string');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -55,21 +55,29 @@ const wheelRoute = async (app, opt) => {
         }
 
         dataUser['sp_item'] = resultUpdateLsSpItem['lsSpItemUpdate'];
-        item                = await wheelFunc.getItemWithRmBox(tmpIdRm);
 
+        let countItemRm     = wheelFunc.countIdItemRmInLsParition(tmpIdRm);
+        if (countItemRm === 1) {
+          item = await wheelFunc.getItemWithRmBox(tmpIdRm);
+        }
+        else {
+          item = await wheelFunc.getRndItem();
+        }
       } //remove item on box case
       else {
-        item = await wheelFunc.getRndItem(config.PARTITIONS['total_percent']);
+        item = await wheelFunc.getRndItem();
       }
 
       if (item === null || item === undefined) throw 'item is not exist';
 
-      //TODO: update data user and incr amount item
+      if (item['type'] === 2) {
+        let strGenerate = generateStr.getStringGenerate();
+        dataUser['lucky_code'].push(strGenerate);
+      } //generate string when user get item "Mã Cơ Hội"
+
       dataUser['turn']          -= 1;
       dataUser['total_turned']  += 1;
       dataUser['inven']          = profileUserFunc.updateInventory(dataUser['inven'], item);
-
-      //TODO: nếu user xoay trúng được mã cơ hội => gen mã lưu lại trong lucky_code
 
       const strHis = JSON.stringify({
         time    : new Date().getTime(),
