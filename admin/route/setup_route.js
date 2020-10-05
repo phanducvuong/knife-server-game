@@ -597,10 +597,7 @@ const setupRoute = async (app, opt) => {
   app.get('/get-config-mission', async (req, rep) => {
     try {
 
-      let [missionDS, supportItem] = await Promise.all([
-        DS.DSGetDataGlobal('admin', 'missions'),
-        DS.DSGetDataGlobal('admin', 'supporting_item')
-      ]);
+      let missionDS = await DS.DSGetDataGlobal('admin', 'missions');
 
       let lsMission;
       if (missionDS === null || missionDS === undefined) {
@@ -611,19 +608,8 @@ const setupRoute = async (app, opt) => {
         lsMission = missionDS.missions;
       }
 
-      let lsSupportItem;
-      if (supportItem === null || supportItem === undefined) {
-        lsSupportItem = [];
-        lsSupportItem.push(...config.SUPPORTING_ITEM);
-      }
-      else {
-        lsSupportItem = supportItem.supporting_item;
-      }
-
-      let missionFilter = setupFunc.filterLsMission(lsMission, lsSupportItem);
-
       rep.view('/partials/config_mission_view.ejs', {
-        data  : missionFilter
+        data  : lsMission
       });
 
     }
@@ -812,10 +798,10 @@ const setupRoute = async (app, opt) => {
   app.post('/update-support-item', async (req, rep) => {
     try {
 
-      let id      = parseInt(req.body.id, 10);
-      let bonus   = parseInt(req.body.bonus, 10);
+      let id          = parseInt(req.body.id, 10);
+      let description = req.body.description.toString().trim();
 
-      if (isNaN(id) || isNaN(bonus)) throw `Update support item failed!`;
+      if (isNaN(id) || description === null || description === undefined || description === '') throw `Update support item failed!`;
 
       let supportItem = await DS.DSGetDataGlobal('admin', 'supporting_item');
       let lsSupportItem;
@@ -823,7 +809,7 @@ const setupRoute = async (app, opt) => {
         let itemFind = config.SUPPORTING_ITEM.find(e => { return e['id'] === id });
         if (itemFind === null || itemFind === undefined) throw `${id} support item is not exist!`;
 
-        itemFind['bonus'] = bonus;
+        itemFind['description'] = description;
         DS.DSUpdateDataGlobal('admin', 'supporting_item', { supporting_item: config.SUPPORTING_ITEM });
 
         rep.send({
@@ -836,7 +822,7 @@ const setupRoute = async (app, opt) => {
         let itemFind  = lsSupportItem.find(e => { return e['id'] === id });
         if (itemFind === null || itemFind === undefined) throw `${id} support item is not exist!`;
 
-        itemFind['bonus'] = bonus;
+        itemFind['description'] = description;
         DS.DSUpdateDataGlobal('admin', 'supporting_item', { supporting_item: lsSupportItem });
 
         rep.send({

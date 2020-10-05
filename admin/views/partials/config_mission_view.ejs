@@ -15,7 +15,6 @@
               <td style="font-weight: bolder;">ID</td>
               <td style="font-weight: bolder;">DESCRIPTION</td>
               <td style="font-weight: bolder;">BONUS</td>
-              <td style="font-weight: bolder;">SUPPORTING ITEM</td>
               <td style="font-weight: bolder;">STATUS</td>
             </tr>
           </thead>
@@ -26,12 +25,15 @@
                   <td><%= e['id'] %></td>
                   <td><%= e['description'] %></td>
 
-                  <% if (e['id_sp_item'] !== null) { %>
-                    <td><%= e['sp_item']['bonus'] %></td>
-                    <td><%= e['sp_item']['description'] %></td>
+                  <% if (e['sp_item'] !== null) { %>
+                    <td>
+                      <p><%= e['bonus_turn'] %> Lượt</p>
+                      <p><%= e['bonus_sp_item'] %> <%= e['sp_item']['description'] %></p>
+                    </td>
                   <% }else { %>
-                    <td><%= e['bonus'] %></td>
-                    <td>NONE</td>
+                    <td>
+                      <p><%= e['bonus_turn']%> Lượt</p>
+                    </td>
                   <% } %>
 
                   <td><%= e['status'] %></td>
@@ -45,13 +47,13 @@
             <% } %>
           </tbody>
 
-          <!-- <tfoot>
-              <tr>
-                  <td colspan="6" style="text-align: center;">
-                      <button type="button" data-toggle="modal" data-target="#modalAddItem" class="btn btn-success">ADD</button>
-                  </td>
-              </tr>
-          </tfoot> -->
+          <tfoot>
+            <tr>
+              <td colspan="6" style="text-align: center;">
+                <button id="btn-add-mission" type="button" data-toggle="modal" data-target="#modal-add-mission" class="btn btn-success">ADD</button>
+              </td>
+            </tr>
+          </tfoot>
       </table>
     </div>
 
@@ -81,7 +83,7 @@
                   <label class="col-md-4 control-label">DESCRIPTION</label>
                   <div class="col-md-12">
                     <input  id="input-description-mission" placeholder="DESCRIPTION"
-                              class="form-control input-md" type="text">
+                            class="form-control input-md" type="text">
                   </div>
                 </div>
 
@@ -126,9 +128,105 @@
 
           </div>
         </div>
-      </div>
+    </div>
 
-    </section>
+    <!-- THE MODAL ADD ITEM -->
+    <div class="modal" id="modal-add-mission">
+      <div class="modal-dialog">
+          <div class="modal-content">
+
+              <!-- Modal Header -->
+              <div class="modal-header">
+                  <h4 class="modal-title" style="font-weight: bolder">EDIT MISSION</h4>
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+              </div>
+
+              <!-- Modal body -->
+              <div class="modal-body">
+                <!-- ID-->
+                <div class="form-group">
+                  <label class="col-md-4 control-label">ID</label>
+                  <div class="col-md-12">
+                    <input id="input-id-add-mission" type="number" placeholder="ID MISSION"
+                          class="form-control input-md" min="0" step="1" required>
+                  </div>
+                </div>
+
+                <!-- DESCRIPTION -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label">DESCRIPTION</label>
+                  <div class="col-md-12">
+                    <input  id="input-add-description-mission" placeholder="DESCRIPTION"
+                            class="form-control input-md" type="text" required>
+                  </div>
+                </div>
+
+                <!-- TARGET-->
+                <div class="form-group">
+                    <label class="col-md-12 control-label" for="product_name_fr">TARGET</label>
+                    <div class="col-md-12">
+                      <input  id="input-add-target-mission" placeholder="TARGET"
+                              class="form-control input-md" type="number"
+                              step="1" min="0" required>
+                    </div>
+                </div>
+
+                <!-- BONUS-->
+                <div class="form-group">
+                    <label class="col-md-12 control-label" for="product_name_fr">BONUS TURN</label>
+                    <div class="col-md-12">
+                      <input  id="input-add-bonus-mission" placeholder="BONUS"
+                              class="form-control input-md" type="number"
+                              step="0" min="0">
+                    </div>
+                </div>
+
+                <!-- SUPPORTING ITEM -->
+                <div class="form-group" id="div-supporting-item">
+                  <label class="col-md-4 control-label">SUPPORTING ITEM</label>
+                  <div class="col-md-12">
+                    <select id="sel-add-mission">
+                      <option selected value="-1">NONE</option>
+                      <option value="0">Vật Phẩm Bỏ Ô</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- BONUS SP ITEM -->
+                <div class="form-group" id="div-add-bonus-sp-item">
+                  <label class="col-md-4 control-label">BONUS SUPPORTING ITEM</label>
+                  <div class="col-md-12">
+                    <input  id="input-add-bonus-sp-item-mission" placeholder="BONUS SP ITEM"
+                            class="form-control input-md" type="number"
+                            step="0" min="1">
+                  </div>
+                </div>
+
+                <!-- STATUS MISSION -->
+                <div class="form-group">
+                  <label class="col-md-12 control-label" for="product_name_fr">STATUS</label>
+                  <div class="col-md-12">
+                    <input  id="input-add-status-mission" placeholder="STATUS"
+                            class="form-control input-md" type="number" step="1">
+                  </div>
+                </div>
+
+              <br>
+              <br>
+
+              <!-- Button -->
+              <div class="form-group">
+                <div class="col-md-12" style="text-align: center;">
+                  <button id="btn-update-mission" type="submit" name="singlebutton" class="btn btn-success">UPDATE</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+      </div>
+    </div>
+
+  </section>
 </div>
 
 <script>
@@ -239,14 +337,17 @@
 
       if (e['id_sp_item'] !== null) {
         markup += `
-          <td>${e['sp_item']['bonus']}</td>
-          <td>${e['sp_item']['description']}</td>
+          <td>
+            <p>${e['bonus_turn']} Lượt</p>
+            <p>${e['bonus_sp_item']} ${e['sp_item']['description']}</p>
+          </td>
         `;
       }
       else {
         markup += `
-          <td>${e['bonus']}</td>
-          <td>NONE</td>
+          <td>
+            <p>${e['bonus_turn']} Lượt</p>
+          </td>
         `;
       }
 

@@ -1,7 +1,7 @@
 const verifyTokenFunc     = require('../functions/verify_user_func');
 const redisClient         = require('../redis/redis_client');
-const FS                  = require('../repository/firestore');
 const DS                  = require('../repository/datastore');
+const profileFunc         = require('../functions/profile_user_func');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -66,11 +66,13 @@ const verifyUserRoute = async (app, opt) => {
         DS.DSUpdateDataUser(`${result.mega1_code}`, 'turn_inven', dataUser);
       }
 
+      let arrNotifica = await profileFunc.getNotificaBanner();
       rep.send({
         status_code : 2000,
         result      : result,
         turn        : dataUser['turn'],
-        config      : config.PARTITIONS
+        config      : config.PARTITIONS,
+        noti_banner : arrNotifica
       });
 
     }

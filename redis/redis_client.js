@@ -108,6 +108,21 @@ exports.getArrItem = () => {
   });
 }
 
+exports.addNotificaBanner = (data) => {
+  let index   = getIndex('notifica_banner');
+  insLsRedis[index].rpush('notifica_banner', data);
+}
+
+exports.getNotificaBanner = () => {
+  return new Promise((resv, rej) => {
+    let index   = getIndex('notifica_banner');
+    insLsRedis[index].lrange('notifica_banner', 0, -1, (err, reply) => {
+      if (err || reply === null) return resv([]);
+      return resv(reply);
+    });
+  });
+}
+
 //-----------------------------------------functional-----------------------------------------------
 function getIndex(key) {
   let index = Math.abs(hashCode(key)) % config.LENGTH_REDIS;

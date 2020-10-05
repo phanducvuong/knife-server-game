@@ -88,7 +88,7 @@ exports.filterLsMission = (lsMission, lsSupportItem) => {
       let tmpSpItem = lsSupportItem.find(e => { return e['id'] === m['id_sp_item'] });
       if (tmpSpItem !== null && tmpSpItem !== undefined) {
         let tmp = {
-          id        : m['id'],
+          id          : m['id'],
           description : m['description'],
           id_sp_item  : tmpSpItem['id'],
           sp_item     : tmpSpItem,

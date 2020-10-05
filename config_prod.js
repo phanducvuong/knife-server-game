@@ -41,13 +41,11 @@ exports.REGIONS                   = ['Tv', 'Matluot', 'Macohoi', '5Tr', 'Ip11', 
 exports.SUPPORTING_ITEM           = [
   {
     id          : 0,
-    description : 'Vật Phẩm Bỏ Ô',
-    bonus       : 1
+    description : 'Vật Phẩm Bỏ Ô'
   },
   {
     id          : 1,
-    description : 'Vật Phẩm Thêm Ô',
-    bonus       : 1
+    description : 'Vật Phẩm Thêm Ô'
   }
 ]
 

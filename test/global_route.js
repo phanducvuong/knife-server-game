@@ -2,6 +2,7 @@ const FS            = require('../repository/firestore');
 const DS            = require('../repository/datastore');
 const redisClient   = require('../redis/redis_client');
 const strGenerate   = require('../utils/generate_string');
+const profileFunc   = require('../functions/profile_user_func');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -113,6 +114,11 @@ const globalRoute = async (app, opt) => {
     DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
 
     rep.send('ok');
+  });
+
+  app.get('/notifica-banner', async (req, rep) => {
+    let data = await profileFunc.getNotificaBanner();
+    rep.send(data);
   });
 
 }
