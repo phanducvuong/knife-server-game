@@ -3,6 +3,12 @@ const redisClient         = require('../redis/redis_client');
 const DS                  = require('../repository/datastore');
 const profileFunc         = require('../functions/profile_user_func');
 
+/**
+ * actions (lưu lại hoạt động của user để checking mission)
+ * index at 0 -> nhập code
+ * index at 1 -> phóng phi tiêu
+ */
+
 var config;
 if (process.env.NODE_ENV === 'production') {
   config = require('../config_prod');
@@ -16,6 +22,7 @@ const dataInitUser = {
   turn: 0,
   total_turned: 0,
   token:'',
+  actions: [],
   lucky_code: [],
   sp_item: [],
   mission: [],

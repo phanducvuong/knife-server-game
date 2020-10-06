@@ -176,3 +176,19 @@ exports.findEventById = (idEvent, lsEvent, lsSupportItem) => {
     }
   }
 }
+
+exports.deleteMissionByID = (lsMission, idMission) => {
+  for (let i=0; i<lsMission.length; i++) {
+    if (lsMission[i]['id'] === idMission) {
+      lsMission.splice(i, 1);
+      return {
+        status        : true,
+        missionUpdate : lsMission
+      }
+    }
+  }
+  return {
+    status  : false,
+    msg     : '2. Delete missions failed!'
+  }
+}

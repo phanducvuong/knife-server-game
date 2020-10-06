@@ -629,55 +629,114 @@ const setupRoute = async (app, opt) => {
       let id = parseInt(req.body.id, 10);
       if (isNaN(id)) throw 'Can not get misson!';
 
-      let missionDS = await DS.DSGetDataGlobal('admin', 'missions');
-      let lsMission;
-      if (missionDS === null || missionDS === undefined) {
-        lsMission = [];
-        lsMission.push(...config.MISSIONS);
-      }
-      else {
-        lsMission = missionDS.missions;
-      }
+      let missionsDS = await DS.DSGetDataGlobal('admin', 'missions');
 
-      let supportItem = await DS.DSGetDataGlobal('admin', 'supporting_item');
-      let lsSpItem;
-      if (supportItem === null || supportItem === undefined) {
-        lsSpItem = [];
-        lsSpItem.push(...config.SUPPORTING_ITEM);
+      let lsMission;
+      if (missionsDS === null || missionsDS === undefined) {
+        lsMission = config.MISSIONS;
       }
       else {
-        lsSpItem = supportItem.supporting_item;
+        lsMission = missionsDS.missions;
       }
 
       let itemMission = lsMission.find(e => { return e['id'] === id });
       if (itemMission === null || itemMission === undefined) throw `${id} is not exist!`;
 
-      if (itemMission['id_sp_item'] !== null) {
-        let tmpSp = lsSpItem.find(e => { return e['id'] === itemMission['id_sp_item'] });
-        if (tmpSp === null || tmpSp === undefined) throw 'Edit mission failed!';
+      rep.send({
+        status_code : 2000,
+        mission     : itemMission
+      });
 
-        rep.send({
-          status_code   : 2000,
-          item_mission  : {
-            id          : itemMission['id'],
-            description : itemMission['description'],
-            sp_item     : tmpSp,
-            status      : itemMission['status']
-          }
-        });
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/add-mission', async (req, rep) => {
+    try {
+
+      let id          = parseInt(req.body.id, 10);
+      let description = req.body.description.toString().trim();
+      let target      = parseInt(req.body.target, 10);
+      let bonusTurn   = parseInt(req.body.bonus_turn, 10);
+      let spItem      = parseInt(req.body.sp_item, 10);
+      let bonusSpItem = parseInt(req.body.bonus_sp_item, 10);
+      let status      = parseInt(req.body.status, 10);
+
+      if (isNaN(id) || isNaN(target) || isNaN(bonusTurn) || isNaN(status)        || isNaN(spItem)             || isNaN(bonusSpItem)        ||
+          id < 0    || target <= 0   || bonusTurn < 0    || description === null || description === undefined || description === '') {
+        throw 'Check info mission!';
+      }
+      else if (bonusTurn === 0 && bonusSpItem <= 0) {
+        throw 'Check info bonus turn or bonus sp item';
+      }
+
+      let [missionDS, supportingItemDS] = await Promise.all([
+        DS.DSGetDataGlobal('admin', 'missions'),
+        DS.DSGetDataGlobal('admin', 'supporting_item')
+      ]);
+
+      let missions;
+      if (missionDS === null || missionDS === undefined) {
+        missions = config.MISSIONS;
       }
       else {
-        rep.send({
-          status_code   : 2000,
-          item_mission  : {
-            id          : itemMission['id'],
-            description : itemMission['description'],
-            bonus       : itemMission['bonus'],
-            sp_item     : null,
-            status      : itemMission['status']
-          }
-        });
+        missions = missionDS['missions'];
       }
+
+      let supportingItems;
+      if (supportingItemDS === null || supportingItemDS === undefined) {
+        supportingItems = config.SUPPORTING_ITEM;
+      }
+      else {
+        supportingItems = supportingItemDS['supporting_item'];
+      }
+
+      let missionFind = missions.find(e => { return e['id'] === id });
+      if (missionFind !== null && missionFind !== undefined) {
+        throw `${id} mission is exist!`;
+      }
+
+      let missionAdd;
+      let spItemFind = supportingItems.find(e => { return e['id'] === spItem });
+      if (spItemFind === null || spItemFind === undefined) {
+        if (bonusTurn <= 0) throw `Check bonus turn when sp_item is null ${bonusTurn}  ${spItem}`;
+        missionAdd = {
+          id            : id,
+          description   : description,
+          target        : target,
+          bonus_turn    : bonusTurn,
+          sp_item       : null,
+          bonus_sp_item : 0,
+          status        : status
+        }
+      }
+      else {
+        missionAdd = {
+          id            : id,
+          description   : description,
+          target        : target,
+          bonus_turn    : bonusTurn,
+          sp_item       : spItemFind,
+          bonus_sp_item : bonusSpItem,
+          status        : status
+        }
+      }
+
+      missions.push(missionAdd);
+      DS.DSUpdateDataGlobal('admin', 'missions', { missions: missions });
+
+      rep.send({
+        status_code   : 2000,
+        missionUpdate : missions
+      });
 
     }
     catch(err) {
@@ -696,63 +755,67 @@ const setupRoute = async (app, opt) => {
 
       let id          = parseInt(req.body.id, 10);
       let description = req.body.description.toString().trim();
-      let bonus       = parseInt(req.body.bonus, 10);
-      let desSpItem   = req.body.des_sp_item.toString().trim();
+      let target      = parseInt(req.body.target, 10);
+      let bonusTurn   = parseInt(req.body.bonus_turn, 10);
+      let spItem      = parseInt(req.body.sp_item, 10);
+      let bonusSpItem = parseInt(req.body.bonus_sp_item, 10);
       let status      = parseInt(req.body.status, 10);
 
-      if (isNaN(id) || isNaN(bonus) || isNaN(status) || description === '') {
-        throw 'Edit mission failed! Please check info mission!';
+      if (isNaN(id) || isNaN(target) || isNaN(bonusTurn) || isNaN(status)        || isNaN(spItem)             || isNaN(bonusSpItem)        ||
+          id < 0    || target < 0   || bonusTurn < 0    || description === null || description === undefined || description === '') {
+        throw 'Check info mission!';
+      }
+      else if (bonusTurn === 0 && bonusSpItem <= 0) {
+        throw 'Check info bonus turn or bonus sp item';
       }
 
-      let [missions, supportItem] = await Promise.all([
+      let [missionDS, supportingItemDS] = await Promise.all([
         DS.DSGetDataGlobal('admin', 'missions'),
         DS.DSGetDataGlobal('admin', 'supporting_item')
       ]);
 
-      let lsMission;
-      if (missions === null || missions === undefined) {
-        lsMission = config.MISSIONS;
+      let missions;
+      if (missionDS === null || missionDS === undefined) {
+        missions = config.MISSIONS;
       }
       else {
-        lsMission = missions['missions'];
+        missions = missionDS['missions'];
       }
 
-      let lsSupportItem;
-      if (supportItem === null || supportItem === undefined) {
-        lsSupportItem = config.SUPPORTING_ITEM;
+      let supportingItems;
+      if (supportingItemDS === null || supportingItemDS === undefined) {
+        supportingItems = config.SUPPORTING_ITEM;
       }
       else {
-        lsSupportItem = supportItem['supporting_item'];
+        supportingItems = supportingItemDS['supporting_item'];
       }
 
-      let itemMissionFind = lsMission.find(e => { return e['id'] === id });
-      if (itemMissionFind === null || itemMissionFind === undefined) throw `${id} mission is not exsit!`;
+      let missionFind = missions.find(e => { return e['id'] === id });
+      if (missionFind === null || missionFind === undefined) throw `${id} mission is not exist!`;
 
-      if (itemMissionFind['id_sp_item'] !== null && itemMissionFind['id_sp_item'] !== undefined) {
-        itemMissionFind['description']  = description;
-        itemMissionFind['status']       = status;
-
-        let spItemFind = lsSupportItem.find(e => { return e['id'] === itemMissionFind['id_sp_item'] });
-        if (spItemFind === null || spItemFind === undefined) throw 'Edit sp item failed!';
-
-        spItemFind['description'] = desSpItem;
-        spItemFind['bonus']       = bonus;
-
-        DS.DSUpdateDataGlobal('admin', 'missions', { missions: lsMission });
-        DS.DSUpdateDataGlobal('admin', 'supporting_item', { supporting_item: lsSupportItem });
-      }// mission thuộc dạng có support item
+      let spItemFind = supportingItems.find(e => { return e['id'] === spItem });
+      if (spItemFind === null || spItemFind === undefined) {
+        if (bonusTurn <= 0) throw `Check bonus turn when bonus sp item is < 0 ${bonusTurn}   ${bonusSpItem}`;
+        missionFind['sp_item']        = null;
+        missionFind['description']    = description;
+        missionFind['target']         = target;
+        missionFind['bonus_turn']     = bonusTurn;
+        missionFind['bonus_sp_item']  = 0;
+        missionFind['status']         = status;
+      }
       else {
-        itemMissionFind['description']  = description;
-        itemMissionFind['bonus']        = bonus;
-        itemMissionFind['status']       = status;
+        missionFind['sp_item']        = spItemFind;
+        missionFind['description']    = description;
+        missionFind['target']         = target;
+        missionFind['bonus_turn']     = bonusTurn;
+        missionFind['bonus_sp_item']  = bonusSpItem;
+        missionFind['status']         = status;
+      }
 
-        DS.DSUpdateDataGlobal('admin', 'missions', { missions: lsMission });
-      }// mission free
-
-      let missionFilter = setupFunc.filterLsMission(lsMission, lsSupportItem);
+      DS.DSUpdateDataGlobal('admin', 'missions', { missions: missions });
       rep.send({
-        status_code : 2000,
-        lsMissionUpdate : missionFilter
+        status_code     : 2000,
+        missionUpdate  : missions
       });
 
     }
@@ -830,6 +893,38 @@ const setupRoute = async (app, opt) => {
           lsSupportItemUpdate : lsSupportItem
         });
       }
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/delete-mission', async (req, rep) => {
+    try {
+
+      let id = parseInt(req.body.id, 10);
+      if (isNaN(id)) throw '0. Delete mission failed!';
+
+      if (id === 0) throw 'Can not delete this mission!';
+
+      let missionDS = await DS.DSGetDataGlobal('admin', 'missions');
+      if (missionDS === null || missionDS === undefined) throw '1. Delete mission failed!';
+
+      let result = setupFunc.deleteMissionByID(missionDS['missions'], id);
+      if (!result['status']) throw result['msg'];
+
+      DS.DSUpdateDataGlobal('admin', 'missions', { missions: result['missionUpdate'] });
+      rep.send({
+        status_code   : 2000,
+        missionUpdate : result['missionUpdate']
+      });
 
     }
     catch(err) {

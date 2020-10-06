@@ -14,6 +14,7 @@
             <tr style="font-weight: bolder;">
               <td style="font-weight: bolder;">ID</td>
               <td style="font-weight: bolder;">DESCRIPTION</td>
+              <td style="font-weight: bolder;">TARGET</td>
               <td style="font-weight: bolder;">BONUS</td>
               <td style="font-weight: bolder;">STATUS</td>
             </tr>
@@ -24,6 +25,7 @@
               <tr>
                   <td><%= e['id'] %></td>
                   <td><%= e['description'] %></td>
+                  <td><%= e['target'] %></td>
 
                   <% if (e['sp_item'] !== null) { %>
                     <td>
@@ -38,111 +40,42 @@
 
                   <td><%= e['status'] %></td>
                   <td class="text-right">
-                    <div class="btn-group">
-                      <a href="#" class="edt-misison" data-id="<%= e['id'] %>" data-toggle="modal"
-                        data-target="#modal-edit-mission">Edit</a>
+                    <div class="btn-group" style="margin-right: 20px;">
+                      <a href="#" class="edt-mission" data-id="<%= e['id'] %>" data-toggle="modal"
+                        data-target="#modal-add-mission">Edit</a>
                     </div>
-                </td>
-              </tr>
+                    <div class="btn-group">
+                      <a href="#" class="del-mission" data-id="<%= e['id'] %>">Delete</a>
+                    </div>
+                  </td>
+                </tr>
             <% } %>
           </tbody>
 
           <tfoot>
             <tr>
               <td colspan="6" style="text-align: center;">
-                <button id="btn-add-mission" type="button" data-toggle="modal" data-target="#modal-add-mission" class="btn btn-success">ADD</button>
+                <button type="button" data-toggle="modal" data-target="#modal-add-mission" class="btn btn-success">ADD</button>
               </td>
             </tr>
           </tfoot>
       </table>
     </div>
 
-    <!-- THE MODAL ADD ITEM -->
-    <div class="modal" id="modal-edit-mission">
-      <div class="modal-dialog">
-          <div class="modal-content">
-
-              <!-- Modal Header -->
-              <div class="modal-header">
-                  <h4 class="modal-title" style="font-weight: bolder">EDIT MISSION</h4>
-                  <button type="button" class="close" data-dismiss="modal">&times;</button>
-              </div>
-
-              <!-- Modal body -->
-              <div class="modal-body">
-                <!-- ID-->
-                <div class="form-group">
-                  <label class="col-md-4 control-label">ID</label>
-                  <div class="col-md-12">
-                    <p id="p-id-misison"></p>
-                  </div>
-                </div>
-
-                <!-- DESCRIPTION -->
-                <div class="form-group">
-                  <label class="col-md-4 control-label">DESCRIPTION</label>
-                  <div class="col-md-12">
-                    <input  id="input-description-mission" placeholder="DESCRIPTION"
-                            class="form-control input-md" type="text">
-                  </div>
-                </div>
-
-                <!-- BONUS-->
-                <div class="form-group">
-                    <label class="col-md-12 control-label" for="product_name_fr">BONUS</label>
-                    <div class="col-md-12">
-                      <input  id="input-bonus-mission" placeholder="BONUS"
-                              class="form-control input-md" type="number"
-                              step="0" min="0">
-                    </div>
-                </div>
-
-                <!-- SUPPORTING ITEM -->
-                <div class="form-group" id="div-supporting-item">
-                  <label class="col-md-4 control-label">SUPPORTING ITEM</label>
-                  <div class="col-md-12">
-                    <input id="input-supporting-item" placeholder="SUPPORTING ITEM"
-                              class="form-control input-md" type="text">
-                  </div>
-                </div>
-
-                <!-- STATUS MISSION -->
-                <div class="form-group">
-                  <label class="col-md-12 control-label" for="product_name_fr">STATUS</label>
-                  <div class="col-md-12">
-                    <input  id="input-status-mission" placeholder="STATUS"
-                            class="form-control input-md" type="number">
-                  </div>
-                </div>
-
-              <br>
-              <br>
-
-              <!-- Button -->
-              <div class="form-group">
-                <div class="col-md-12" style="text-align: center;">
-                  <button id="btn-update-mission" type="submit" name="singlebutton" class="btn btn-success">UPDATE</button>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-    </div>
-
-    <!-- THE MODAL ADD ITEM -->
+    <!-- THE MODAL ADD MISSION -->
     <div class="modal" id="modal-add-mission">
       <div class="modal-dialog">
           <div class="modal-content">
 
               <!-- Modal Header -->
               <div class="modal-header">
-                  <h4 class="modal-title" style="font-weight: bolder">EDIT MISSION</h4>
+                  <h4 class="modal-title" id="title-mission" style="font-weight: bolder">ADD MISSION</h4>
                   <button type="button" class="close" data-dismiss="modal">&times;</button>
               </div>
 
               <!-- Modal body -->
               <div class="modal-body">
+
                 <!-- ID-->
                 <div class="form-group">
                   <label class="col-md-4 control-label">ID</label>
@@ -193,7 +126,7 @@
                 </div>
 
                 <!-- BONUS SP ITEM -->
-                <div class="form-group" id="div-add-bonus-sp-item">
+                <div class="form-group" id="div-add-bonus-sp-item" style="display: none;">
                   <label class="col-md-4 control-label">BONUS SUPPORTING ITEM</label>
                   <div class="col-md-12">
                     <input  id="input-add-bonus-sp-item-mission" placeholder="BONUS SP ITEM"
@@ -217,7 +150,7 @@
               <!-- Button -->
               <div class="form-group">
                 <div class="col-md-12" style="text-align: center;">
-                  <button id="btn-update-mission" type="submit" name="singlebutton" class="btn btn-success">UPDATE</button>
+                  <button id="btn-add-mission" type="submit" name="singlebutton" class="btn btn-success">ADD</button>
                 </div>
               </div>
             </div>
@@ -235,12 +168,17 @@
 
     resetModalEditMission();
 
-    $('body').delegate('.edt-misison', 'click', (event) => {
+    //edit mission
+    $('body').delegate('.edt-mission', 'click', (event) => {
       let dataID = event.currentTarget.attributes.getNamedItem('data-id').value;
       if (dataID === '') {
         alert('Edit mission failed!');
         return;
       }
+
+      $('#title-mission').text('EDIT MISSION');
+      $('#btn-add-mission').text('UPDATE');
+      $('#input-id-add-mission').attr('readonly', 'readonly');
 
       $.ajax({
         url           : 'http://' + window.location.host + '/api/v1/admin/setup/get-config-mission-by-id',
@@ -257,35 +195,52 @@
             return;
           }
 
-          setDataModalEditMission(data['item_mission']);
+          setDataModalEditMission(data['mission']);
 
         })
         .fail(() => {});
     });
 
-    //update mission
-    $('#btn-update-mission').click(() => {
+    //add mission
+    $('#btn-add-mission').click(() => {
 
-      let id          = $('#p-id-misison').text();
-      let description = $('#input-description-mission').val();
-      let bonus       = $('#input-bonus-mission').val();
-      let desSpItem   = $('#input-supporting-item').val();
-      let status      = $('#input-status-mission').val();
+      let id          = $('#input-id-add-mission').val();
+      let description = $('#input-add-description-mission').val();
+      let target      = $('#input-add-target-mission').val();
+      let bonusTurn   = $('#input-add-bonus-mission').val();
+      let spItem      = $('#sel-add-mission').val();
+      let bonusSpItem = $('#input-add-bonus-sp-item-mission').val();
+      let status      = $('#input-add-status-mission').val();
 
-      if (id === '' || description === '' || bonus === '' || status === '') {
-        alert('Edit mission failed!');
+      if (id     === '' || description === '' || target === '' ||
+          status === '' || bonusTurn   === '' || spItem === '') {
+        alert('Check info mission client!');
         return;
       }
 
+      if (spItem === '-1') {
+        bonusSpItem = 0;
+      }
+
+      let url = '';
+      if ($('#btn-add-mission').text() === 'ADD') {
+        url = 'http://' + window.location.host + '/api/v1/admin/setup/add-mission';
+      }
+      else if ($('#btn-add-mission').text() === 'UPDATE') {
+        url = 'http://' + window.location.host + '/api/v1/admin/setup/update-mission';
+      }
+
       $.ajax({
-        url             : 'http://' + window.location.host + '/api/v1/admin/setup/update-mission',
-        method          : 'POST',
-        contentType     : 'application/json; charset=utf-8',
-        data            : JSON.stringify({
+        url           : url,
+        method        : 'POST',
+        contentType   : 'application/json; charset=utf-8',
+        data          : JSON.stringify({
           id            : id,
           description   : description,
-          bonus         : bonus,
-          des_sp_item   : desSpItem,
+          target        : target,
+          bonus_turn    : bonusTurn,
+          sp_item       : spItem,
+          bonus_sp_item : bonusSpItem,
           status        : status
         })
       })
@@ -296,12 +251,49 @@
             return;
           }
 
-          $('#modal-edit-mission').modal('hide');
-          updateTableMission(data['lsMissionUpdate']);
+          $('#modal-add-mission').modal('hide');
+          updateTableMission(data['missionUpdate']);
 
         })
-        .fail(() => {})
+        .fail(() => {});
 
+    });
+
+    //delete mission
+    $('body').delegate('.del-mission', 'click', (event) => {
+      let dataID = event.currentTarget.attributes.getNamedItem('data-id').value;
+      if (dataID === '') {
+        alert('Edit mission failed!');
+        return;
+      }
+
+      $.ajax({
+        url         : 'http://' + window.location.host + '/api/v1/admin/setup/delete-mission',
+        method      : 'POST',
+        contentType : 'application/json; charset=utf-8',
+        data        : JSON.stringify({ id: dataID })
+      })
+        .done((data) => {
+
+          if (data['status_code'] !== 2000) {
+            alert(data['error']);
+            return;
+          }
+          updateTableMission(data['missionUpdate']);
+
+        })
+        .fail(() => {});
+    });
+
+    //select supporting item
+    $('#sel-add-mission').change(() => {
+      let value = parseInt($('#sel-add-mission option:selected').val(), 10);
+      if (!isNaN(value) && value !== -1) {
+        $('#div-add-bonus-sp-item').css('display', 'block');
+      }
+      else {
+        $('#div-add-bonus-sp-item').css('display', 'none');
+      }
     });
 
   });
@@ -309,18 +301,20 @@
   function setDataModalEditMission(data) {
 
     if (data['sp_item'] === null) {
-      $('#div-supporting-item').css('display', 'none');
-      $('#input-bonus-mission').val(data['bonus']);
+      $('#div-add-bonus-sp-item').css('display', 'none');
+      $('#sel-add-mission').val('-1');
     }
     else {
-      $('#div-supporting-item').css('display', 'inline');
-      $('#input-supporting-item').val(data['sp_item']['description']);
-      $('#input-bonus-mission').val(data['sp_item']['bonus']);
+      $('#div-add-bonus-sp-item').css('display', 'block');
+      $('#sel-add-mission').val(`${data['sp_item']['id']}`);
+      $('#input-add-bonus-sp-item-mission').val(data['bonus_sp_item']);
     }
 
-    $('#p-id-misison').text(data['id']);
-    $('#input-description-mission').val(data['description']);
-    $('#input-status-mission').val(data['status']);
+    $('#input-id-add-mission').val(data['id']);
+    $('#input-add-description-mission').val(data['description']);
+    $('#input-add-target-mission').val(data['target']);
+    $('#input-add-bonus-mission').val(data['bonus_turn']);
+    $('#input-add-status-mission').val(data['status']);
 
   }
 
@@ -333,9 +327,10 @@
         <tr>
           <td>${e['id']}</td>
           <td>${e['description']}</td>
+          <td>${e['target']}</td>
         `;
 
-      if (e['id_sp_item'] !== null) {
+      if (e['sp_item'] !== null) {
         markup += `
           <td>
             <p>${e['bonus_turn']} Lượt</p>
@@ -354,9 +349,12 @@
       markup += `
           <td>${e['status']}</td>
           <td class="text-right">
+            <div class="btn-group" style="margin-right: 20px;">
+              <a href="#" class="edt-mission" data-id="${e['id']}" data-toggle="modal"
+                data-target="#modal-add-mission">Edit</a>
+            </div>
             <div class="btn-group">
-              <a href="#" class="edt-misison" data-id="${e['id']}" data-toggle="modal"
-                data-target="#modal-edit-mission">Edit</a>
+              <a href="#" class="del-mission" data-id="${e['id']}">Delete</a>
             </div>
           </td>
         </tr>
@@ -368,11 +366,19 @@
 
   function resetModalEditMission() {
     $(".modal").on("hidden.bs.modal", () => {
-      $('#input-bonus-mission').val('');
-      $('#input-supporting-item').val('');
-      $('#p-id-misison').text('');
-      $('#input-description-mission').val('');
-      $('#input-status-mission').val('');
+      $('#input-id-add-mission').val('');
+      $('#input-id-add-mission').removeAttr('readonly');
+
+      $('#input-add-description-mission').val('');
+      $('#input-add-target-mission').val('');
+      $('#input-add-bonus-mission').val('');
+      $('#sel-add-mission').val('-1');
+      $('#input-add-status-mission').val('');
+      $('#div-add-bonus-sp-item').css('display', 'none');
+      $('#input-add-bonus-sp-item-mission').val('');
+
+      $('#title-mission').text('ADD MISSION');
+      $('#btn-add-mission').text('ADD');
     });
   }
 
