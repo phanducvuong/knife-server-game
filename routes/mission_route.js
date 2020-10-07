@@ -63,10 +63,7 @@ const missionRoute = async (app, opt) => {
       rep.send({
         status_code   : 2000,
         missionUpdate : missionFilter,
-        bonus         : bonusFromMission['bonus'],
-        description   : bonusFromMission['description'],
-        turn          : bonusFromMission['dataUserUpdate']['turn'],
-        free          : bonusFromMission['free']
+        bonus         : bonusFromMission['bonus']
       });
 
     }

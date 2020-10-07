@@ -12,7 +12,38 @@ else {
   config = require('../config_dev');
 }
 
+const dataInitUser = {
+  inven: [],
+  turn: 0,
+  total_turned: 0,
+  token:'',
+  actions: [0, 0],
+  lucky_code: [],
+  sp_item: [],
+  mission: [],
+  phone: '',
+  userID: '',
+  name: ''
+}
+
 const globalRoute = async (app, opt) => {
+
+  app.post('/init-user', async (req, rep) => {
+
+    let megaID  = req.body.megaID;
+    let name    = req.body.name;
+    let userID  = req.body.userID;
+    
+    dataInitUser.turn   = 2000;
+    dataInitUser.name   = name;
+    dataInitUser.userID = userID;
+    dataInitUser.token  = '123456';
+
+    redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataInitUser));
+    DS.DSUpdateDataGlobal(megaID, 'turn_inven', dataInitUser);
+    rep.send('ok');
+
+  });
 
   app.get('/microsecond', async (req, rep) => {
     const hrtime1      = process.hrtime();

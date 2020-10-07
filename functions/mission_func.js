@@ -9,97 +9,82 @@ else {
 exports.filterMisisonWithSpItem = (lsMissionUser) => {
   let filter = [];
   for (let m of config.MISSIONS) {
-    if (!lsMissionUser.includes(m['id']) && m['status'] === 1) {
+    if (m['status'] === 1 && !lsMissionUser.includes(m['id'])) {
 
-      if (m['id_sp_item'] !== null) {
-        let tmpSpItem = config.SUPPORTING_ITEM.find(e => { return e['id'] === m['id_sp_item'] });
-        if (tmpSpItem !== null && tmpSpItem !== undefined) {
-          filter.push({
-            id          : m['id'],
-            description : m['description'],
-            free        : false,
-            sp_item     : tmpSpItem
-          });
-        }
-      }
-      else {
+      //status reset mission. 0 -> everyday, 1 -> one time
+      let status = 0;
+      if (m['id'] === 0) status = 1;
+
+      //mission filter
+      if (m['sp_item'] !== null && m['bonus_turn'] > 0) {
         filter.push({
-          id          : m['id'],
-          description : m['description'],
-          free        : true,
-          bonus       : m['bonus']
+          id            : m['id'],
+          description   : m['description'],
+          bonus         : `${m['bonus_turn']} Lượt, ${m['bonus_sp_item']} ${m['sp_item']['description']}`,
+          status        : status
+        });
+      }
+      else if (m['sp_item'] !== null && m['bonus_turn'] <= 0) {
+        filter.push({
+          id            : m['id'],
+          description   : m['description'],
+          bonus         : `${m['bonus_sp_item']} ${m['sp_item']['description']}`,
+          status        : status
+        });
+      }
+      else if (m['bonus_turn'] > 0) {
+        filter.push({
+          id            : m['id'],
+          description   : m['description'],
+          bonus         : `${m['bonus_turn']} Lượt`,
+          status        : status
         });
       }
     }
-
   }
   return filter;
 }
 
 exports.getBonusFromMission = (idMission, dataUser) => {
-  if (dataUser['mission'].includes(idMission)) {
+  let missionFind = config.MISSIONS.find(e => { return e['id'] === idMission && e['status'] === 1 });
+  if (missionFind === null || missionFind === undefined || dataUser['mission'].includes(idMission)) {
     return {
       status  : false,
-      msg     : 'Mission completed!'
-    }
-  } //check mission user have completed
-
-  let tmpMission = config.MISSIONS.find(e => { return e['id'] === idMission && e['status'] === 1 });
-  if (tmpMission === null || tmpMission === undefined) {
-    return {
-      status  : false,
-      msg     : 'Mission is not exist!'
+      msg     : 'Can not get mission or mission is completed!'
     };
-  } //mission is not exist
+  }
 
-  if (tmpMission['id_sp_item'] !== null) {
-    let tmpSpItem = config.SUPPORTING_ITEM.find(e => { return e['id'] === tmpMission['id_sp_item'] });
-    if (tmpSpItem === null || tmpSpItem === undefined) {
-      return {
-        status  : false,
-        msg     : 'Support item is not exist!'
-      }
-    }
-
-    //check list sp_item user have tmpSpItem or not
-    for (let i=0; i<dataUser['sp_item'].length; i++) {
-      let tmpSp   = dataUser['sp_item'][i].split('_');
-      let id      = parseInt(tmpSp[0], 10);
-      let amount  = parseInt(tmpSp[1], 10);
-      if (isNaN(id) === false && isNaN(amount) === false && id === tmpSpItem['id']) {
-        amount                += tmpSpItem['bonus'];
-        dataUser['sp_item'][i] = `${id}_${amount}`;
-        dataUser['mission'].push(tmpMission['id']);
-        return {
-          status          : true,
-          dataUserUpdate  : dataUser,
-          bonus           : tmpSpItem['bonus'],
-          description     : tmpSpItem['description'],
-          free            : false
-        };
-      }
-    }
-
-    let strSpItem = `${tmpSpItem['id']}_${tmpSpItem['bonus']}`;
-    dataUser['sp_item'].push(strSpItem);
-    dataUser['mission'].push(tmpMission['id']);
-    return {
-      status          : true,
-      dataUserUpdate  : dataUser,
-      bonus           : tmpSpItem['bonus'],
-      description     : tmpSpItem['description'],
-      free            : false
-    }
-  } //mission is not free
+  let bonus = '';
+  if (missionFind['type'] === 0 && missionFind['target'] === dataUser['actions'][0]) {
+    bonus = getStrBonusFromMission(missionFind);
+    dataUser['mission'].push(missionFind['id']);
+  }
+  else if (missionFind['type'] === 1 && missionFind['target'] === dataUser['actions'][1]) {
+    bonus = getStrBonusFromMission(missionFind);
+    dataUser['mission'].push(missionFind['id']);
+  }
   else {
-    dataUser['mission'].push(tmpMission['id']);
-    dataUser['turn'] += tmpMission['bonus'];
-    return {
-      status          : true,
-      dataUserUpdate  : dataUser,
-      bonus           : tmpMission['bonus'],
-      description     : tmpMission['description'],
-      free            : true
-    }
-  } //mission is free
+    bonus = getStrBonusFromMission(missionFind);
+    dataUser['mission'].push(missionFind['id']);
+  }
+
+  return {
+    status          : true,
+    bonus           : bonus,
+    dataUserUpdate  : dataUser
+  };
+}
+
+//------------------------------------functional------------------------------------
+function getStrBonusFromMission(mission) {
+  let str = '';
+  if (mission['bonus_turn'] > 0 && mission['bonus_sp_item'] > 0) {
+    str = `${mission['bonus_turn']} lượt và ${mission['bonus_sp_item']} ${mission['sp_item']['description']}`;
+  }
+  else if (mission['bonus_turn'] === 0 && mission['bonus_sp_item'] > 0) {
+    str = `${mission['bonus_turn']} ${mission['sp_item']['description']}`;
+  }
+  else {
+    str = `${mission['bonus_turn']} lượt`;
+  }
 }

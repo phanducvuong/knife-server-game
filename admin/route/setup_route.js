@@ -669,8 +669,9 @@ const setupRoute = async (app, opt) => {
       let spItem      = parseInt(req.body.sp_item, 10);
       let bonusSpItem = parseInt(req.body.bonus_sp_item, 10);
       let status      = parseInt(req.body.status, 10);
+      let type        = parseInt(req.body.type, 10);
 
-      if (isNaN(id) || isNaN(target) || isNaN(bonusTurn) || isNaN(status)        || isNaN(spItem)             || isNaN(bonusSpItem)        ||
+      if (isNaN(id) || isNaN(target) || isNaN(bonusTurn) || isNaN(status)        || isNaN(spItem)             || isNaN(bonusSpItem) || isNaN(type) ||
           id < 0    || target <= 0   || bonusTurn < 0    || description === null || description === undefined || description === '') {
         throw 'Check info mission!';
       }
@@ -715,7 +716,8 @@ const setupRoute = async (app, opt) => {
           bonus_turn    : bonusTurn,
           sp_item       : null,
           bonus_sp_item : 0,
-          status        : status
+          status        : status,
+          type          : type
         }
       }
       else {
@@ -726,7 +728,8 @@ const setupRoute = async (app, opt) => {
           bonus_turn    : bonusTurn,
           sp_item       : spItemFind,
           bonus_sp_item : bonusSpItem,
-          status        : status
+          status        : status,
+          type          : type
         }
       }
 
@@ -761,7 +764,7 @@ const setupRoute = async (app, opt) => {
       let bonusSpItem = parseInt(req.body.bonus_sp_item, 10);
       let status      = parseInt(req.body.status, 10);
 
-      if (isNaN(id) || isNaN(target) || isNaN(bonusTurn) || isNaN(status)        || isNaN(spItem)             || isNaN(bonusSpItem)        ||
+      if (isNaN(id) || isNaN(target) || isNaN(bonusTurn) || isNaN(status)        || isNaN(spItem)             || isNaN(bonusSpItem)       ||
           id < 0    || target < 0   || bonusTurn < 0    || description === null || description === undefined || description === '') {
         throw 'Check info mission!';
       }

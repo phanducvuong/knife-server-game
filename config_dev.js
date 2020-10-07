@@ -36,6 +36,7 @@ exports.PARTITIONS                = {
  * 1 -> thẻ cào
  * 2 -> mã cơ hội
  * 
+ * @key status
  * 0 -> hidden
  * 1 -> show
  */
@@ -60,6 +61,13 @@ exports.SUPPORTING_ITEM           = [
   }
 ]
 
+/**
+ * @key type mission: check action user
+ * -1 -> NONE
+ * 0  -> Nhập Code
+ * 1  -> Phóng Phi Tiêu
+ * 2  -> Mời Bạn
+ */
 exports.MISSIONS                  = [
   {
     id            : 0,
@@ -68,7 +76,8 @@ exports.MISSIONS                  = [
     target        : 0,
     sp_item       : this.SUPPORTING_ITEM[0],
     bonus_sp_item : 1,
-    status        : 1
+    status        : 1,
+    type          : -1
   }
 ]
 

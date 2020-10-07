@@ -13,6 +13,7 @@
           <thead>
             <tr style="font-weight: bolder;">
               <td style="font-weight: bolder;">ID</td>
+              <td style="font-weight: bolder;">TYPE</td>
               <td style="font-weight: bolder;">DESCRIPTION</td>
               <td style="font-weight: bolder;">TARGET</td>
               <td style="font-weight: bolder;">BONUS</td>
@@ -24,6 +25,15 @@
             <% for (e of data) { %>
               <tr>
                   <td><%= e['id'] %></td>
+
+                  <% if (e['type'] === 0) { %>
+                    <td>Nhập Code</td>
+                  <% }else if (e['type'] === 1) { %>
+                    <td>Phóng Phi Tiêu</td>
+                  <% }else { %>
+                    <td>NONE</td>
+                  <% } %>
+
                   <td><%= e['description'] %></td>
                   <td><%= e['target'] %></td>
 
@@ -82,6 +92,19 @@
                   <div class="col-md-12">
                     <input id="input-id-add-mission" type="number" placeholder="ID MISSION"
                           class="form-control input-md" min="0" step="1" required>
+                  </div>
+                </div>
+
+                <!-- TYPE MISSION -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label">TYPE</label>
+                  <div class="col-md-12">
+                    <select id="sel-type-mission">
+                      <option selected value="-1">NONE</option>
+                      <option value="0">Nhập Code</option>
+                      <option value="1">Phóng Phi Tiêu</option>
+                      <option value="2">Mời Bạn</option>
+                    </select>
                   </div>
                 </div>
 
@@ -211,9 +234,10 @@
       let spItem      = $('#sel-add-mission').val();
       let bonusSpItem = $('#input-add-bonus-sp-item-mission').val();
       let status      = $('#input-add-status-mission').val();
+      let type        = $('#sel-type-mission').val();
 
       if (id     === '' || description === '' || target === '' ||
-          status === '' || bonusTurn   === '' || spItem === '') {
+          status === '' || bonusTurn   === '' || spItem === '' || type === '') {
         alert('Check info mission client!');
         return;
       }
@@ -241,7 +265,8 @@
           bonus_turn    : bonusTurn,
           sp_item       : spItem,
           bonus_sp_item : bonusSpItem,
-          status        : status
+          status        : status,
+          type          : type
         })
       })
         .done((data) => {
@@ -316,6 +341,9 @@
     $('#input-add-bonus-mission').val(data['bonus_turn']);
     $('#input-add-status-mission').val(data['status']);
 
+    $('#sel-type-mission').attr('disabled', 'disabled');
+    $('#sel-type-mission').val(data['type']);
+
   }
 
   function updateTableMission(data) {
@@ -323,9 +351,16 @@
     let markup = '<tbody>';
 
     for (let e of data) {
+
+      let type = '';
+      if (e['type'] === 0)        type = 'Nhập Code';
+      else if (e['type'] === 1)   type = 'Phóng Phi Tiêu';
+      else                        type = 'NONE';
+
       markup += `
         <tr>
           <td>${e['id']}</td>
+          <td>${type}</td>
           <td>${e['description']}</td>
           <td>${e['target']}</td>
         `;
@@ -379,6 +414,7 @@
 
       $('#title-mission').text('ADD MISSION');
       $('#btn-add-mission').text('ADD');
+      $('#sel-type-mission').removeAttr('disabled');
     });
   }
 

@@ -82,6 +82,7 @@ const wheelRoute = async (app, opt) => {
       } //lưu lại item là quà hoặc thẻ cào để chạy thông báo ở user
 
       dataUser['turn']          -= 1;
+      dataUser['actions'][1]    += 1;
       dataUser['total_turned']  += 1;
       dataUser['inven']          = profileUserFunc.updateInventory(dataUser['inven'], item);
 
