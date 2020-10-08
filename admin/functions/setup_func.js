@@ -192,3 +192,19 @@ exports.deleteMissionByID = (lsMission, idMission) => {
     msg     : '2. Delete missions failed!'
   }
 }
+
+exports.deleteEventByID = (events, idEvent) => {
+  for (let i=0; i<events['data'].length; i++) {
+    if (events['data'][i]['id'] === idEvent) {
+      events['data'].splice(i, 1);
+      return {
+        status        : true,
+        eventUpdate   : events
+      }
+    }
+  }
+  return {
+    status  : false,
+    msg     : '2. Delete events failed!'
+  }
+}

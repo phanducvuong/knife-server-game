@@ -839,7 +839,6 @@ const setupRoute = async (app, opt) => {
       let supportItem = await DS.DSGetDataGlobal('admin', 'supporting_item');
       let lsSupportItem;
       if (supportItem === null || supportItem === undefined) {
-        lsSupportItem = [];
         lsSupportItem = config.SUPPORTING_ITEM;
       }
       else {
@@ -945,38 +944,18 @@ const setupRoute = async (app, opt) => {
   app.get('/get-config-event', async (req, rep) => {
     try {
 
-      let [events, supportItem] = await Promise.all([
-        DS.DSGetDataGlobal('admin', 'events'),
-        DS.DSGetDataGlobal('admin', 'supporting_item')
-      ]);
+      let eventDS = await DS.DSGetDataGlobal('admin', 'events');
 
-      let tmpEvent;
-      let lsEvent;
-      if (events === null || events === undefined) {
-        tmpEvent = {
-          start : config.EVENTS.start,
-          end   : config.EVENTS.end,
-          data  : config.EVENTS.data
-        }
+      let events;
+      if (eventDS === null || eventDS === undefined) {
+        events = config.EVENTS
       }
       else {
-        tmpEvent = events;
+        events = eventDS;
       }
 
-      let lsSupportItem;
-      if (supportItem === null || supportItem === undefined) {
-        lsSupportItem = [];
-        lsSupportItem.push(...config.SUPPORTING_ITEM);
-      }
-      else {
-        lsSupportItem = supportItem.supporting_item;
-      }
-
-      let eventFilter = setupFunc.filterLsEvent(tmpEvent['data'], lsSupportItem);
       rep.view('/partials/config_event_view.ejs', {
-        data          : eventFilter,
-        starting_time : tmpEvent['start'],
-        ending_time   : tmpEvent['end']
+        data  : events
       });
 
     }
@@ -993,38 +972,25 @@ const setupRoute = async (app, opt) => {
   app.post('/get-event-by-id', async (req, rep) => {
     try {
 
-      let idEvent = parseInt(req.body.id_event, 10);
+      let idEvent = parseInt(req.body.id, 10);
       if (isNaN(idEvent)) throw 'Can not get event by id';
 
-      let [events, supportItem] = await Promise.all([
-        DS.DSGetDataGlobal('admin', 'events'),
-        DS.DSGetDataGlobal('admin', 'supporting_item')
-      ]);
+      let eventDS = await DS.DSGetDataGlobal('admin', 'events');
 
-      let lsEvent;
-      if (events === null || events === undefined) {
-        lsEvent = [];
-        lsEvent.push(...config.EVENTS.data);
+      let events;
+      if (eventDS === null || eventDS === undefined) {
+        events = config.EVENTS;
       }
       else {
-        lsEvent = events.data;
+        events = eventDS;
       }
 
-      let lsSupportItem;
-      if (supportItem === null || supportItem === undefined) {
-        lsSupportItem = [];
-        lsSupportItem.push(...config.SUPPORTING_ITEM);
-      }
-      else {
-        lsSupportItem = supportItem.supporting_item;
-      }
-
-      let result = setupFunc.findEventById(idEvent, lsEvent, lsSupportItem);
-      if (!result['status']) throw result['msg'];
+      let result = events['data'].find(e => { return e['id'] === idEvent });
+      if (result === null || result === undefined) throw 'Event not exist!';
 
       rep.send({
         status_code : 2000,
-        result      : result['eventById']
+        result      : result
       });
 
     }
@@ -1039,59 +1005,196 @@ const setupRoute = async (app, opt) => {
     }
   });
 
-  app.post('/update-event-by-id', async (req, rep) => {
+  app.post('/add-event', async (req, rep) => {
     try {
 
       let id          = parseInt(req.body.id, 10);
       let description = req.body.description.toString().trim();
-      let bonus       = parseInt(req.body.bonus, 10);
+      let target      = parseInt(req.body.target, 10);
+      let bonusTurn   = parseInt(req.body.bonus_turn, 10);
+      let spItem      = parseInt(req.body.sp_item, 10);
+      let bonusSpItem = parseInt(req.body.bonus_sp_item, 10);
       let status      = parseInt(req.body.status, 10);
+      let type        = parseInt(req.body.type, 10);
 
-      if (id          === null || id          === undefined || isNaN(id)            ||
-          description === null || description === undefined || description  === ''  ||
-          bonus       === null || bonus       === undefined || isNaN(bonus)         ||
-          status      === null || status      === undefined || isNaN(status)) {
-        throw 'Check info event when update!';
+      if (isNaN(id) || isNaN(target) || isNaN(bonusTurn) || isNaN(status)        || isNaN(spItem)             || isNaN(bonusSpItem) || isNaN(type) ||
+          id < 0    || target <= 0   || bonusTurn < 0    || description === null || description === undefined || description === '') {
+        throw 'Check info mission!';
+      }
+      else if (bonusTurn === 0 && bonusSpItem <= 0) {
+        throw 'Check info bonus turn or bonus sp item';
       }
 
-      let [events, supportItem] = await Promise.all([
+      let [eventDS, spItemDS] = await Promise.all([
         DS.DSGetDataGlobal('admin', 'events'),
         DS.DSGetDataGlobal('admin', 'supporting_item')
       ]);
 
-      let tmpEvents;
-      if (events === null || events === undefined) {
-        tmpEvents = {
-          start : config.EVENTS.start,
-          end   : config.EVENTS.end,
-          data  : config.EVENTS.data
+      let events;
+      if (eventDS === null || eventDS === undefined) {
+        events = config.EVENTS;
+      }
+      else {
+        events = eventDS;
+      }
+
+      let supportingItem;
+      if (spItemDS === null || spItemDS === undefined) {
+        supportingItem = config.SUPPORTING_ITEM
+      }
+      else {
+        supportingItem = spItemDS['supporting_item'];
+      }
+
+      let eventFind = events['data'].find(e => { return e['id'] === id });
+      if (eventFind !== null && eventFind !== undefined) throw `Event is Exist!`;
+
+      let eventAdd;
+      let spItemFind = supportingItem.find(e => { return e['id'] === spItem });
+      if (spItemFind === null || spItemFind === undefined) {
+        if (bonusTurn <= 0) throw `Check bonus turn when sp_item is null ${bonusTurn}  ${spItem}`;
+        eventAdd = {
+          id            : id,
+          description   : description,
+          target        : target,
+          bonus_turn    : bonusTurn,
+          sp_item       : null,
+          bonus_sp_item : 0,
+          status        : status,
+          type          : type
         }
       }
       else {
-        tmpEvents = events;
+        eventAdd = {
+          id            : id,
+          description   : description,
+          target        : target,
+          bonus_turn    : bonusTurn,
+          sp_item       : spItemFind,
+          bonus_sp_item : bonusSpItem,
+          status        : status,
+          type          : type
+        }
       }
 
-      let lsSupportItem;
-      if (supportItem === null || supportItem === undefined) {
-        lsSupportItem = [];
-        lsSupportItem.push(...config.SUPPORTING_ITEM);
-      }
-      else {
-        lsSupportItem = supportItem.supporting_item;
-      }
+      events['data'].push(eventAdd);
+      DS.DSUpdateDataGlobal('admin', 'events', events);
 
-      let eventFind = tmpEvents['data'].find(e => { return e['id'] === id });
-      if (eventFind === null || eventFind === undefined) throw `${id} is not exist!`;
-
-      eventFind['description']  = description;
-      eventFind['bonus']        = bonus;
-      eventFind['status']       = status;
-
-      DS.DSUpdateDataGlobal('admin', 'events', tmpEvents);
-      let eventFilter = setupFunc.filterLsEvent(tmpEvents['data'], lsSupportItem);
       rep.send({
         status_code   : 2000,
-        lsEventUpdate : eventFilter
+        eventUpdate   : events['data']
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/update-event', async (req, rep) => {
+    try {
+
+      let id          = parseInt(req.body.id, 10);
+      let description = req.body.description.toString().trim();
+      let target      = parseInt(req.body.target, 10);
+      let bonusTurn   = parseInt(req.body.bonus_turn, 10);
+      let spItem      = parseInt(req.body.sp_item, 10);
+      let bonusSpItem = parseInt(req.body.bonus_sp_item, 10);
+      let status      = parseInt(req.body.status, 10);
+
+      if (isNaN(id) || isNaN(target) || isNaN(bonusTurn) || isNaN(status)        || isNaN(spItem)             || isNaN(bonusSpItem)       ||
+          id < 0    || target <= 0   || bonusTurn < 0    || description === null || description === undefined || description === '') {
+        throw 'Check info mission!';
+      }
+      else if (bonusTurn === 0 && bonusSpItem <= 0) {
+        throw 'Check info bonus turn or bonus sp item';
+      }
+
+      let [eventDS, spItemDS] = await Promise.all([
+        DS.DSGetDataGlobal('admin', 'events'),
+        DS.DSGetDataGlobal('admin', 'supporting_item')
+      ]);
+
+      let events;
+      if (eventDS === null || eventDS === undefined) {
+        events = config.EVENTS;
+      }
+      else {
+        events = eventDS;
+      }
+
+      let supportingItems;
+      if (spItemDS === null || spItemDS === undefined) {
+        supportingItems = config.SUPPORTING_ITEM;
+      }
+      else {
+        supportingItems = spItemDS['supporting_item'];
+      }
+
+      let eventFind = events['data'].find(e => { return e['id'] === id });
+      if (eventFind === null || eventFind === undefined) throw `${id} event is not exist!`;
+
+      let spItemFind = supportingItems.find(e => { return e['id'] === spItem });
+      if (spItemFind === null || spItemFind === undefined) {
+        if (bonusTurn <= 0) throw `Check bonus turn when bonus sp item is < 0 ${bonusTurn}   ${bonusSpItem}`;
+        eventFind['sp_item']        = null;
+        eventFind['description']    = description;
+        eventFind['target']         = target;
+        eventFind['bonus_turn']     = bonusTurn;
+        eventFind['bonus_sp_item']  = 0;
+        eventFind['status']         = status;
+      }
+      else {
+        eventFind['sp_item']        = spItemFind;
+        eventFind['description']    = description;
+        eventFind['target']         = target;
+        eventFind['bonus_turn']     = bonusTurn;
+        eventFind['bonus_sp_item']  = bonusSpItem;
+        eventFind['status']         = status;
+      }
+
+      DS.DSUpdateDataGlobal('admin', 'events', events);
+      rep.send({
+        status_code     : 2000,
+        eventUpdate     : events['data']
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/delete-event', async (req, rep) => {
+    try {
+
+      let id = parseInt(req.body.id, 10);
+      if (isNaN(id)) throw '0. Delete event failed!';
+
+      if (id === 0) throw 'Can not delete this event!';
+
+      let eventDS = await DS.DSGetDataGlobal('admin', 'events');
+      if (eventDS === null || eventDS === undefined) throw '1. Delete event failed!';
+
+      let result = setupFunc.deleteEventByID(eventDS, id);
+      if (!result['status']) throw result['msg'];
+
+      DS.DSUpdateDataGlobal('admin', 'events', result['eventUpdate']);
+      rep.send({
+        status_code   : 2000,
+        eventUpdate   : result['eventUpdate']['data']
       });
 
     }

@@ -13,13 +13,13 @@
               <div class="form-group row"><label class="col-sm-2 col-form-label">Thời Gian Bắt Đầu:</label>
                 <div class="col-sm-6">
                   <input type="date" id="start-time-event" class="form-control"
-                    value="<%= starting_time %>">
+                    value="<%= data.start %>">
                 </div>
               </div>
               <div class="form-group row"><label class="col-sm-2 col-form-label">Thời Gian Kết Thúc:</label>
                 <div class="col-sm-6">
                   <input type="date" id="end-time-event" class="form-control"
-                    value="<%= ending_time %>">
+                    value="<%= data.end %>">
                 </div>
               </div>
             </div>
@@ -37,87 +37,160 @@
           <thead>
             <tr style="font-weight: bolder;">
               <td style="font-weight: bolder;">ID</td>
+              <td style="font-weight: bolder;">TYPE</td>
               <td style="font-weight: bolder;">DESCRIPTION</td>
+              <td style="font-weight: bolder;">TARGET</td>
               <td style="font-weight: bolder;">BONUS</td>
-              <td style="font-weight: bolder;">SUPPORTING ITEM</td>
               <td style="font-weight: bolder;">STATUS</td>
             </tr>
           </thead>
 
           <tbody>
-            <% for (e of data) { %>
+            <% for (e of data['data']) { %>
               <tr>
                   <td><%= e['id'] %></td>
+
+                  <% if (e['type'] === 0) { %>
+                    <td>Nhập Code</td>
+                  <% }else if (e['type'] === 1) { %>
+                    <td>Phóng Phi Tiêu</td>
+                  <% }else if (e['type'] === 2) { %>
+                    <td>Mời Bạn</td>
+                  <% }else { %>
+                    <td>NONE</td>
+                  <% } %>
+
                   <td><%= e['description'] %></td>
-                  <td><%= e['bonus'] %></td>
-                  <td><%= e['sp_item'] %></td>
+                  <td><%= e['target'] %></td>
+
+                  <% if (e['sp_item'] !== null) { %>
+                    <td>
+                      <p><%= e['bonus_turn'] %> Lượt</p>
+                      <p><%= e['bonus_sp_item'] %> <%= e['sp_item']['description'] %></p>
+                    </td>
+                  <% }else { %>
+                    <td>
+                      <p><%= e['bonus_turn']%> Lượt</p>
+                    </td>
+                  <% } %>
+
                   <td><%= e['status'] %></td>
                   <td class="text-right">
-                    <div class="btn-group">
-                        <a href="#" class="edit-event" data-id="<%= e['id'] %>" data-toggle="modal"
-                            data-target="#modal-edit-event">Edit</a>
+                    <div class="btn-group" style="margin-right: 20px;">
+                      <a href="#" class="edt-event" data-id="<%= e['id'] %>" data-toggle="modal"
+                        data-target="#modal-event">Edit</a>
                     </div>
-                </td>
-              </tr>
+                    <div class="btn-group">
+                      <a href="#" class="del-event" data-id="<%= e['id'] %>">Delete</a>
+                    </div>
+                  </td>
+                </tr>
             <% } %>
           </tbody>
+
+          <tfoot>
+            <tr>
+              <td colspan="6" style="text-align: center;">
+                <button type="button" data-toggle="modal" data-target="#modal-event" class="btn btn-success">ADD</button>
+              </td>
+            </tr>
+          </tfoot>
       </table>
   
       <!-- THE MODAL ADD ITEM -->
-      <div class="modal" id="modal-edit-event">
+      <div class="modal" id="modal-event">
           <div class="modal-dialog">
               <div class="modal-content">
   
-                  <!-- Modal Header -->
-                  <div class="modal-header">
-                      <h4 class="modal-title" style="font-weight: bolder">EDIT EVENT</h4>
-                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <!-- Modal Header -->
+              <div class="modal-header">
+                  <h4 class="modal-title" id="title-event" style="font-weight: bolder">ADD EVENT</h4>
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+              </div>
+
+              <!-- Modal body -->
+              <div class="modal-body">
+
+                <!-- ID-->
+                <div class="form-group">
+                  <label class="col-md-4 control-label">ID</label>
+                  <div class="col-md-12">
+                    <input id="modal-input-id-event" type="number" placeholder="ID EVENT"
+                          class="form-control input-md" min="0" step="1" required>
                   </div>
-  
-                  <!-- Modal body -->
-                  <div class="modal-body">
-                    
-                    <!-- ID-->
-                    <div class="form-group">
-                      <label class="col-md-4 control-label">ID</label>
-                      <div class="col-md-12">
-                        <p id="p-id-event"></p>
-                      </div>
-                    </div>
+                </div>
 
-                    <!--DESCRIPTION -->
-                    <div class="form-group">
-                      <label class="col-md-4 control-label">DESCRIPTION</label>
-                      <div class="col-md-12">
-                        <input type="text" class="form-control input-md" id="input-des-event" placeholder="Description event">
-                      </div>
-                    </div>
+                <!-- TYPE EVENT -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label">TYPE</label>
+                  <div class="col-md-12">
+                    <select id="modal-sel-type-event">
+                      <option selected value="-1">NONE</option>
+                      <option value="0">Nhập Code</option>
+                      <option value="1">Phóng Phi Tiêu</option>
+                      <option value="2">Mời Bạn</option>
+                    </select>
+                  </div>
+                </div>
 
-                    <!-- SUPPORTING ITEM -->
-                    <div class="form-group" id="div-supporting-item">
-                      <label class="col-md-4 control-label">SUPPORTING ITEM</label>
-                      <div class="col-md-12">
-                        <p id="p-sp-item-event"></p>
-                      </div>
-                    </div>
+                <!-- DESCRIPTION -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label">DESCRIPTION</label>
+                  <div class="col-md-12">
+                    <input  id="modal-input-description-event" placeholder="DESCRIPTION"
+                            class="form-control input-md" type="text" required>
+                  </div>
+                </div>
 
-                    <!-- BONUS-->
-                    <div class="form-group">
-                        <label class="col-md-12 control-label" for="product_name_fr">BONUS</label>
-                        <div class="col-md-12">
-                          <input  id="input-bonus-event" placeholder="Bonus"
-                                  class="form-control input-md" type="number" min="1" step="1">
-                        </div>
+                <!-- TARGET-->
+                <div class="form-group">
+                    <label class="col-md-12 control-label" for="product_name_fr">TARGET</label>
+                    <div class="col-md-12">
+                      <input  id="modal-input-target-event" placeholder="TARGET"
+                              class="form-control input-md" type="number"
+                              step="1" min="0" required>
                     </div>
+                </div>
 
-                    <!-- STATUS -->
-                    <div class="form-group">
-                      <label class="col-md-4 control-label">STATUS</label>
-                      <div class="col-md-12">
-                        <input  id="input-status-event" placeholder="Status"
-                                class="form-control input-md" type="number">
-                      </div>
+                <!-- BONUS-->
+                <div class="form-group">
+                    <label class="col-md-12 control-label" for="product_name_fr">BONUS TURN</label>
+                    <div class="col-md-12">
+                      <input  id="modal-input-bonus-event" placeholder="BONUS"
+                              class="form-control input-md" type="number"
+                              step="1" min="0">
                     </div>
+                </div>
+
+                <!-- SUPPORTING ITEM -->
+                <div class="form-group" id="modal-div-supporting-item">
+                  <label class="col-md-4 control-label">SUPPORTING ITEM</label>
+                  <div class="col-md-12">
+                    <select id="modal-sel-sp-item-event">
+                      <option selected value="-1">NONE</option>
+                      <option value="0">Vật Phẩm Bỏ Ô</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- BONUS SP ITEM -->
+                <div class="form-group" id="modal-div-bonus-sp-item" style="display: none;">
+                  <label class="col-md-4 control-label">BONUS SUPPORTING ITEM</label>
+                  <div class="col-md-12">
+                    <input  id="modal-input-bonus-sp-item-event" placeholder="BONUS SP ITEM"
+                            class="form-control input-md" type="number"
+                            step="1" min="1">
+                  </div>
+                </div>
+
+                <!-- STATUS MISSION -->
+                <div class="form-group">
+                  <label class="col-md-12 control-label" for="product_name_fr">STATUS</label>
+                  <div class="col-md-12">
+                    <input  id="modal-input-status-event" placeholder="STATUS"
+                            class="form-control input-md" type="number" step="1">
+                  </div>
+                </div>
 
                   <br>
                   <br>
@@ -125,7 +198,7 @@
                   <!-- Button -->
                   <div class="form-group">
                       <div class="col-md-12" style="text-align: center;">
-                        <button id="btn-update-event" type="submit" name="singlebutton" class="btn btn-success">UPDATE</button>
+                        <button id="modal-btn-submit-event" type="submit" name="singlebutton" class="btn btn-success">ADD</button>
                       </div>
                   </div>
                 </div>
@@ -141,68 +214,44 @@
 
     $(document.body).ready(() => {
 
-      getEventById();
+      //select supporting item
+      $('#modal-sel-sp-item-event').change(() => {
+        let value = parseInt($('#modal-sel-sp-item-event option:selected').val(), 10);
+        if (!isNaN(value) && value !== -1) {
+          $('#modal-div-bonus-sp-item').css('display', 'block');
+        }
+        else {
+          $('#modal-div-bonus-sp-item').css('display', 'none');
+        }
+      });
+
+      resetDataFormModal();
+      addOrUpdateEvent();
+      editEvent();
+      delEvent();
       updateEvent();
       updateTimeEvent();
       
     });
 
-    function getEventById() {
-      $('body').delegate('.edit-event', 'click', (event) => {
-        let idEvent = event.currentTarget.attributes.getNamedItem('data-id').value;
-        if (idEvent === null || idEvent === undefined || idEvent === '') {
-          alert('Please check info event!');
+    function editEvent() {
+      $('body').delegate('.edt-event', 'click', (event) => {
+        let dataID = event.currentTarget.attributes.getNamedItem('data-id').value;
+        if (dataID === '') {
+          alert('Edit event failed!');
           return;
         }
+
+        $('#title-event').text('EDIT EVENT');
+        $('#modal-btn-submit-event').text('UPDATE');
+        $('#modal-input-id-event').attr('readonly', 'readonly');
 
         $.ajax({
           url           : 'http://' + window.location.host + '/api/v1/admin/setup/get-event-by-id',
           method        : 'POST',
           contentType   : 'application/json; charset=utf-8',
           data          : JSON.stringify({
-            id_event    : idEvent
-          })
-        })
-          .done((data) => {
-
-            if (data['status_code'] !== 2000) {
-              alert('Get event failed!');
-              return;
-            }
-
-            setDataFormEditEvent(data['result']);
-
-          })
-          .fail(() => {});
-      });
-    }
-
-    function updateEvent() {
-      $('#btn-update-event').click(() => {
-
-        let id          = $('#p-id-event').text();
-        let description = $('#input-des-event').val();
-        let bonus       = $('#input-bonus-event').val();
-        let status      = $('#input-status-event').val();
-
-        if (id          === null || id          === undefined || id           === '' ||
-            description === null || description === undefined || description  === '' ||
-            bonus       === null || bonus       === undefined || bonus        === '' ||
-            status      === null || status      === undefined || status       === '') {
-        
-          alert('Check info event!');
-          return;
-        }
-
-        $.ajax({
-          url         : 'http://' + window.location.host + '/api/v1/admin/setup/update-event-by-id',
-          method      : 'POST',
-          contentType : 'application/json; charset=utf-8',
-          data        : JSON.stringify({
-            id          : id,
-            description : description,
-            bonus       : bonus,
-            status      : status
+            id          : dataID
           })
         })
           .done((data) => {
@@ -211,14 +260,95 @@
               alert(data['error']);
               return;
             }
-
-            console.log(data);
-
-            $('#modal-edit-event').modal('hide');
-            updateTableEvent(data['lsEventUpdate']);
+            setDataFormEditEvent(data['result']);
 
           })
           .fail(() => {});
+      });
+    }
+
+    function delEvent() {
+      $('body').delegate('.del-event', 'click', (event) => {
+        let dataID = event.currentTarget.attributes.getNamedItem('data-id').value;
+        if (dataID === '') {
+          alert('Delete event failed!');
+          return;
+        }
+
+        $.ajax({
+          url         : 'http://' + window.location.host + '/api/v1/admin/setup/delete-event',
+          method      : 'POST',
+          contentType : 'application/json; charset=utf-8',
+          data        : JSON.stringify({ id: dataID })
+        })
+          .done((data) => {
+
+            if (data['status_code'] !== 2000) {
+              alert(data['error']);
+              return;
+            }
+            updateTableEvent(data['eventUpdate']);
+
+          })
+          .fail(() => {});
+      });
+    }
+
+    function addOrUpdateEvent() {
+      $('#modal-btn-submit-event').click(() => {
+        
+        let id          = $('#modal-input-id-event').val();
+        let type        = $('#modal-sel-type-event').val();
+        let description = $('#modal-input-description-event').val();
+        let target      = $('#modal-input-target-event').val();
+        let bonusTurn   = $('#modal-input-bonus-event').val();
+        let spItem      = $('#modal-sel-sp-item-event').val();
+        let bonusSpItem = $('#modal-input-bonus-sp-item-event').val();
+        let status      = $('#modal-input-status-event').val();
+
+        if (id     === '' || description === '' || target === '' ||
+            status === '' || bonusTurn   === '' || spItem === '' || type === '') {
+          alert('Check info mission client!');
+          return;
+        }
+
+        if (spItem === '-1') bonusSpItem = 0;
+
+        let url = '';
+        if ($('#modal-btn-submit-event').text() === 'ADD') {
+          url = 'http://' + window.location.host + '/api/v1/admin/setup/add-event';
+        }
+        else if ($('#modal-btn-submit-event').text() === 'UPDATE') {
+          url = 'http://' + window.location.host + '/api/v1/admin/setup/update-event';
+        }
+
+        $.ajax({
+        url           : url,
+        method        : 'POST',
+        contentType   : 'application/json; charset=utf-8',
+        data          : JSON.stringify({
+          id            : id,
+          description   : description,
+          target        : target,
+          bonus_turn    : bonusTurn,
+          sp_item       : spItem,
+          bonus_sp_item : bonusSpItem,
+          status        : status,
+          type          : type
+        })
+      })
+        .done((data) => {
+
+          if (data['status_code'] !== 2000) {
+            alert(data['error']);
+            return;
+          }
+
+          $('#modal-event').modal('hide');
+          updateTableEvent(data['eventUpdate']);
+
+        })
+        .fail(() => {});
 
       });
     }
@@ -262,45 +392,100 @@
     }
 
     function setDataFormEditEvent(data) {
-      $('#p-id-event').text(data['id']);
-      $('#input-des-event').val(data['description']);
-      $('#input-bonus-event').val(data['bonus']);
-      $('#input-status-event').val(data['status']);
-
-      if (data['sp_item']) {
-        $('#div-supporting-item').css('display', 'inline');
-        $('#p-sp-item-event').text(data['sp_item']);
+      if (data['sp_item'] === null) {
+        $('#modal-div-bonus-sp-item').css('display', 'none');
+        $('#modal-sel-sp-item-event').val('-1');
       }
       else {
-        $('#div-supporting-item').css('display', 'none');
-        $('#p-sp-item-event').text('');
+        $('#modal-div-bonus-sp-item').css('display', 'block');
+        $('#modal-sel-sp-item-event').val(`${data['sp_item']['id']}`);
+        $('#modal-input-bonus-sp-item-event').val(data['bonus_sp_item']);
       }
+
+      $('#modal-input-id-event').val(data['id']);
+      $('#modal-input-description-event').val(data['description']);
+      $('#modal-input-target-event').val(data['target']);
+      $('#modal-input-bonus-event').val(data['bonus_turn']);
+      $('#modal-input-status-event').val(data['status']);
+
+      $('#modal-sel-type-event').attr('disabled', 'disabled');
+      $('#modal-sel-type-event').val(data['type']);
     }
 
     function updateTableEvent(data) {
       $('#table-event tbody').remove();
       let markup = '<tbody>';
-      
+
       for (let e of data) {
+
+        let type = '';
+        if (e['type'] === 0)        type = 'Nhập Code';
+        else if (e['type'] === 1)   type = 'Phóng Phi Tiêu';
+        else if (e['type'] === 2)   type = 'Mời Bạn';
+        else                        type = 'NONE';
+
         markup += `
-        <tr>
-          <td>${e['id']}</td>
-          <td>${e['description']}</td>
-          <td>${e['bonus']}</td>
-          <td>${e['sp_item']}</td>
-          <td>${e['status']}</td>
-          <td class="text-right">
-            <div class="btn-group">
-                <a href="#" class="edit-event" data-id="${e['id']}" data-toggle="modal"
-                    data-target="#modal-edit-event">Edit</a>
-            </div>
-          </td>
-        </tr>
+          <tr>
+            <td>${e['id']}</td>
+            <td>${type}</td>
+            <td>${e['description']}</td>
+            <td>${e['target']}</td>
+          `;
+
+        if (e['sp_item'] !== null) {
+          markup += `
+            <td>
+              <p>${e['bonus_turn']} Lượt</p>
+              <p>${e['bonus_sp_item']} ${e['sp_item']['description']}</p>
+            </td>
+          `;
+        }
+        else {
+          markup += `
+            <td>
+              <p>${e['bonus_turn']} Lượt</p>
+            </td>
+          `;
+        }
+
+        markup += `
+            <td>${e['status']}</td>
+            <td class="text-right">
+              <div class="btn-group" style="margin-right: 20px;">
+                <a href="#" class="edt-event" data-id="${e['id']}" data-toggle="modal"
+                  data-target="#modal-event">Edit</a>
+              </div>
+              <div class="btn-group">
+                <a href="#" class="del-event" data-id="${e['id']}">Delete</a>
+              </div>
+            </td>
+          </tr>
         `;
       }
-
       markup += '</tbody>';
       $('#table-event').append(markup);
+    }
+
+    function resetDataFormModal() {
+      $(".modal").on("hidden.bs.modal", () => {
+        $('#modal-input-id-event').val('');
+        $('#modal-input-id-event').removeAttr('readonly');
+
+        $('#modal-input-description-event').val('');
+        $('#modal-input-target-event').val('');
+        $('#modal-input-bonus-event').val('');
+        $('#modal-sel-sp-item-event').val('-1');
+        $('#modal-input-status-event').val('');
+
+        $('#modal-div-bonus-sp-item').css('display', 'none');
+        $('#modal-input-bonus-sp-item-event').val('');
+
+        $('#title-event').text('ADD EVENT');
+        $('#modal-btn-submit-event').text('ADD');
+
+        $('#modal-sel-type-event').val('-1');
+        $('#modal-sel-type-event').removeAttr('disabled');
+      });
     }
 
   </script>

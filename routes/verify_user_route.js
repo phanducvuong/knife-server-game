@@ -7,6 +7,10 @@ const profileFunc         = require('../functions/profile_user_func');
  * @key actions (lưu lại hoạt động của user để checking mission)
  * index at 0 -> nhập code
  * index at 1 -> phóng phi tiêu
+ * 
+ * @key events (giống actions. Cứ mỗi lần user nhận bonus thì trừ số lượng event tương ứng)
+ * index at 0 -> nhập code
+ * index at 1 -> phóng phi tiêu
  */
 
 var config;
@@ -23,6 +27,7 @@ const dataInitUser = {
   total_turned: 0,
   token:'',
   actions: [0, 0],
+  events: [0, 0],
   lucky_code: [],
   sp_item: [],
   mission: [],

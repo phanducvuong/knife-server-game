@@ -54,6 +54,7 @@ exports.getBonusFromMission = (idMission, dataUser) => {
     };
   }
 
+  //TODO: check mission at type = 2
   let bonus = '';
   if (missionFind['type'] === 0 && missionFind['target'] === dataUser['actions'][0]) {
     bonus = getStrBonusFromMission(missionFind);

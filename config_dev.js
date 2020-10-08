@@ -1,3 +1,21 @@
+/**
+ * @key type in items
+ * 0 -> quà
+ * 1 -> thẻ cào
+ * 2 -> mã cơ hội
+ * 
+ * @key status
+ * 0 -> hidden
+ * 1 -> show
+ * 
+ * @key type mission/event: check action user
+ * -1 -> NONE
+ * 0  -> Nhập Code
+ * 1  -> Phóng Phi Tiêu
+ * 2  -> Mời Bạn
+ */
+
+
 exports.URL_VALID_TOKEN           = 'http://demo8992960.mockable.io/verify-token';
 
 exports.LENGTH_REDIS              = 1;
@@ -30,17 +48,6 @@ exports.PARTITIONS                = {
   data              : []
 }
 
-/**
- * @param type in items
- * 0 -> quà
- * 1 -> thẻ cào
- * 2 -> mã cơ hội
- * 
- * @key status
- * 0 -> hidden
- * 1 -> show
- */
-
 exports.TOTAL_PERCENT             = 0;
 exports.ARR_ITEM                  = [];
 exports.ITEM_FILTER               = [];     //danh sách item có trong list partition
@@ -61,13 +68,6 @@ exports.SUPPORTING_ITEM           = [
   }
 ]
 
-/**
- * @key type mission: check action user
- * -1 -> NONE
- * 0  -> Nhập Code
- * 1  -> Phóng Phi Tiêu
- * 2  -> Mời Bạn
- */
 exports.MISSIONS                  = [
   {
     id            : 0,
@@ -86,32 +86,14 @@ exports.EVENTS                    = {
   end       : '2020-10-30',
   data      : [
     {
-      id          : 0,
-      description : 'ABC Event',
-      bonus       : 1,
-      id_sp_item  : null,
-      status      : 1
-    },
-    {
-      id          : 1,
-      description : 'DEF Event',
-      bonus       : 1,
-      id_sp_item  : 0,
-      status      : 1
-    },
-    {
-      id          : 0,
-      description : 'GHI Event',
-      bonus       : 1,
-      id_sp_item  : null,
-      status      : 1
-    },
-    {
-      id          : 1,
-      description : 'JKL Event',
-      bonus       : 1,
-      id_sp_item  : 0,
-      status      : 1
+      id            : 0,
+      description   : 'x2 Lượt Chơi Khi Nhập Code',
+      bonus_turn    : 2,
+      target        : 1,
+      sp_item       : null,
+      bonus_sp_item : 0,
+      status        : 1,
+      type          : 0
     }
   ]
 }

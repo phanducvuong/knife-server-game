@@ -30,6 +30,8 @@
                     <td>Nhập Code</td>
                   <% }else if (e['type'] === 1) { %>
                     <td>Phóng Phi Tiêu</td>
+                  <% }else if (e['type'] === 2) { %>
+                    <td>Mời Bạn</td>
                   <% }else { %>
                     <td>NONE</td>
                   <% } %>
@@ -288,7 +290,7 @@
     $('body').delegate('.del-mission', 'click', (event) => {
       let dataID = event.currentTarget.attributes.getNamedItem('data-id').value;
       if (dataID === '') {
-        alert('Edit mission failed!');
+        alert('Delete mission failed!');
         return;
       }
 
@@ -355,6 +357,7 @@
       let type = '';
       if (e['type'] === 0)        type = 'Nhập Code';
       else if (e['type'] === 1)   type = 'Phóng Phi Tiêu';
+      else if (e['type'] === 2)   type = 'Mời Bạn';
       else                        type = 'NONE';
 
       markup += `
