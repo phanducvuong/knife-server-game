@@ -3,16 +3,6 @@ const redisClient         = require('../redis/redis_client');
 const DS                  = require('../repository/datastore');
 const profileFunc         = require('../functions/profile_user_func');
 
-/**
- * @key actions (lưu lại hoạt động của user để checking mission)
- * index at 0 -> nhập code
- * index at 1 -> phóng phi tiêu
- * 
- * @key events (giống actions. Cứ mỗi lần user nhận bonus thì trừ số lượng event tương ứng)
- * index at 0 -> nhập code
- * index at 1 -> phóng phi tiêu
- */
-
 var config;
 if (process.env.NODE_ENV === 'production') {
   config = require('../config_prod');
@@ -21,19 +11,30 @@ else {
   config = require('../config_dev');
 }
 
+/**
+ * @key actions (lưu lại hoạt động của user để checking mission. return actions to 0 when 23:59:59)
+ * index at 0 -> nhập code
+ * index at 1 -> phóng phi tiêu
+ * 
+ * @key events (giống actions. Cứ mỗi lần user nhận bonus thì trừ số lượng event tương ứng)
+ * index at 0 -> nhập code
+ * index at 1 -> phóng phi tiêu
+ * index at 2 -> mời bạn
+ */
+
 const dataInitUser = {
-  inven: [],
-  turn: 0,
-  total_turned: 0,
-  token:'',
-  actions: [0, 0],
-  events: [0, 0],
-  lucky_code: [],
-  sp_item: [],
-  mission: [],
-  phone: '',
-  userID: '',
-  name: ''
+  inven         : [],
+  turn          : 0,
+  total_turned  : 0,
+  token         :'',
+  actions       : [0, 0],
+  events        : [0, 0, 0],
+  lucky_code    : [],
+  sp_item       : [],
+  mission       : [],
+  phone         : '',
+  userID        : '',
+  name          : ''
 }
 
 const verifyUserRoute = async (app, opt) => {

@@ -31,7 +31,7 @@ exports.updateLsLuckyCode = (lsLuckyCode) => {
 
 }
 
-exports.updateLsSpItemUser = (lsSpItem, idSpItem) => {
+exports.descSpItemInLsSpItemById = (lsSpItem, idSpItem) => {
   for (let i=0; i<lsSpItem.length; i++) {
     let tmpStr  = lsSpItem[i].split('_');
     let id      = parseInt(tmpStr[0], 10);
@@ -54,6 +54,66 @@ exports.updateLsSpItemUser = (lsSpItem, idSpItem) => {
   return {
     status          : true,
     lsSpItemUpdate  : lsSpItem
+  }
+}
+
+exports.incrSpItemInLsSpItemById = (lsSpItem, idSpItem, unit) => {
+  for (let i=0; i<lsSpItem.length; i++) {
+    let tmpStr  = lsSpItem[i].split('_');
+    let id      = parseInt(tmpStr[0], 10);
+    let amount  = parseInt(tmpStr[1], 10);
+    
+    if (isNaN(id) || isNaN(amount)) {
+      return { status: false, msg: 'Invalid sp item when get it in list!' }
+    }
+
+    if (id === idSpItem) {
+      amount      += unit;
+      lsSpItem[i]  = `${id}_${amount}`;
+      return { status: true, data: lsSpItem }
+    }
+  }
+
+  lsSpItem.push(`${idSpItem}_${unit}`);
+  return {
+    status  : true,
+    data    : lsSpItem
+  }
+}
+
+exports.getBonusFromMissionOrEvent = (obj, dataUser) => {
+  if (obj['bonus_turn'] > 0 && obj['bonus_sp_item'] > 0) {
+    let str         = `${obj['bonus_turn']} lượt và ${obj['bonus_sp_item']} ${obj['sp_item']['description']}`;
+    let resultBonus = this.incrSpItemInLsSpItemById(dataUser['sp_item'], obj['sp_item']['id'], obj['bonus_sp_item']);
+
+    if (!resultBonus['status']) return { status: false, msg: resultBonus['msg'] };
+    return {
+      status          : true,
+      bonus_str       : str,
+      bonus_turn      : obj['bonus_turn'],
+      lsSpItemUpdate  : resultBonus['data']
+    }
+  }
+  else if (obj['bonus_turn'] === 0 && obj['bonus_sp_item'] > 0) {
+    let str         = `${obj['bonus_sp_item']} ${obj['sp_item']['description']}`;
+    let resultBonus = this.incrSpItemInLsSpItemById(dataUser['sp_item'], obj['sp_item']['id'], obj['bonus_sp_item']);
+
+    if (!resultBonus['status']) return { status: false, msg: resultBonus['msg'] };
+    return {
+      status          : true,
+      bonus_str       : str,
+      bonus_turn      : 0,
+      lsSpItemUpdate  : resultBonus['data']
+    }
+  }
+  else {
+    str = `${obj['bonus_turn']} lượt`;
+    return {
+      status          : true,
+      bonus_str       : str,
+      bonus_turn      : obj['bonus_turn'],
+      lsSpItemUpdate  : dataUser['sp_item']
+    }
   }
 }
 

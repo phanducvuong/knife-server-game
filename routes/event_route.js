@@ -36,10 +36,10 @@ const eventRoute = async (app, opt) => {
 
       if (dataUser['token'] !== token) throw `Invalid token!`;
 
-      let lsEvent   = eventFunc.lsEventWithSpItem();
+      let lsFilter   = eventFunc.filterLsEventWithSpItem();
       rep.send({
         status_code : 2000,
-        lsEvent     : lsEvent,
+        lsEvent     : lsFilter,
         time_start  : config.EVENTS.start,
         time_end    : config.EVENTS.end,
         turn        : dataUser['turn'],
@@ -71,6 +71,10 @@ const eventRoute = async (app, opt) => {
         throw `Pls check info user!`;
       }
 
+      if (!util.chkTimeEvent(config.EVENTS.start, config.EVENTS.end)) {
+        throw 'Event is comming soon!';
+      }
+
       let dataUser = JSON.parse(await redis.getTurnAndInvenUser(megaID));
       if (dataUser === null || dataUser === undefined) {
         dataUser = await DS.DSGetDataUser(megaID, 'turn_inven');
@@ -85,14 +89,10 @@ const eventRoute = async (app, opt) => {
       redis.updateTurnAndInvenUser(megaID, JSON.stringify(resultJoinEvent['dataUserUpdate']));
       DS.DSUpdateDataUser(megaID, 'turn_inven', resultJoinEvent['dataUserUpdate']);
 
-      let lsEvent = eventFunc.lsEventWithSpItem();
       rep.send({
         status_code   : 2000,
-        bonus         : resultJoinEvent['bonus'],
-        description   : resultJoinEvent['description'],
+        bonus_str     : resultJoinEvent['bonusStr'],
         turn          : dataUser['turn'],
-        lsEvent       : lsEvent,
-        free          : resultJoinEvent['free']
       });
 
     }

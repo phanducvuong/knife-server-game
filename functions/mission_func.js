@@ -1,3 +1,5 @@
+const profileFunc           = require('./profile_user_func');
+
 var config;
 if (process.env.NODE_ENV === 'production') {
   config = require('../config_prod');
@@ -55,37 +57,78 @@ exports.getBonusFromMission = (idMission, dataUser) => {
   }
 
   //TODO: check mission at type = 2
-  let bonus = '';
-  if (missionFind['type'] === 0 && missionFind['target'] === dataUser['actions'][0]) {
-    bonus = getStrBonusFromMission(missionFind);
-    dataUser['mission'].push(missionFind['id']);
-  }
-  else if (missionFind['type'] === 1 && missionFind['target'] === dataUser['actions'][1]) {
-    bonus = getStrBonusFromMission(missionFind);
-    dataUser['mission'].push(missionFind['id']);
-  }
-  else {
-    bonus = getStrBonusFromMission(missionFind);
-    dataUser['mission'].push(missionFind['id']);
+  let resultBonus;
+
+  switch (missionFind['type']) {
+    case 0: {
+
+      if (dataUser['actions'][0] < missionFind['target']) return { status: false, msg: 'Not eligible yet!' };
+      resultBonus = profileFunc.getBonusFromMissionOrEvent(missionFind, dataUser);
+      dataUser['mission'].push(missionFind['id']);
+      break;
+
+    }
+    case 1: {
+
+      if (dataUser['actions'][1] < missionFind['target']) return { status: false, msg: 'Not eligible yet!' };
+      resultBonus = profileFunc.getBonusFromMissionOrEvent(missionFind, dataUser);
+      dataUser['mission'].push(missionFind['id']);
+      break;
+
+    }
+    default: {
+
+      resultBonus = profileFunc.getBonusFromMissionOrEvent(missionFind, dataUser);
+      dataUser['mission'].push(missionFind['id']);
+      break;
+
+    }
   }
 
+  if (!resultBonus['status']) return { status: false, msg: resultBonus['msg'] };
+
+  dataUser['turn']     += resultBonus['bonus_turn'];
+  dataUser['sp_item']   = resultBonus['lsSpItemUpdate'];
   return {
     status          : true,
-    bonus           : bonus,
+    bonusStr        : resultBonus['bonus_str'],
     dataUserUpdate  : dataUser
   };
 }
 
 //------------------------------------functional------------------------------------
-function getStrBonusFromMission(mission) {
-  let str = '';
+function getBonusFromMission(mission, dataUser) {
   if (mission['bonus_turn'] > 0 && mission['bonus_sp_item'] > 0) {
-    str = `${mission['bonus_turn']} lượt và ${mission['bonus_sp_item']} ${mission['sp_item']['description']}`;
+    let str         = `${mission['bonus_turn']} lượt và ${mission['bonus_sp_item']} ${mission['sp_item']['description']}`;
+    let resultBonus = profileFunc.incrSpItemInLsSpItemById(dataUser['sp_item'], mission['sp_item']['id'], mission['bonus_sp_item']);
+
+    if (!resultBonus['status']) return { status: false, msg: resultBonus['msg'] };
+    return {
+      status          : true,
+      bonusStr        : str,
+      bonus_turn      : mission['bonus_turn'],
+      lsSpItemUpdate  : resultBonus['data']
+    }
   }
   else if (mission['bonus_turn'] === 0 && mission['bonus_sp_item'] > 0) {
-    str = `${mission['bonus_turn']} ${mission['sp_item']['description']}`;
+    let str         = `${mission['bonus_sp_item']} ${mission['sp_item']['description']}`;
+    let resultBonus = profileFunc.incrSpItemInLsSpItemById(dataUser['sp_item'], mission['sp_item']['id'], mission['bonus_sp_item']);
+
+    if (!resultBonus['status']) return { status: false, msg: resultBonus['msg'] };
+    return {
+      status          : true,
+      bonusStr        : str,
+      bonus_turn      : 0,
+      lsSpItemUpdate  : resultBonus['data']
+    }
   }
   else {
     str = `${mission['bonus_turn']} lượt`;
+    return {
+      status          : true,
+      bonusStr        : str,
+      bonus_turn      : mission['bonus_turn'],
+      lsSpItemUpdate  : dataUser['sp_item']
+    }
   }
 }

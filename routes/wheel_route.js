@@ -45,7 +45,7 @@ const wheelRoute = async (app, opt) => {
         let tmpIdRm = parseInt(idItemRm, 10);
         if (isNaN(idItemRm)) throw `${idItemRm} remove box is not a number!`;
 
-        let resultUpdateLsSpItem = profileUserFunc.updateLsSpItemUser(dataUser['sp_item'], 0);
+        let resultUpdateLsSpItem = profileUserFunc.descSpItemInLsSpItemById(dataUser['sp_item'], 0);
         if (resultUpdateLsSpItem['status'] === false) {
           rep.send({
             status_code : 2500,
@@ -80,6 +80,10 @@ const wheelRoute = async (app, opt) => {
         let notiStr = `${dataUser['name']}_${item['name']}_${time.getTime()}`;
         redisClient.addNotificaBanner(notiStr);
       } //lưu lại item là quà hoặc thẻ cào để chạy thông báo ở user
+
+      if (util.chkTimeEvent(config.EVENTS.start, config.EVENTS.end)) {
+        dataUser['events'][1] += 1;
+      } //lưu lại lần phóng của user nếu sự kiện đang diễn ra
 
       dataUser['turn']          -= 1;
       dataUser['actions'][1]    += 1;
