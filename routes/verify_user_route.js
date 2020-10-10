@@ -50,6 +50,10 @@ const verifyUserRoute = async (app, opt) => {
         throw 'unvalid token';
       }
 
+      if (config.PARTITIONS['data'].length !== config.PARTITIONS['partition']) {
+        throw `please reload game to update config!`;
+      }
+
       let dataUser = JSON.parse(await redisClient.getTurnAndInvenUser(`${result.mega1_code}`));
       if (dataUser === null || dataUser === undefined) {
         dataUser = await DS.DSGetDataUser(`${result.mega1_code}`, 'turn_inven');

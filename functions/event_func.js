@@ -8,29 +8,43 @@ else {
   config = require('../config_dev');
 }
 
-exports.filterLsEventWithSpItem = () => {
+exports.filterLsEventWithSpItem = (lsEvent) => {
   let filter = [];
   for (let m of config.EVENTS.data) {
     if (m['status'] === 1) {
+      let did = 0;
+      if (m['type'] === 0)      did = lsEvent[0];
+      else if (m['type'] === 1) did = lsEvent[1];
+      else if (m['type'] === 2) did = lsEvent[2];
+      
       if (m['sp_item'] !== null && m['bonus_turn'] > 0) {
         filter.push({
           id            : m['id'],
           description   : m['description'],
-          bonus         : `${m['bonus_turn']} Lượt, ${m['bonus_sp_item']} ${m['sp_item']['description']}`
+          target        : m['target'],
+          did           : did,
+          bonus_str_1   : `${m['bonus_turn']} lượt`,
+          bonus_str_2   : `${m['bonus_sp_item']} ${m['sp_item']['description']}`
         });
       }
       else if (m['sp_item'] !== null && m['bonus_turn'] <= 0) {
         filter.push({
           id            : m['id'],
           description   : m['description'],
-          bonus         : `${m['bonus_sp_item']} ${m['sp_item']['description']}`
+          target        : m['target'],
+          did           : did,
+          bonus_str_1   : '',
+          bonus_str_2   : `${m['bonus_sp_item']} ${m['sp_item']['description']}`
         });
       }
       else if (m['bonus_turn'] > 0) {
         filter.push({
           id            : m['id'],
           description   : m['description'],
-          bonus         : `${m['bonus_turn']} Lượt`
+          target        : m['target'],
+          did           : did,
+          bonus_str_1   : `${m['bonus_turn']} Lượt`,
+          bonus_str_2   : ''
         });
       }
     }
@@ -47,7 +61,7 @@ exports.joinEvent = (dataUser, idEvent) => {
     case 0: {
 
       if (dataUser['events'][0] < tmpEvent['target']) return { status: false, msg: 'Not eligible yet!' };
-      resultBonus = profileFunc.getBonusFromMissionOrEvent(tmpEvent, dataUser);
+      resultBonus            = profileFunc.getBonusFromMissionOrEvent(tmpEvent, dataUser);
       dataUser['events'][0] -= tmpEvent['target'];
 
       break;
@@ -55,7 +69,7 @@ exports.joinEvent = (dataUser, idEvent) => {
     case 1: {
 
       if (dataUser['events'][1] < tmpEvent['target']) return { status: false, msg: 'Not eligible yet!' };
-      resultBonus = profileFunc.getBonusFromMissionOrEvent(tmpEvent, dataUser);
+      resultBonus            = profileFunc.getBonusFromMissionOrEvent(tmpEvent, dataUser);
       dataUser['events'][1] -= tmpEvent['target'];
 
       break;

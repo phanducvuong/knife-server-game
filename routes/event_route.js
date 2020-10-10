@@ -36,13 +36,14 @@ const eventRoute = async (app, opt) => {
 
       if (dataUser['token'] !== token) throw `Invalid token!`;
 
-      let lsFilter   = eventFunc.filterLsEventWithSpItem();
+      let lsFilter   = eventFunc.filterLsEventWithSpItem(dataUser['events']);
       rep.send({
         status_code : 2000,
-        lsEvent     : lsFilter,
+        ls_event    : lsFilter,
         time_start  : config.EVENTS.start,
         time_end    : config.EVENTS.end,
         turn        : dataUser['turn'],
+        turned      : dataUser['total_turned'],
         name        : dataUser['name']
       });
 
@@ -84,15 +85,23 @@ const eventRoute = async (app, opt) => {
       if (dataUser['token'] !== token) throw `Invalid token!`;
 
       let resultJoinEvent = eventFunc.joinEvent(dataUser, idEvent);
-      if (resultJoinEvent['status'] === false) throw resultJoinEvent['msg'];
+      if (resultJoinEvent['status'] === false) {
+        rep.send({
+          status_code : 2500,
+          msg         : resultJoinEvent['msg']
+        });
+        return;
+      }
 
       redis.updateTurnAndInvenUser(megaID, JSON.stringify(resultJoinEvent['dataUserUpdate']));
       DS.DSUpdateDataUser(megaID, 'turn_inven', resultJoinEvent['dataUserUpdate']);
 
+      let lsFilter   = eventFunc.filterLsEventWithSpItem(resultJoinEvent['dataUserUpdate']['events']);
       rep.send({
         status_code   : 2000,
         bonus_str     : resultJoinEvent['bonusStr'],
-        turn          : dataUser['turn'],
+        turn          : resultJoinEvent['dataUserUpdate']['turn'],
+        ls_event      : lsFilter
       });
 
     }

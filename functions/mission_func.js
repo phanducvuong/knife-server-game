@@ -8,7 +8,7 @@ else {
   config = require('../config_dev');
 }
 
-exports.filterMisisonWithSpItem = (lsMissionUser) => {
+exports.filterMisisonWithSpItem = (lsMissionUser, lsAction) => {
   let filter = [];
   for (let m of config.MISSIONS) {
     if (m['status'] === 1 && !lsMissionUser.includes(m['id'])) {
@@ -18,11 +18,15 @@ exports.filterMisisonWithSpItem = (lsMissionUser) => {
       if (m['id'] === 0) status = 1;
 
       //mission filter
+      let did = (m['type'] === 0) ? lsAction[0] : lsAction[1];
       if (m['sp_item'] !== null && m['bonus_turn'] > 0) {
         filter.push({
           id            : m['id'],
           description   : m['description'],
-          bonus         : `${m['bonus_turn']} Lượt, ${m['bonus_sp_item']} ${m['sp_item']['description']}`,
+          target        : m['target'],
+          did           : did,
+          bonus_str_1   : `${m['bonus_turn']} lượt`,
+          bonus_str_2   : `${m['bonus_sp_item']} ${m['sp_item']['description'].toLowerCase()}`,
           status        : status
         });
       }
@@ -30,7 +34,10 @@ exports.filterMisisonWithSpItem = (lsMissionUser) => {
         filter.push({
           id            : m['id'],
           description   : m['description'],
-          bonus         : `${m['bonus_sp_item']} ${m['sp_item']['description']}`,
+          target        : m['target'],
+          did           : did,
+          bonus_str_1   : '',
+          bonus_str_2   : `${m['bonus_sp_item']} ${m['sp_item']['description'].toLowerCase()}`,
           status        : status
         });
       }
@@ -38,7 +45,10 @@ exports.filterMisisonWithSpItem = (lsMissionUser) => {
         filter.push({
           id            : m['id'],
           description   : m['description'],
-          bonus         : `${m['bonus_turn']} Lượt`,
+          target        : m['target'],
+          did           : did,
+          bonus_str_1   : `${m['bonus_turn']} lượt`,
+          bonus_str_2   : '',
           status        : status
         });
       }

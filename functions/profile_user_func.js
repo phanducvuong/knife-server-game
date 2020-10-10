@@ -47,13 +47,13 @@ exports.descSpItemInLsSpItemById = (lsSpItem, idSpItem) => {
     if (id === idSpItem) {
       amount      -= 1;
       lsSpItem[i]  = `${id}_${amount}`;
-      break;
+      return { status: true, lsSpItemUpdate: lsSpItem }
     }
   }
 
   return {
-    status          : true,
-    lsSpItemUpdate  : lsSpItem
+    status  : false,
+    msg     : `${idSpItem} is not exist!`
   }
 }
 
@@ -181,4 +181,25 @@ exports.getNotificaBanner = async () => {
     }
   }
   return arrNoti;
+}
+
+exports.getSpItemById = (lsSpItem, idSpItem) => {
+  let cfgSpItem = config.SUPPORTING_ITEM.find(e => { return e['id'] === idSpItem });
+  if (cfgSpItem === null || cfgSpItem === undefined) return { status: false, msg: 'Can not get cfgSpItem!' };
+
+  for (let e of lsSpItem) {
+    let split   = e.split('_');
+    let id      = parseInt(split[0], 10);
+    let amount  = parseInt(split[1], 10);
+
+    if (isNaN(id) || isNaN(amount)) return { status: false, msg: 'Invalid id or amount!' };
+
+    if (id === idSpItem) {
+      return {
+        status  : true,
+        amount  : amount
+      }
+    }
+  }
+  return { status: false, msg: 'idSpItem not exist!' };
 }

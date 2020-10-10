@@ -18,7 +18,7 @@ const missionRoute = async (app, opt) => {
 
       if (dataUser['token'] !== token) throw 'Invalid token user!';
 
-      let filterMission = missionFunc.filterMisisonWithSpItem(dataUser['mission']);
+      let filterMission = missionFunc.filterMisisonWithSpItem(dataUser['mission'], dataUser['actions']);
       rep.send({
         status_code : 2000,
         missions    : filterMission
@@ -54,16 +54,23 @@ const missionRoute = async (app, opt) => {
       if (dataUser['token'] !== token) throw `Invalid token!`;
 
       let bonusFromMission = missionFunc.getBonusFromMission(idMission, dataUser);
-      if (bonusFromMission['status'] === false) throw bonusFromMission['msg'];
+      if (bonusFromMission['status'] === false) {
+        rep.send({
+          status_code : 2500,
+          msg         : bonusFromMission['msg']
+        });
+        return;
+      }
 
-      let missionFilter = missionFunc.filterMisisonWithSpItem(bonusFromMission['dataUserUpdate']['mission']);
+      let missionFilter = missionFunc.filterMisisonWithSpItem(bonusFromMission['dataUserUpdate']['mission'], bonusFromMission['dataUserUpdate']['actions']);
       DS.DSUpdateDataUser(megaID, 'turn_inven', bonusFromMission['dataUserUpdate']);
       redis.updateTurnAndInvenUser(megaID, JSON.stringify(bonusFromMission['dataUserUpdate']));
       
       rep.send({
-        status_code   : 2000,
-        missionUpdate : missionFilter,
-        bonusStr      : bonusFromMission['bonusStr']
+        status_code     : 2000,
+        mission_update  : missionFilter,
+        bonus_str       : bonusFromMission['bonusStr'],
+        turn            : bonusFromMission['dataUserUpdate']['turn']
       });
 
     }

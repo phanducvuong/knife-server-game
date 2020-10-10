@@ -1,4 +1,3 @@
-const FS            = require('../repository/firestore');
 const DS            = require('../repository/datastore');
 const redisClient   = require('../redis/redis_client');
 
@@ -90,7 +89,11 @@ exports.getItemWithRmBox = async (idItemRm) => {
 }
 
 exports.getItemUnlimit = () => {
-  return config.ARR_ITEM.find(e => { return e['maximum'] === -1 });
+  let map = config.ARR_ITEM.filter(e => e['maximum'] === -1);
+  if (map.length <= 0) return null;
+
+  let rndIndex = Math.round(Math.random() * (map.length-1));
+  return map[rndIndex];
 }
 
 function newLsItemFilterWhenRmBox(idItemRm) {

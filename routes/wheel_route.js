@@ -37,15 +37,32 @@ const wheelRoute = async (app, opt) => {
       if (dataUser['token'] !== token || dataUser['turn'] <= 0) throw 'unvalid token or turn is zero';
 
       let item;
-      if (util.chkUserInBlackList(megaID, config.BLACK_LIST) === true) {
-        item = wheelFunc.getItemUnlimit();
+      if (config.BLACK_LIST.includes(megaID)) {
+
+        //TODO: Tách hàm check idItemRm từ đây và if else phía dưới
+        if (idItemRm !== null && idItemRm !== undefined) {
+          let tmpIdRm = parseInt(idItemRm, 10);
+          if (isNaN(idItemRm)) throw `${idItemRm} remove box is not a number!`;
+
+          let resultUpdateLsSpItem = profileUserFunc.descSpItemInLsSpItemById(dataUser['sp_item'], tmpIdRm);
+          if (resultUpdateLsSpItem['status'] === false) {
+            rep.send({
+              status_code : 2500,
+              msg         : resultUpdateLsSpItem['msg']
+            });
+            return;
+          }
+          dataUser['sp_item'] = resultUpdateLsSpItem['lsSpItemUpdate'];
+        }
+        item                = wheelFunc.getItemUnlimit();
+
       } //user is have in blacklist
-      if (idItemRm !== null && idItemRm !== undefined) {
+      else if (idItemRm !== null && idItemRm !== undefined) {
 
         let tmpIdRm = parseInt(idItemRm, 10);
         if (isNaN(idItemRm)) throw `${idItemRm} remove box is not a number!`;
 
-        let resultUpdateLsSpItem = profileUserFunc.descSpItemInLsSpItemById(dataUser['sp_item'], 0);
+        let resultUpdateLsSpItem = profileUserFunc.descSpItemInLsSpItemById(dataUser['sp_item'], tmpIdRm);
         if (resultUpdateLsSpItem['status'] === false) {
           rep.send({
             status_code : 2500,
@@ -53,10 +70,9 @@ const wheelRoute = async (app, opt) => {
           });
           return;
         }
-
         dataUser['sp_item'] = resultUpdateLsSpItem['lsSpItemUpdate'];
 
-        let countItemRm     = wheelFunc.countIdItemRmInLsParition(tmpIdRm);
+        let countItemRm = wheelFunc.countIdItemRmInLsParition(tmpIdRm);
         if (countItemRm === 1) {
           item = await wheelFunc.getItemWithRmBox(tmpIdRm);
         }

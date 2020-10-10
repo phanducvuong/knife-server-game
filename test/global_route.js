@@ -45,6 +45,10 @@ const globalRoute = async (app, opt) => {
 
   });
 
+  app.get('/get-black-list', async (req, rep) => {
+    rep.send(config.BLACK_LIST);
+  });
+
   app.get('/microsecond', async (req, rep) => {
     const hrtime1      = process.hrtime();
     const hrtime2      = process.hrtime();
