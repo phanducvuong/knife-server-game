@@ -47,7 +47,7 @@ exports.descSpItemInLsSpItemById = (lsSpItem, idSpItem) => {
     if (id === idSpItem) {
       amount      -= 1;
       lsSpItem[i]  = `${id}_${amount}`;
-      return { status: true, lsSpItemUpdate: lsSpItem }
+      return { status: true, lsSpItemUpdate: lsSpItem, amount: amount }
     }
   }
 

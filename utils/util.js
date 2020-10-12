@@ -33,7 +33,8 @@ exports.chkTimeEvent = (start, end) => {
   let timeS = new Date(start);
   let timeE = new Date(end);
 
-  if (time.getTime() >= timeS.getTime() && time <= timeE.getTime()) {
+  let convertMilli = time.getTime() + 7 * 3600 * 1000;
+  if (convertMilli >= timeS.getTime() && convertMilli <= timeE.getTime()) {
     return true;
   }
   return false;

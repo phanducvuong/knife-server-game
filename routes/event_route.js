@@ -25,7 +25,11 @@ const eventRoute = async (app, opt) => {
       }
 
       if (!util.chkTimeEvent(config.EVENTS.start, config.EVENTS.end)) {
-        throw 'Event is comming soon!';
+        rep.send({
+          status_code : 2500,
+          msg         : 'Event is comming soon!'
+        });
+        return;
       }
 
       let dataUser = JSON.parse(await redis.getTurnAndInvenUser(megaID));

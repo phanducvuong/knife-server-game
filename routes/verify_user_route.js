@@ -83,13 +83,19 @@ const verifyUserRoute = async (app, opt) => {
         DS.DSUpdateDataUser(`${result.mega1_code}`, 'turn_inven', dataUser);
       }
 
-      let arrNotifica = await profileFunc.getNotificaBanner();
+      let arrNotifica         = await profileFunc.getNotificaBanner();
+
+      let amountSpItem        = 0;
+      let resultAmountSpItem  = profileFunc.getSpItemById(dataUser['sp_item'], 0);
+      if (resultAmountSpItem['status']) amountSpItem = resultAmountSpItem['amount'];
+
       rep.send({
-        status_code : 2000,
-        result      : result,
-        turn        : dataUser['turn'],
-        config      : config.PARTITIONS,
-        noti_banner : arrNotifica
+        status_code     : 2000,
+        result          : result,
+        turn            : dataUser['turn'],
+        amount_sp_item  : amountSpItem,
+        config          : config.PARTITIONS,
+        noti_banner     : arrNotifica
       });
 
     }

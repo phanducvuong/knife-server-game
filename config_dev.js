@@ -52,8 +52,8 @@ exports.TOTAL_PERCENT             = 0;
 exports.ARR_ITEM                  = [];
 exports.ITEM_FILTER               = [];     //danh sách item có trong list partition
 exports.ARR_ID_ITEM_BL            = [];     //danh sách id item dành cho user nằm trong blacklist
-exports.BLACK_LIST                = ['MEGA1179262'];
-exports.NOTIFICATION_LINE         = [];     //danh sách user trúng được quà với thẻ cào. Dùng để chạy banner thông báo
+exports.BLACK_LIST                = [];
+// exports.NOTIFICATION_BANNER       = [];     //danh sách user trúng được quà với thẻ cào. Dùng để chạy banner thông báo
 
 exports.REGIONS                   = ['Tv', 'Matluot', 'Macohoi', '5Tr', 'Ip11', '15Tr', '10k', '20k', '50k', '100k', '200k', '500k'];
 

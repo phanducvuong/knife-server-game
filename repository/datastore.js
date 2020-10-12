@@ -120,3 +120,22 @@ exports.DSUpdateHistoryUser = async (kind, strHis) => {
     console.log(err);
   }
 }
+
+exports.DSGetAllUser = async () => {
+  try {
+    const query       = dbClient.createQuery('__kind__').select('__key__');
+    const [entities]  = await dbClient.runQuery(query);
+
+    let arrKind       = [];
+    for (let e of entities) {
+      if (e[dbClient.KEY].name.includes('MEGA')) {
+        arrKind.push(e[dbClient.KEY].name);
+      }
+    }
+    return arrKind;
+  }
+  catch(err) {
+    console.log(err);
+    return [];
+  }
+}

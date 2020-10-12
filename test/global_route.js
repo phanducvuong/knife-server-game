@@ -49,17 +49,6 @@ const globalRoute = async (app, opt) => {
     rep.send(config.BLACK_LIST);
   });
 
-  app.get('/microsecond', async (req, rep) => {
-    const hrtime1      = process.hrtime();
-    const hrtime2      = process.hrtime();
-    let micro = strGenerate.getStringGenerate(hrtime1);
-    let micro1 = strGenerate.getStringGenerate(hrtime2);
-    rep.send({
-      m1 : micro,
-      m2  : micro1
-    });
-  });
-
   app.get('/partition', async (req, rep) => {
     rep.send(config.PARTITIONS);
   });
@@ -114,11 +103,6 @@ const globalRoute = async (app, opt) => {
 
   });
 
-  app.get('/insert', async (req, rep) => {
-    let result = await DS.DSGetDataGlobal('admin', 'supporting_item');
-    rep.send(result);
-  });
-
   app.post('/empty-mission', async (req, rep) => {
     let megaID          = req.body.megaID;
     let dataUser        = JSON.parse(await redisClient.getTurnAndInvenUser(megaID));
@@ -154,6 +138,39 @@ const globalRoute = async (app, opt) => {
   app.get('/notifica-banner', async (req, rep) => {
     let data = await profileFunc.getNotificaBanner();
     rep.send(data);
+  });
+
+  app.post('/reset-event-user', async (req, rep) => {
+    try {
+
+      let megaID    = req.body.megaID.toString().trim();
+      let dataUser  = await DS.DSGetDataUser(megaID, 'turn_inven');
+      
+      if (dataUser === null || dataUser === undefined) throw `User not exist!`;
+      dataUser['events'][0]   = 0;
+      dataUser['events'][1]   = 0;
+      dataUser['events'][2]   = 0;
+
+      dataUser['actions'][0]  = 0;
+      dataUser['actions'][1]  = 0;
+
+      DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
+      redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
+
+      rep.send({
+        status_code : 2000,
+        msg         : 'success'
+      });
+
+    }
+    catch(err) {
+
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
   });
 
 }

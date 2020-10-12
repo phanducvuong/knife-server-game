@@ -109,8 +109,13 @@ exports.getArrItem = () => {
 }
 
 exports.addNotificaBanner = (data) => {
-  let index   = getIndex('notifica_banner');
+  let index = getIndex('notifica_banner');
   insLsRedis[index].rpush('notifica_banner', data);
+}
+
+exports.clearLsNotificaBanner = () => {
+  let index = getIndex('notifica_banner');
+  insLsRedis[index].del('notifica_banner');
 }
 
 exports.getNotificaBanner = () => {

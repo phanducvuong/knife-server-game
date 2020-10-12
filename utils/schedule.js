@@ -1,4 +1,7 @@
 const DS              = require('../repository/datastore');
+const cron            = require('node-cron');
+const redisClient     = require('../redis/redis_client');
+const util            = require('./util');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -12,6 +15,20 @@ exports.scheDataGlobal = () => {
   setInterval(async () => {
     await this.updatePartition();
   }, 10000);
+}
+
+exports.scheResetDataUser = async () => {
+  cron.schedule('59 59 16 * * *', async () => {
+
+    try {
+      redisClient.clearLsNotificaBanner();
+      await resetDataUser();
+    }
+    catch(err) {
+      console.log(err);
+    }
+
+  });
 }
 
 exports.updatePartition = async () => {
@@ -57,9 +74,6 @@ exports.updatePartition = async () => {
     config.EVENTS.data  = [];
     config.EVENTS.data.push(...events['data']);
   }
-
-  //update notifica_banner
-  
 }
 
 function filterItemHaveInListPartition(lsPartition, lsItem) {
@@ -74,6 +88,26 @@ function filterItemHaveInListPartition(lsPartition, lsItem) {
         config.ITEM_FILTER.push(item);
         config.TOTAL_PERCENT += item['percent'];
       }
+    }
+  }
+}
+
+async function resetDataUser() {
+  let lsMegaIDUser = await DS.DSGetAllUser();
+  for (let u of lsMegaIDUser) {
+    let dataUser = await DS.DSGetDataUser(u, 'turn_inven');
+    if (dataUser !== null && dataUser !== undefined) {
+      dataUser['actions'][0] = 0;
+      dataUser['actions'][1] = 0;
+
+      if (!util.chkTimeEvent(config.EVENTS.start, config.EVENTS.end)) {
+        dataUser['events'][0] = 0;
+        dataUser['events'][1] = 0;
+        dataUser['events'][2] = 0;
+      }
+
+      DS.DSUpdateDataUser(u, 'turn_inven', dataUser);
+      redisClient.updateTurnAndInvenUser(u, JSON.stringify(dataUser));
     }
   }
 }

@@ -75,6 +75,7 @@ app.register(require('./admin/route/setup_route'),        { prefix: '/api/v1/adm
 app.register(require('./test/global_route'),              { prefix: '/api/v1/test' });
 
 //schedule
+schedule.scheResetDataUser();
 schedule.scheDataGlobal();
 
 schedule.updatePartition()

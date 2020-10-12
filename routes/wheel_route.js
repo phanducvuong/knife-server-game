@@ -37,6 +37,7 @@ const wheelRoute = async (app, opt) => {
       if (dataUser['token'] !== token || dataUser['turn'] <= 0) throw 'unvalid token or turn is zero';
 
       let item;
+      let resultUpdateLsSpItem;
       if (config.BLACK_LIST.includes(megaID)) {
 
         //TODO: Tách hàm check idItemRm từ đây và if else phía dưới
@@ -44,7 +45,7 @@ const wheelRoute = async (app, opt) => {
           let tmpIdRm = parseInt(idItemRm, 10);
           if (isNaN(idItemRm)) throw `${idItemRm} remove box is not a number!`;
 
-          let resultUpdateLsSpItem = profileUserFunc.descSpItemInLsSpItemById(dataUser['sp_item'], tmpIdRm);
+          let resultUpdateLsSpItem = profileUserFunc.descSpItemInLsSpItemById(dataUser['sp_item'], 0);
           if (resultUpdateLsSpItem['status'] === false) {
             rep.send({
               status_code : 2500,
@@ -62,7 +63,7 @@ const wheelRoute = async (app, opt) => {
         let tmpIdRm = parseInt(idItemRm, 10);
         if (isNaN(idItemRm)) throw `${idItemRm} remove box is not a number!`;
 
-        let resultUpdateLsSpItem = profileUserFunc.descSpItemInLsSpItemById(dataUser['sp_item'], tmpIdRm);
+        resultUpdateLsSpItem = profileUserFunc.descSpItemInLsSpItemById(dataUser['sp_item'], 0);
         if (resultUpdateLsSpItem['status'] === false) {
           rep.send({
             status_code : 2500,
@@ -116,14 +117,19 @@ const wheelRoute = async (app, opt) => {
       DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
       DS.DSUpdateHistoryUser(megaID, strHis);
 
+      let amountSpItem        = 0;
+      let resultAmountSpItem  = profileUserFunc.getSpItemById(dataUser['sp_item'], 0);
+      if (resultAmountSpItem['status']) amountSpItem = resultAmountSpItem['amount'];
+
       let region = config.PARTITIONS['data'].find(e => { return e['id'] === item['id'] });
       if (region === null || region === undefined) throw `Can not get region by ${item['id']}`;
 
       rep.send({
-        status_code : 2000,
-        turn        : dataUser['turn'],
-        id          : item['id'],
-        region      : region['region']
+        status_code     : 2000,
+        turn            : dataUser['turn'],
+        id              : item['id'],
+        region          : region['region'],
+        amount_sp_item  : amountSpItem
       });
 
     }
