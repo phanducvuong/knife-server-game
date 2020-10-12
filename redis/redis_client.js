@@ -47,6 +47,16 @@ exports.updateHistoryUser = (mega_code, data) => {
   insLsRedis[index].rpush(key, data);
 }
 
+exports.getHistoryUser = (mega_code) => {
+  return new Promise((resv, rej) => {
+    let index = getIndex(mega_code);
+    insLsRedis[index].lrange(`${mega_code}_his`, 0, -1, (err, reply) => {
+      if (err) return rej('Can not get history user!');
+      return resv(reply);
+    });
+  });
+}
+
 //-----------------------------------------data global----------------------------------------------
 exports.updatePartition = (data) => {
   const index = getIndex('partition');

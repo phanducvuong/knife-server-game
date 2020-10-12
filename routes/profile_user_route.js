@@ -21,11 +21,19 @@ const profileUserRoute = async (app, opt) => {
         if (dataUser === null || dataUser === undefined) throw `User not exist ${megaID}`;
       }
 
-      let resultFilterHis = profileFunc.filterHistory(dataUser['inven']);
+      let histories = JSON.parse(await redisClient.getHistoryUser(megaID));
+      if (histories === null || histories === undefined || histories.length <= 0) {
+        let tmpH = await DS.DSGetDataUser(megaID, 'histories');
+        if (tmpH !== null && tmpH !== undefined) {
+          histories = tmpH['history'];
+        }
+      }
+
+      let resultFilterHis = profileFunc.filterHistory(histories);
       rep.send({
         status_code : 2000,
-        lsGift      : resultFilterHis['lsGift'],
-        lsCard      : resultFilterHis['lsCard'],
+        lsGift      : resultFilterHis['ls_gift'],
+        lsCard      : resultFilterHis['ls_card'],
         lsLuckyCode : dataUser['lucky_code'],
         name        : dataUser['name'],
         turn        : dataUser['turn']

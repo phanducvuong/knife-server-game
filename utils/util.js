@@ -39,3 +39,11 @@ exports.chkTimeEvent = (start, end) => {
   }
   return false;
 }
+
+exports.convertTimeToString = (mili) => {
+  let time  = new Date(mili);
+  let month = time.getMonth() + 1;
+  let date  = time.getDate();
+  let year  = time.getFullYear();
+  return `${date}/${month}/${year}`;
+}
