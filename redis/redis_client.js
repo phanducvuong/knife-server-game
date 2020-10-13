@@ -52,6 +52,7 @@ exports.getHistoryUser = (mega_code) => {
     let index = getIndex(mega_code);
     insLsRedis[index].lrange(`${mega_code}_his`, 0, -1, (err, reply) => {
       if (err) return rej('Can not get history user!');
+      if (reply === null || reply === undefined || reply.length <= 0) return resv([]);
       return resv(reply);
     });
   });

@@ -28,7 +28,8 @@ const wheelRoute = async (app, opt) => {
         throw `please reload game to update config!`;
       }
 
-      let dataUser = JSON.parse(await redisClient.getTurnAndInvenUser(megaID));
+      let time      = new Date();
+      let dataUser  = JSON.parse(await redisClient.getTurnAndInvenUser(megaID));
       if (dataUser === null || dataUser === undefined) {
         dataUser = await DS.DSGetDataUser(megaID, 'turn_inven');
         if (dataUser === null || dataUser === undefined) throw `user is not exist`;
@@ -89,11 +90,11 @@ const wheelRoute = async (app, opt) => {
 
       if (item['type'] === 2) {
         let strGenerate = generateStr.getStringGenerate();
-        dataUser['lucky_code'].push(strGenerate);
+        let str         = `${strGenerate}_${time.getTime()}`;
+        dataUser['lucky_code'].push(str);
       } //generate string when user get item "Mã Cơ Hội"
 
       if (item['type'] === 0 || item['type'] === 1) {
-        let time    = new Date();
         let notiStr = `${dataUser['name']}_${item['name']}_${time.getTime()}`;
         redisClient.addNotificaBanner(notiStr);
       } //lưu lại item là quà hoặc thẻ cào để chạy thông báo ở user

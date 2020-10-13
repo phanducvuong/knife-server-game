@@ -186,7 +186,7 @@ exports.filterHistory = (lsHistory) => {
       switch(tmpItem['type']) {
         case 0: {
           lsGift.push({
-            id          : id,
+            id          : tmpItem['id'],
             description : tmpItem['name'],
             time        : timeStr,
             region      : tmpP['region']
@@ -195,7 +195,7 @@ exports.filterHistory = (lsHistory) => {
         }
         case 1: {
           lsCard.push({
-            id          : id,
+            id          : tmpItem['id'],
             description : tmpItem['name'],
             time        : timeStr,
             region      : tmpP['region']
@@ -210,6 +210,16 @@ exports.filterHistory = (lsHistory) => {
     ls_gift : lsGift,
     ls_card : lsCard
   }
+}
+
+exports.convertLsLuckyCode = (lsLuckyCode) => {
+  let filter = [];
+  for (let c of lsLuckyCode) {
+    let tmp     = c.split('_');
+    let timeStr = util.convertTimeToString(parseInt(tmp[1], 10));
+    filter.push({ code: tmp[0], time: timeStr });
+  }
+  return filter;
 }
 
 exports.getNotificaBanner = async () => {

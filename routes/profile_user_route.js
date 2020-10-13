@@ -21,7 +21,7 @@ const profileUserRoute = async (app, opt) => {
         if (dataUser === null || dataUser === undefined) throw `User not exist ${megaID}`;
       }
 
-      let histories = JSON.parse(await redisClient.getHistoryUser(megaID));
+      let histories = await redisClient.getHistoryUser(megaID);
       if (histories === null || histories === undefined || histories.length <= 0) {
         let tmpH = await DS.DSGetDataUser(megaID, 'histories');
         if (tmpH !== null && tmpH !== undefined) {
@@ -29,12 +29,13 @@ const profileUserRoute = async (app, opt) => {
         }
       }
 
-      let resultFilterHis = profileFunc.filterHistory(histories);
+      let resultFilterHis   = profileFunc.filterHistory(histories);
+      let filterLsLuckyCode = profileFunc.convertLsLuckyCode(dataUser['lucky_code']);
       rep.send({
         status_code : 2000,
         lsGift      : resultFilterHis['ls_gift'],
         lsCard      : resultFilterHis['ls_card'],
-        lsLuckyCode : dataUser['lucky_code'],
+        lsLuckyCode : filterLsLuckyCode,
         name        : dataUser['name'],
         turn        : dataUser['turn']
       });

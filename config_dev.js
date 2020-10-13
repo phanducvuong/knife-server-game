@@ -23,8 +23,8 @@ exports.initLsRedis = () => {
   let lsRedis = [];
   lsRedis.push({
     port  : 6379,
-    // host  : '127.0.0.1'
-    host  : '54.151.144.72'
+    host  : '127.0.0.1'
+    // host  : '54.151.144.72'
   });
 
   /**add redis config in here
