@@ -18,22 +18,72 @@
   <section class="content">
   <div class="row">
     <div class="col-xl-12 col-12">
-      <div class="box">
-        <div class="box-header with-border">
-          <h4 class="box-title">THỐNG KÊ</h4>
+      <div class="box" style="box-shadow: 1px 0 10px rgba(0,0,0,0.1);">
+        <div class="box-header with-border" style="text-align: center;">
+          <h4 class="box-title" style="font-size: xx-large; font-weight: bold;">
+            THỐNG KÊ
+          </h4>
         </div>
         <div class="panel-body">
 
+          <!-- Tổng User Unique Tham Gia -->
           <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Tổng Unique User Tham Gian</label>
-            <div class="col-sm-3">
-              <input type="date" id="start-time-event" class="form-control" value="2020-09-12">
+            <label class="col-sm-3 col-form-label">Tổng Unique User Tham Gia</label>
+            <div class="col-sm-2">
+              <input type="date" id="start-date-range-user-unique" class="form-control" value="2020-09-12">
             </div>
             <div class="col-sm-1">
-              <p style="margin-top: 10px; text-align: center;">TO</p>
+              <p style="margin-top: 10px; text-align: center; font-weight: bolder;">TO</p>
             </div>
-            <div class="col-sm-3">
-              <input type="date" id="start-time-event" class="form-control" value="2020-09-12">
+            <div class="col-sm-2">
+              <input type="date" id="end-date-range-user-unique" class="form-control" value="2020-09-12">
+            </div>
+            <div class="col-sm-3 total-statistical">
+              <p id="total-user-unique">1500</p>
+            </div>
+          </div>
+
+          <!-- User Mới Tham Gian Theo Ngày -->
+          <div class="form-group row">
+            <label class="col-sm-3 col-form-label">User Mới Tham Gia Theo Ngày</label>
+            <div class="col-sm-2">
+              <input type="date" id="date-newbie-user" class="form-control" value="2020-09-12">
+            </div>
+            <div class="col-sm-6 total-statistical">
+              <p id="total-newbie-user">1500</p>
+            </div>
+          </div>
+
+          <!-- Số Lượt Quay Tạo Ra Theo Ngày -->
+          <div class="form-group row">
+            <label class="col-sm-3 col-form-label">Số Lượt Quay Tạo Ra Theo Ngày</label>
+            <div class="col-sm-2">
+              <input type="date" id="date-turn-created" class="form-control" value="2020-09-12">
+            </div>
+            <div class="col-sm-6 total-statistical">
+              <p id="total-turn-created">1500</p>
+            </div>
+          </div>
+
+          <!-- Số lượt quay được dùng theo ngày -->
+          <div class="form-group row">
+            <label class="col-sm-3 col-form-label">Số lượt quay được dùng theo ngày</label>
+            <div class="col-sm-2">
+              <input type="date" id="date-turn-used" class="form-control" value="2020-09-12">
+            </div>
+            <div class="col-sm-6 total-statistical">
+              <p id="total-turn-used">1500</p>
+            </div>
+          </div>
+
+          <!-- Số lượt quay còn tồn theo ngày -->
+          <div class="form-group row">
+            <label class="col-sm-3 col-form-label">Số lượt quay còn tồn theo ngày</label>
+            <div class="col-sm-2">
+              <input type="date" id="date-turn-remain" class="form-control" value="2020-09-12">
+            </div>
+            <div class="col-sm-6 total-statistical">
+              <p id="total-turn-remain">1500</p>
             </div>
           </div>
           

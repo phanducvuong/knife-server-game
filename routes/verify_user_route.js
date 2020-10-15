@@ -66,6 +66,8 @@ const verifyUserRoute = async (app, opt) => {
           DS.DSUpdateDataUser(`${result.mega1_code}`, 'turn_inven', dataInitUser);
 
           dataUser = dataInitUser;
+
+          //TODO: User mới tham gia theo ngày (admin tool)
         }
         else {
           dataUser.token  = token;
