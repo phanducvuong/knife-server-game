@@ -40,6 +40,15 @@ exports.chkTimeEvent = (start, end) => {
   return false;
 }
 
+exports.chkUserExistInBlackList = (mega_code, lsBlackList) => {
+  for (let b of lsBlackList) {
+    if (b['mega_code'] === mega_code && b['status'] === 1) {
+      return true;
+    }
+  }
+  return false;
+}
+
 exports.convertTimeToString = (mili) => {
   let time  = new Date(mili);
   let month = time.getMonth() + 1;

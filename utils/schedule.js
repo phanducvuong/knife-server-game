@@ -14,7 +14,7 @@ else {
 exports.scheDataGlobal = () => {
   setInterval(async () => {
     await this.updatePartition();
-  }, 10000);
+  }, 10000000);
 }
 
 exports.scheResetDataUser = async () => {
@@ -73,6 +73,13 @@ exports.updatePartition = async () => {
     config.EVENTS.end   = events['end'];
     config.EVENTS.data  = [];
     config.EVENTS.data.push(...events['data']);
+  }
+
+  //update black list
+  let blackList = await DS.DSGetDataGlobal('admin', 'black_list');
+  if (blackList !== null && blackList !== undefined) {
+    config.BLACK_LIST = [];
+    config.BLACK_LIST.push(...blackList['black_list']);
   }
 }
 

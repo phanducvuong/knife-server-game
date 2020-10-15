@@ -96,6 +96,18 @@ exports.getItemUnlimit = () => {
   return map[rndIndex];
 }
 
+exports.countIdItemRmInLsParition = (idItemRm) => {
+  let count = 0;
+  for (let e of config.ITEM_FILTER) {
+    if (e['id'] === idItemRm) {
+      count++;
+    }
+  }
+
+  return count;
+}
+
+//-------------------------------------------------functional------------------------------------------
 function newLsItemFilterWhenRmBox(idItemRm) {
   let newLsFilter = [];
   newLsFilter.push(...config.ITEM_FILTER);
@@ -116,15 +128,4 @@ function newLsItemFilterWhenRmBox(idItemRm) {
     newLsFilter   : newLsFilter,
     totalPercent  : totalPercent
   }
-}
-
-exports.countIdItemRmInLsParition = (idItemRm) => {
-  let count = 0;
-  for (let e of config.ITEM_FILTER) {
-    if (e['id'] === idItemRm) {
-      count++;
-    }
-  }
-
-  return count;
 }

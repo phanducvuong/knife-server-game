@@ -29,7 +29,7 @@ exports.getTurnAndInvenUser = (mega_code) => {
     const index = getIndex(mega_code);
     const key   = `${mega_code}_turn_inven`;
     insLsRedis[index].get(key, (err, reply) => {
-      if (err) return rej('can not get data user');
+      if (err) return rej('Can not get data user');
       return resv(reply);
     });
   });

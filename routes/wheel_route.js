@@ -39,12 +39,12 @@ const wheelRoute = async (app, opt) => {
 
       let item;
       let resultUpdateLsSpItem;
-      if (config.BLACK_LIST.includes(megaID)) {
+      if (util.chkUserExistInBlackList(megaID, config.BLACK_LIST)) {
 
         //TODO: Tách hàm check idItemRm từ đây và if else phía dưới
         if (idItemRm !== null && idItemRm !== undefined) {
           let tmpIdRm = parseInt(idItemRm, 10);
-          if (isNaN(idItemRm)) throw `${idItemRm} remove box is not a number!`;
+          if (isNaN(tmpIdRm)) throw `${idItemRm} remove box is not a number!`;
 
           let resultUpdateLsSpItem = profileUserFunc.descSpItemInLsSpItemById(dataUser['sp_item'], 0);
           if (resultUpdateLsSpItem['status'] === false) {
@@ -56,7 +56,7 @@ const wheelRoute = async (app, opt) => {
           }
           dataUser['sp_item'] = resultUpdateLsSpItem['lsSpItemUpdate'];
         }
-        item                = wheelFunc.getItemUnlimit();
+        item = wheelFunc.getItemUnlimit();
 
       } //user is have in blacklist
       else if (idItemRm !== null && idItemRm !== undefined) {

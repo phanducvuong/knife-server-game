@@ -1253,6 +1253,166 @@ const setupRoute = async (app, opt) => {
     }
   });
 
+  app.get('/get-config-black-list', async (req, rep) => {
+    try {
+
+      let lsBlackList;
+      let tmp = await DS.DSGetDataGlobal('admin', 'black_list');
+      if (tmp === null || tmp === undefined) lsBlackList = config.BLACK_LIST;
+      else lsBlackList = tmp['black_list'];
+
+      rep.view('/partials/config_black_list_view.ejs', {
+        data  : lsBlackList
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.view('/partials/error_view.ejs', {
+        title_error : err
+      });
+
+    }
+  });
+
+  app.post('/add-user-black-list', async (req, rep) => {
+    try {
+
+      let megaID  = req.body.mega_code;
+      let status  = parseInt(req.body.status, 10);
+
+      if (megaID === null || megaID === undefined || isNaN(status)) throw 'Check info in form!';
+
+      let lsBlackList;
+      let lsBlackDS = await DS.DSGetDataGlobal('admin', 'black_list');
+      if (lsBlackDS === null || lsBlackDS === undefined) lsBlackList = config.BLACK_LIST;
+      else lsBlackList = lsBlackDS['black_list'];
+
+      let tmp = lsBlackList.find(e => { return e['mega_code'] === megaID });
+      if (tmp !== null && tmp !== undefined) throw `${megaID} is exist!`;
+
+      lsBlackList.push({ mega_code: megaID, status: status });
+      DS.DSUpdateDataGlobal('admin', 'black_list', { black_list: lsBlackList });
+
+      rep.send({
+        status_code : 2000,
+        lsUpdate    : lsBlackList
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/edit-user-black-list', async (req, rep) => {
+    try {
+
+      let megaID  = req.body.mega_code.toString().trim();
+      let status  = parseInt(req.body.status, 10);
+
+      if (megaID === null || megaID === undefined || isNaN(status)) throw 'Check info form!';
+
+      let lsBL;
+      let lsBLDS = await DS.DSGetDataGlobal('admin', 'black_list');
+      if (lsBLDS === null || lsBLDS === undefined) lsBL = config.BLACK_LIST;
+      else lsBL = lsBLDS['black_list'];
+
+      let tmpUserFind = lsBL.find(e => { return e['mega_code'] === megaID });
+      if (tmpUserFind === null || tmpUserFind === undefined) throw `${megaID} is not exist!`;
+
+      tmpUserFind['status'] = status;
+      DS.DSUpdateDataGlobal('admin', 'black_list', { black_list: lsBL });
+
+      rep.send({
+        status_code : 2000,
+        lsUpdate    : lsBL
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/get-user-black-list-by-mega-code', async (req, rep) => {
+    try {
+
+      let megaID = req.body.mega_code.toString().trim();
+      if (megaID === null || megaID === undefined) throw 'Unknow mega code!';
+
+      let lsBL;
+      let tmpLsBL = await DS.DSGetDataGlobal('admin', 'black_list');
+      if (tmpLsBL === null || tmpLsBL === undefined) lsBL = config.BLACK_LIST;
+      else lsBL = tmpLsBL['black_list'];
+
+      let tmpUserFind = lsBL.find(e => { return e['mega_code'] === megaID });
+      if (tmpUserFind === null || tmpUserFind === undefined) throw `${megaID} is not exist!`;
+
+      rep.send({
+        status_code : 2000,
+        user        : tmpUserFind
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/del-user-black-list-by-mega-code', async (req, rep) => {
+    try {
+
+      let megaID = req.body.mega_code.toString().trim();
+      if (megaID === null || megaID === undefined) throw 'Unknow mega code!';
+
+      let lsBL;
+      let tmpLsBL = await DS.DSGetDataGlobal('admin', 'black_list');
+      if (tmpLsBL === null || tmpLsBL === undefined) lsBL = config.BLACK_LIST;
+      else lsBL = tmpLsBL['black_list'];
+
+      let tmpUserFind = lsBL.find(e => { return e['mega_code'] === megaID });
+      if (tmpUserFind === null || tmpUserFind === undefined) throw `${megaID} is not exist!`;
+
+      lsBL = lsBL.filter(e => e['mega_code'] !== megaID);
+      DS.DSUpdateDataGlobal('admin', 'black_list', { black_list: lsBL });
+
+      rep.send({
+        status_code : 2000,
+        lsUpdate    : lsBL
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
 }
 
 module.exports = setupRoute;

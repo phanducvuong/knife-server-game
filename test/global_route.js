@@ -12,7 +12,7 @@ else {
   config = require('../config_dev');
 }
 
-const dataInitUser = {
+const dataInitUser  = {
   inven: [],
   turn: 0,
   total_turned: 0,
@@ -26,7 +26,279 @@ const dataInitUser = {
   name: ''
 }
 
+const lsItem        = [
+  {
+      "type": -1,
+      "save": true,
+      "id": 0,
+      "amount": 10,
+      "maximum": -1,
+      "name": "Mất Lượt",
+      "special_item": false,
+      "percent": 1000
+  },
+  {
+      "type": 2,
+      "save": true,
+      "id": 1,
+      "amount": 19,
+      "name": "Mã Cơ Hội",
+      "maximum": -1,
+      "special_item": false,
+      "percent": 15000000
+  },
+  {
+      "maximum": 1500,
+      "name": "5 Triệu",
+      "percent": 1000,
+      "id": 10,
+      "special_item": false,
+      "save": true,
+      "type": 0,
+      "amount": 13
+  },
+  {
+      "name": "15 Triệu",
+      "special_item": false,
+      "percent": 1000,
+      "id": 11,
+      "maximum": 1500,
+      "amount": 12,
+      "save": true,
+      "type": 0
+  },
+  {
+      "special_item": false,
+      "percent": 1000,
+      "type": -1,
+      "id": 13,
+      "save": true,
+      "name": "ALskas",
+      "maximum": 1500,
+      "amount": 0
+  },
+  {
+      "id": 2,
+      "special_item": false,
+      "type": 1,
+      "amount": 11,
+      "name": "Thẻ Cào 10K",
+      "save": true,
+      "maximum": 1500,
+      "percent": 1000
+  },
+  {
+      "type": 1,
+      "maximum": 1500,
+      "name": "Thẻ Cào 20K",
+      "percent": 1000,
+      "save": true,
+      "special_item": false,
+      "id": 3,
+      "amount": 14
+  },
+  {
+      "maximum": 1500,
+      "amount": 11,
+      "save": true,
+      "type": 1,
+      "name": "Thẻ Cào 50K",
+      "id": 4,
+      "special_item": false,
+      "percent": 1000
+  },
+  {
+      "special_item": false,
+      "percent": 1000,
+      "amount": 10,
+      "type": 1,
+      "save": true,
+      "id": 5,
+      "name": "Thẻ Cào 100K",
+      "maximum": 1500
+  },
+  {
+      "amount": 15,
+      "percent": 1000,
+      "special_item": false,
+      "id": 6,
+      "maximum": 1500,
+      "name": "Thẻ Cào 200K",
+      "type": 1,
+      "save": true
+  },
+  {
+      "save": true,
+      "id": 7,
+      "percent": 1000,
+      "amount": 11,
+      "name": "Thẻ Cào 500K",
+      "special_item": false,
+      "maximum": 1500,
+      "type": 1
+  },
+  {
+      "name": "Tivi",
+      "amount": 17,
+      "id": 8,
+      "save": true,
+      "type": 0,
+      "special_item": false,
+      "maximum": 1500,
+      "percent": 1000
+  },
+  {
+      "amount": 43,
+      "type": 0,
+      "name": "Iphone 11",
+      "percent": 1000,
+      "maximum": 1500,
+      "id": 9,
+      "save": true,
+      "special_item": false
+  }
+]
+
+const partition     = {
+  "distane_ani_board": 50,
+  "veloc": 5000,
+  "dura_ani_board": 0.1,
+  "partition": 20,
+  "dura_knife_fly": 0.1,
+  "data": [
+    {
+      "pos": 0,
+      "region": "Matluot",
+      "name": "Mất Lượt",
+      "id": 0
+    },
+    {
+      "id": 8,
+      "name": "Tivi",
+      "region": "Tv",
+      "pos": 1
+    },
+    {
+      "id": 2,
+      "name": "Thẻ Cào 10K",
+      "region": "10k",
+      "pos": 2
+    },
+    {
+      "name": "Thẻ Cào 20K",
+      "region": "20k",
+      "pos": 3,
+      "id": 3
+    },
+    {
+      "region": "50k",
+      "id": 4,
+      "pos": 4,
+      "name": "Thẻ Cào 50K"
+    },
+    {
+      "name": "5 Triệu",
+      "id": 10,
+      "pos": 5,
+      "region": "5Tr"
+    },
+    {
+      "name": "Thẻ Cào 500K",
+      "pos": 6,
+      "id": 7,
+      "region": "500k"
+    },
+    {
+      "region": "200k",
+      "name": "Thẻ Cào 200K",
+      "id": 6,
+      "pos": 11
+    },
+    {
+      "region": "15Tr",
+      "name": "15 Triệu",
+      "pos": 8,
+      "id": 11
+    },
+    {
+      "region": "Ip11",
+      "id": 9,
+      "name": "Iphone 11",
+      "pos": 12
+    },
+    {
+      "region": "20k",
+      "id": 3,
+      "pos": 9,
+      "name": "Thẻ Cào 20K"
+    },
+    {
+      "pos": 13,
+      "region": "Macohoi",
+      "name": "Mã Cơ Hội",
+      "id": 1
+    },
+    {
+      "id": 2,
+      "region": "10k",
+      "pos": 14,
+      "name": "Thẻ Cào 10K"
+    },
+    {
+      "name": "Tivi",
+      "id": 8,
+      "pos": 15,
+      "region": "Tv"
+    },
+    {
+      "id": 6,
+      "region": "200k",
+      "pos": 16,
+      "name": "Thẻ Cào 200K"
+    },
+    {
+      "pos": 17,
+      "id": 0,
+      "region": "Matluot",
+      "name": "Mất Lượt"
+    },
+    {
+      "pos": 18,
+      "id": 5,
+      "region": "100k",
+      "name": "Thẻ Cào 100K"
+    },
+    {
+      "region": "15Tr",
+      "id": 11,
+      "pos": 19,
+      "name": "15 Triệu"
+    },
+    {
+      "id": 3,
+      "region": "20k",
+      "pos": 10,
+      "name": "Thẻ Cào 20K"
+    },
+    {
+      "id": 4,
+      "name": "Thẻ Cào 50K",
+      "region": "50k",
+      "pos": 7
+    }
+  ],
+}
+
 const globalRoute = async (app, opt) => {
+
+  app.get('/quickly-config', async (req, rep) => {
+    for (i of lsItem) {
+      redisClient.initItemBy(i['id']);
+      DS.DSUpdateDataGlobal('items', i['id'], i);
+    }
+    DS.DSUpdateDataGlobal('admin', 'partitions', partition);
+    rep.send('ok');
+  });
 
   app.post('/init-user', async (req, rep) => {
 
@@ -171,6 +443,18 @@ const globalRoute = async (app, opt) => {
       });
 
     }
+  });
+
+  app.get('/get-black-lists', async (req, rep) => {
+    rep.send(config.BLACK_LIST);
+  });
+
+  app.post('/libgdx', async (req, rep) => {
+    let name  = req.body.name;
+    let age   = req.body.age;
+
+    console.log(`name: ${name}   age: ${age}`);
+    rep.send('ok');
   });
 
 }

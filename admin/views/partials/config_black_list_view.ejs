@@ -1,0 +1,252 @@
+<%- include('../layouts/header') %>
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1></h1>
+    </section>
+    
+    <section class="content">
+      <div style="background-color: white;">
+        <table id="table-black-list" class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
+
+          <thead>
+            <tr style="font-weight: bolder;">
+              <td style="font-weight: bolder;">MEGA ID</td>
+              <td style="font-weight: bolder;">STATUS</td>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% for (e of data) { %>
+              <tr>
+                <td><%= e['mega_code'] %></td>
+                <td><%= e['status'] %></td>
+                <td class="text-right">
+                  <div class="btn-group" style="margin-right: 20px;">
+                    <a href="#" class="edt-user-bl" data-id="<%= e['mega_code'] %>" data-toggle="modal"
+                      data-target="#modal-black-list">Edit</a>
+                  </div>
+                  <div class="btn-group">
+                    <a href="#" class="del-user-bl" data-id="<%= e['mega_code'] %>">Delete</a>
+                  </div>
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+
+          <tfoot>
+            <tr>
+              <td colspan="6" style="text-align: center;">
+                <button type="button" id="btn-add-user" data-toggle="modal" data-target="#modal-black-list" class="btn btn-success">ADD USER</button>
+              </td>
+            </tr>
+          </tfoot>
+      </table>
+    </div>
+
+    <!-- THE MODAL ADD MISSION -->
+    <div class="modal" id="modal-black-list">
+      <div class="modal-dialog">
+          <div class="modal-content">
+
+              <!-- Modal Header -->
+              <div class="modal-header">
+                  <h4 class="modal-title" id="title-modal" style="font-weight: bolder">ADD USER</h4>
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+              </div>
+
+              <!-- Modal body -->
+              <div class="modal-body">
+
+                <!-- MEGA ID -->
+                <div class="form-group">
+                  <label class="col-md-4 control-label">ID</label>
+                  <div class="col-md-12">
+                    <input id="input-mega-id" type="text" placeholder="MEGA ID"
+                          class="form-control input-md" required>
+                  </div>
+                </div>
+
+                <!-- STATUS -->
+                <div class="form-group">
+                  <label class="col-md-12 control-label" for="product_name_fr">STATUS</label>
+                  <div class="col-md-12">
+                    <input  id="input-status" placeholder="STATUS"
+                            class="form-control input-md" type="number" step="1">
+                  </div>
+                </div>
+
+              <br>
+              <br>
+
+              <!-- Button -->
+              <!-- 1: edit    0: add -->
+              <div class="form-group">
+                <div class="col-md-12" style="text-align: center;">
+                  <button id="btn-submit" type="submit" name="singlebutton" value="0" class="btn btn-success">SUBMIT</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+      </div>
+    </div>
+
+  </section>
+</div>
+
+<script>
+
+  $(document).ready(() => {
+
+    $('#btn-add-user').click(() => {
+      $('#btn-submit').val('0');
+      console.log($('#btn-submit').val());
+    });
+
+    resetFormUser();
+    delUserByMegaCode();
+    editUserByMegaCode();
+    addOrEditUser();
+
+  });
+
+  function delUserByMegaCode() {
+    $('body').delegate('.del-user-bl', 'click', (event) => {
+      let megaCode  = event.currentTarget.attributes.getNamedItem('data-id').value;
+      if (megaCode === null || megaCode === undefined || megaCode === '') {
+        alert('0. Delete User Failed!');
+        return;
+      }
+
+      $.ajax({
+        url           : 'http://' + window.location.host + '/api/v1/admin/setup/del-user-black-list-by-mega-code',
+        method        : 'POST',
+        contentType   : 'application/json',
+        data          : JSON.stringify({ mega_code: megaCode })
+      })
+        .done((data) => {
+
+          if (data['status_code'] !== 2000) {
+            alert(data['error']);
+            return;
+          }
+          updateTableBlackList(data['lsUpdate']);
+
+        })
+        .fail(() => {});
+    });
+  }
+
+  function editUserByMegaCode() {
+    $('body').delegate('.edt-user-bl', 'click', (event) => {
+      let megaCode = event.currentTarget.attributes.getNamedItem('data-id').value;
+      if (megaCode === null || megaCode === undefined || megaCode === '') {
+        alert('0. User not exist!');
+        return;
+      }
+
+      $.ajax({
+        url           : 'http://' + window.location.host + '/api/v1/admin/setup/get-user-black-list-by-mega-code',
+        method        : 'POST',
+        contentType   : 'application/json; charset=utf-8',
+        data          : JSON.stringify({ mega_code: megaCode })
+      })
+        .done((data) => {
+
+          console.log(data);
+          if (data['status_code'] !== 2000) {
+            alert(data['error']);
+            return;
+          }
+          $('#btn-submit').val('1');
+          setDataUserToForm(data['user']);
+
+        })
+        .fail(() => {});
+    });
+  }
+
+  function addOrEditUser() {
+    $('#btn-submit').click(() => {
+      $('#title-modal').text('ADD USER');
+      let megaCode  = $('#input-mega-id').val();
+      let status    = $('#input-status').val();
+
+      if (megaCode === '' || status === '') {
+        alert('Check info form!');
+        return;
+      }
+
+      let url           = 'http://' + window.location.host + '/api/v1/admin/setup/add-user-black-list';
+      let valBtnSubmit  = $('#btn-submit').val();
+      if (valBtnSubmit === '1') {
+        url = 'http://' + window.location.host + '/api/v1/admin/setup/edit-user-black-list'
+      }
+
+      $.ajax({
+        url           : url,
+        method        : 'POST',
+        contentType   : 'application/json; charset=utf-8',
+        data          : JSON.stringify({
+          mega_code   : megaCode,
+          status      : status
+        })
+      })
+        .done((data) => {
+
+          if (data['status_code'] !== 2000) {
+            alert(data['error']);
+            return;
+          }
+          $("#modal-black-list").modal('hide');
+          updateTableBlackList(data['lsUpdate']);
+
+        })
+        .fail(() => {});
+    });
+  }
+
+  function updateTableBlackList(data) {
+    $('#table-black-list tbody').remove();
+    let markup = '<tbody>';
+    
+    for (e of data) {
+      markup += `
+        <tr>
+          <td>${e['mega_code']}</td>
+          <td>${e['status']}</td>
+          <td class="text-right">
+            <div class="btn-group" style="margin-right: 20px;">
+              <a href="#" class="edt-user-bl" data-id="${e['mega_code']}" data-toggle="modal"
+                data-target="#modal-black-list">Edit</a>
+            </div>
+            <div class="btn-group">
+              <a href="#" class="del-user-bl" data-id="${e['mega_code']}">Delete</a>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+    markup += '</tbody>';
+    $('#table-black-list').append(markup);
+  }
+
+  function setDataUserToForm(data) {
+    $('#input-mega-id').attr('readonly', true);
+    $('#input-mega-id').val(data['mega_code']);
+    $('#input-status').val(data['status']);
+  }
+
+  function resetFormUser() {
+    $(".modal").on("hidden.bs.modal", () => {
+      $('#input-mega-id').val('');
+      $('#input-mega-id').attr('readonly', false);
+      $('#input-status').val('');
+    });
+  }
+
+</script>
+
+<%- include('../layouts/footer') %>
