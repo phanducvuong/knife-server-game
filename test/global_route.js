@@ -457,6 +457,11 @@ const globalRoute = async (app, opt) => {
     rep.send('ok');
   });
 
+  app.get('/transaction', async (req, rep) => {
+    await DS.DSUpdateUniqueUser('MEGA1179268', new Date().getTime());
+    rep.send('ok');
+  });
+
 }
 
 module.exports = globalRoute;

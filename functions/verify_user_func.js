@@ -31,3 +31,19 @@ exports.verifyTokenUser = (token) => {
 
   });
 }
+
+exports.checkDateIsExistIn = (millisecond, lsDateLogin) => {
+  let date1 = new Date(millisecond);
+  let date2 = new Date();
+  for (d of lsDateLogin) {
+    date2.setTime(d);
+    if (date1.getDate()     === date2.getDate()   &&
+        date1.getMonth()    === date2.getMonth()  &&
+        date1.getFullYear() === date2.getFullYear()) {
+
+      return true;
+
+    }
+  }
+  return false;
+}
