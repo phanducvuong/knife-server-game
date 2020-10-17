@@ -99,6 +99,12 @@ exports.getBonusFromMission = (idMission, dataUser) => {
 
   dataUser['turn']     += resultBonus['bonus_turn'];
   dataUser['sp_item']   = resultBonus['lsSpItemUpdate'];
+
+  if (resultBonus['bonus_turn'] > 0) {
+    let strLog = `${idMission}_${dataUser['turn']}_${resultBonus['bonus_turn']}_${new Date().getTime()}`;
+    dataUser['log_get_turn']['from_mission'].push(strLog);
+  }
+
   return {
     status          : true,
     bonusStr        : resultBonus['bonus_str'],

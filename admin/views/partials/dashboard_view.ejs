@@ -39,51 +39,51 @@
               <input type="date" id="end-date-range-user-unique" class="form-control" value="2020-09-12">
             </div>
             <div class="col-sm-3 total-statistical">
-              <p id="total-user-unique">1500</p>
+              <p id="total-user-unique"><%= total_unique_user %></p>
             </div>
           </div>
 
           <!-- User Mới Tham Gian Theo Ngày -->
           <div class="form-group row">
-            <label class="col-sm-3 col-form-label">User Mới Tham Gia Theo Ngày</label>
+            <label class="col-sm-3 col-form-label">Tổng User Mới Tham Gia Theo Ngày</label>
             <div class="col-sm-2">
               <input type="date" id="date-newbie-user" class="form-control" value="2020-09-12">
             </div>
             <div class="col-sm-6 total-statistical">
-              <p id="total-newbie-user">1500</p>
+              <p id="total-newbie-user"><%= total_newbie_user %></p>
             </div>
           </div>
 
           <!-- Số Lượt Quay Tạo Ra Theo Ngày -->
           <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Số Lượt Quay Tạo Ra Theo Ngày</label>
+            <label class="col-sm-3 col-form-label">Tổng Số Lượt Quay Tạo Ra Theo Ngày</label>
             <div class="col-sm-2">
               <input type="date" id="date-turn-created" class="form-control" value="2020-09-12">
             </div>
             <div class="col-sm-6 total-statistical">
-              <p id="total-turn-created">1500</p>
+              <p id="total-turn-created"><%= total_turn_created %></p>
             </div>
           </div>
 
           <!-- Số lượt quay được dùng theo ngày -->
           <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Số lượt quay được dùng theo ngày</label>
+            <label class="col-sm-3 col-form-label">Tổng Số lượt quay được dùng theo ngày</label>
             <div class="col-sm-2">
               <input type="date" id="date-turn-used" class="form-control" value="2020-09-12">
             </div>
             <div class="col-sm-6 total-statistical">
-              <p id="total-turn-used">1500</p>
+              <p id="total-turn-used"><%= total_turn_used %></p>
             </div>
           </div>
 
           <!-- Số lượt quay còn tồn theo ngày -->
           <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Số lượt quay còn tồn theo ngày</label>
+            <label class="col-sm-3 col-form-label">Tổng Số lượt quay còn tồn theo ngày</label>
             <div class="col-sm-2">
               <input type="date" id="date-turn-remain" class="form-control" value="2020-09-12">
             </div>
             <div class="col-sm-6 total-statistical">
-              <p id="total-turn-remain">1500</p>
+              <p id="total-turn-remain"><%= total_turn_remain %></p>
             </div>
           </div>
           
@@ -95,5 +95,34 @@
 </section>
   <!-- /.content -->
 </div>
+
+<script>
+
+  $(document).ready(() => {
+
+    let date = new Date();
+    let strTime = convertDateToStringInputDate(date.getDate(), date.getMonth() + 1, date.getFullYear());
+
+    $('#start-date-range-user-unique').val(strTime);
+    $('#end-date-range-user-unique').val(strTime);
+    $('#date-newbie-user').val(strTime);
+    $('#date-turn-created').val(strTime);
+    $('#date-turn-used').val(strTime);
+    $('#date-turn-remain').val(strTime);
+
+  });
+
+  function convertDateToStringInputDate(date, month, year) {
+    let str = `${year}-`;
+    if (month < 10) str += `0${month}-`;
+    else            str += `${month}-`;
+
+    if (date < 10)  str += `0${date}`;
+    else            str += `${date}`;
+
+    return str;
+  }
+
+</script>
 
 <%- include('../layouts/footer') %>

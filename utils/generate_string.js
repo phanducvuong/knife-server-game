@@ -1,7 +1,9 @@
 exports.getStringGenerate = () => {
   const hrtime        = process.hrtime();
+  // let   microSeconds  = parseInt(((h[0] * 1e6) + (h[1]) * 1e-3));
   let   microSeconds  = parseInt(((hrtime[0] * 1e6) + (hrtime[1]) * 1e-3));
-  let   decimal       = parseInt(microSeconds % 10000000000, 10);
+  let   decimal       = parseInt(microSeconds % 1000000000, 10);
+  console.log(decimal);
 
   let remainder       = 0;
   let deckChar        = '';

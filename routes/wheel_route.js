@@ -103,14 +103,16 @@ const wheelRoute = async (app, opt) => {
         dataUser['events'][1] += 1;
       } //lưu lại lần phóng của user nếu sự kiện đang diễn ra
 
+      let invenUpdate = profileUserFunc.updateInventory(dataUser['inven'], item);
       dataUser['turn']          -= 1;
       dataUser['actions'][1]    += 1;
       dataUser['total_turned']  += 1;
-      dataUser['inven']          = profileUserFunc.updateInventory(dataUser['inven'], item);
+      dataUser['inven']          = invenUpdate['invevntoryUpdate'];
 
       const strHis = JSON.stringify({
         time    : new Date().getTime(),
-        id_item : item['id']
+        id_item : item['id'],
+        amount  : invenUpdate['newAmount']
       });
       redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
       redisClient.updateHistoryUser(megaID, strHis);

@@ -12,18 +12,25 @@ else {
   config = require('../config_dev');
 }
 
-const dataInitUser  = {
-  inven: [],
-  turn: 0,
-  total_turned: 0,
-  token:'',
-  actions: [0, 0],
-  lucky_code: [],
-  sp_item: [],
-  mission: [],
-  phone: '',
-  userID: '',
-  name: ''
+const dataInitUser = {
+  inven         : [],
+  turn          : 0,
+  total_turned  : 0,
+  token         :'',
+  actions       : [0, 0],
+  events        : [0, 0, 0],
+  lucky_code    : [],
+  sp_item       : [],
+  mission       : [],
+  newbie        : [],                         //lưu lại thời gian đăng nhập nếu user lần đầu chơi game
+  date_login    : [],                         //lưu lại ngày đăng nhập (mỗi ngày lưu lại một lần nếu user có vào game ngày hôm đó),
+  log_get_turn  : {                           //lưu lại thời gian và lượt chơi mới sau mỗi lần user làm nhiệm vụ get code hoặc nhập mã code được bonus lượt
+    from_mission    : [],
+    from_enter_code : []
+  },
+  phone         : '',
+  userID        : '',
+  name          : ''
 }
 
 const lsItem        = [
@@ -457,9 +464,12 @@ const globalRoute = async (app, opt) => {
     rep.send('ok');
   });
 
-  app.get('/transaction', async (req, rep) => {
-    await DS.DSUpdateUniqueUser('MEGA1179268', new Date().getTime());
-    rep.send('ok');
+  app.get('/gen-random-string', async (req, rep) => {
+    const hrtime1        = process.hrtime();
+    const hrtime2        = process.hrtime();
+    let str1 = strGenerate.getStringGenerate(hrtime1);
+    let str2 = strGenerate.getStringGenerate(hrtime2);
+    rep.send(`${str1}\n${str2}`);
   });
 
 }

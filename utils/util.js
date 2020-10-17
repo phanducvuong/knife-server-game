@@ -56,3 +56,23 @@ exports.convertTimeToString = (mili) => {
   let year  = time.getFullYear();
   return `${date}/${month}/${year}`;
 }
+
+exports.chkTheSameDate = (milli1, milli2) => {
+  let d1 = new Date(milli1);
+  let d2 = new Date(milli2);
+
+  if (d1.getDate()      === d2.getDate()  &&
+      d1.getMonth()     === d2.getMonth() &&
+      d1.getFullYear()  === d2.getFullYear()) {
+    return true;
+  }
+  return false;
+}
+
+exports.isValidDate = (date) => {
+  let d = new Date(date);
+  if (isNaN(d.getTime())) {
+    return false;
+  }
+  return true;
+}

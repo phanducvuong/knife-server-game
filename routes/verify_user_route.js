@@ -32,8 +32,11 @@ const dataInitUser = {
   lucky_code    : [],
   sp_item       : [],
   mission       : [],
-  newbie        : [],                         //lưu lại thời gian đăng nhập nếu user lần đầu chơi game
-  date_login    : [],                         //lưu lại ngày đăng nhập (mỗi ngày lưu lại một lần nếu user có vào game ngày hôm đó)
+  date_login    : [],                         //lưu lại ngày đăng nhập (mỗi ngày lưu lại một lần nếu user có vào game ngày hôm đó), (login_date[0] là thời gian user mới đăng nhập lần đầu (newbie))
+  log_get_turn  : {                           //lưu lại thời gian và lượt chơi mới sau mỗi lần user làm nhiệm vụ get code hoặc nhập mã code được bonus lượt
+    from_mission    : [],                     //format: {id}_{new-turn-user}_{bonus-turn}_{timestamp}
+    from_enter_code : []                      //format: {id}_{new-turn-user}_{bonus-turn}_{timestamp}
+  },
   phone         : '',
   userID        : '',
   name          : ''
@@ -65,42 +68,27 @@ const verifyUserRoute = async (app, opt) => {
           dataInitUser.phone  = result.phone;
           dataInitUser.userID = result.user_id;
           dataInitUser.name   = result.name;
-
-          dataInitUser.newbie.push(date.getTime());
-          dataInitUser.date_login.push(date.getTime());
-
           dataUser            = dataInitUser;
-          redisClient.updateTurnAndInvenUser(`${result.mega1_code}`, JSON.stringify(dataInitUser));
-          DS.DSUpdateDataUser(`${result.mega1_code}`, 'turn_inven', dataInitUser);
         }
         else {
           dataUser.token  = token;
           dataUser.phone  = result.phone;
           dataUser.userID = result.user_id;
           dataUser.name   = result.name;
-
-          if (!verifyTokenFunc.checkDateIsExistIn(date.getTime(), dataUser['date_login'])) {
-            dataUser['date_login'].push(date.getTime());
-          }
-
-          redisClient.updateTurnAndInvenUser(`${result.mega1_code}`, JSON.stringify(dataUser));
-          DS.DSUpdateDataUser(`${result.mega1_code}`, 'turn_inven', dataUser);
         }
       }
       else {
         dataUser.token  = token;
         dataUser.name   = result.name;
-
-        if (!verifyTokenFunc.checkDateIsExistIn(date.getTime(), dataUser['date_login'])) {
-          dataUser['date_login'].push(date.getTime());
-        }
-
-        redisClient.updateTurnAndInvenUser(`${result.mega1_code}`, JSON.stringify(dataUser));
-        DS.DSUpdateDataUser(`${result.mega1_code}`, 'turn_inven', dataUser);
       }
 
-      let arrNotifica         = await profileFunc.getNotificaBanner();
+      if (!verifyTokenFunc.checkDateIsExistIn(date.getTime(), dataUser['date_login'])) {
+        dataUser['date_login'].push(date.getTime());
+      }
+      redisClient.updateTurnAndInvenUser(`${result.mega1_code}`, JSON.stringify(dataUser));
+      DS.DSUpdateDataUser(`${result.mega1_code}`, 'turn_inven', dataUser);
 
+      let arrNotifica         = await profileFunc.getNotificaBanner();
       let amountSpItem        = 0;
       let resultAmountSpItem  = profileFunc.getSpItemById(dataUser['sp_item'], 0);
       if (resultAmountSpItem['status']) amountSpItem = resultAmountSpItem['amount'];

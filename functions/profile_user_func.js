@@ -17,14 +17,23 @@ exports.updateInventory = (inventory, item) => {
 
       let strItem                    = `${itemExist['item']['id']}_${itemExist['item']['amount']}`;
       inventory[itemExist['index']]  = strItem;
-      return inventory;
+      return {
+        invevntoryUpdate  : inventory,
+        newAmount         : itemExist['item']['amount']
+      };
     }
 
     let strItem = `${item['id']}_1`;
     inventory.push(strItem);
-    return inventory;
+    return {
+      invevntoryUpdate  : inventory,
+      newAmount         : 1
+    };;
   }
-  return inventory;
+  return {
+    invevntoryUpdate  : inventory,
+    newAmount         : -1
+  };;
 }
 
 exports.updateLsLuckyCode = (lsLuckyCode) => {
