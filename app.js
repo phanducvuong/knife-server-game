@@ -56,8 +56,8 @@ app.register(require('point-of-view'), {
 });
 
 app.register(require('fastify-static'), {
-  root: path.join(__dirname, './admin/public'),
-  prefix: '/public/', // optional: default '/'
+  root    : path.join(__dirname, './admin/public'),
+  prefix  : '/public/',                                     // optional: default '/'
 });
 
 app.register(require('./routes/config_route'),            { prefix: '/api/v1/config/get-partition' });
@@ -70,6 +70,7 @@ app.register(require('./routes/profile_user_route'),      { prefix: '/api/v1/pro
 //route admin
 app.register(require('./admin/route/dashboard_route'),    { prefix: '/api/v1/admin/dashboard' });
 app.register(require('./admin/route/setup_route'),        { prefix: '/api/v1/admin/setup' });
+app.register(require('./admin/route/item_route'),         { prefix: '/api/v1/admin/item' });
 
 //route test
 app.register(require('./test/global_route'),              { prefix: '/api/v1/test' });

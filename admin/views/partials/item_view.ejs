@@ -1,0 +1,70 @@
+<%- include('../layouts/header') %>
+
+  <div class="content-wrapper">
+    <section class="content">
+      <div style="background-color: white;">
+        <div class="div-all-item">
+          <label class="sel-item" >Loại Vật Phẩm</label>
+          <select class="sel-item" id="sel-id-item">
+            <% for (d of data) { %>
+              <option value="<%= d['id'] %>"><%= d['name'] %></option>
+            <% } %>
+          </select>
+
+          <label class="time-right">Thời Gian</label>
+          <input type="date" id="time-sel-item" class="col-3 time-right" value="2020-09-12">
+        </div>
+
+        <table id="table" class="footable table table-stripped">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Position</th>
+              <th>Office</th>
+              <th>Age</th>
+              <th>Start date</th>
+              <th>Salary</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Tiger Nixon</td>
+              <td>System Architect</td>
+              <td>Edinburgh</td>
+              <td>61</td>
+              <td>2011/04/25</td>
+              <td>$320,800</td>
+            </tr>
+            <tr>
+              <td>Garrett Winters</td>
+              <td>Accountant</td>
+              <td>Tokyo</td>
+              <td>63</td>
+              <td>2011/07/25</td>
+              <td>$170,750</td>
+            </tr>
+            <tr>
+              <td>Ashton Cox</td>
+              <td>Junior Technical Author</td>
+              <td>San Francisco</td>
+              <td>66</td>
+              <td>2009/01/12</td>
+              <td>$86,000</td>
+            </tr>
+          </tbody>				  
+          <tfoot>
+            <tr>
+              <th>Name</th>
+              <th>Position</th>
+              <th>Office</th>
+              <th>Age</th>
+              <th>Start date</th>
+              <th>Salary</th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+  </div>
+
+<%- include('../layouts/footer') %>

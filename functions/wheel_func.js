@@ -12,8 +12,9 @@ else {
 exports.getRndItem = async () => {
   if (config.ITEM_FILTER.length <= 0) return null;
 
-  let rnd     = Math.round(Math.random() * config.TOTAL_PERCENT) + 1;
-  let percent = 0;
+  let rnd                   = Math.round(Math.random() * config.TOTAL_PERCENT) + 1;
+  let percent               = 0;
+  let isGetAmountItemRedis  = true;
 
   // let tmpItem = config.ITEM_FILTER.find(e => { return e.maximum <= 0 });
   let tmpItem;
@@ -27,7 +28,7 @@ exports.getRndItem = async () => {
 
   if (tmpItem === null || tmpItem === undefined) return null;
   if (tmpItem['maximum'] <= -1) {
-    DS.DSIncreaseAmountItem(tmpItem['id']);
+    // DS.DSIncreaseAmountItem(tmpItem['id']);
     return tmpItem;
   }
 
@@ -35,15 +36,25 @@ exports.getRndItem = async () => {
   if (amountItem === null || amountItem === undefined) {
     let itemDS = await DS.DSGetDataGlobal('items', tmpItem['id']);
     if (itemDS === null || itemFS === undefined) return null;
-    amountItem = itemDS['amount'];
+    amountItem            = itemDS['amount'];
+    isGetAmountItemRedis  = false;
   }
 
   if (amountItem >= tmpItem['maximum']) {
     tmpItem = config.ARR_ITEM.find(e => { return e['maximum'] <= -1 });
   }
 
-  redisClient.incrItemBy(tmpItem['id']);
-  DS.DSIncreaseAmountItem(tmpItem['id']);
+  amountItem        += 1;
+  tmpItem['amount']  = amountItem;
+
+  if (!isGetAmountItemRedis) {
+    redisClient.incrByItemBy(tmpItem['id'], amountItem);
+  }
+  else {
+    redisClient.incrItemBy(tmpItem['id']);
+  }
+  DS.DSUpdateDataGlobal('items', tmpItem['id'], tmpItem);
+  // DS.DSIncreaseAmountItem(tmpItem['id']);
   return tmpItem;
 }
 
@@ -53,8 +64,9 @@ exports.getItemWithRmBox = async (idItemRm) => {
   let result = newLsItemFilterWhenRmBox(idItemRm);
   if (result['newLsFilter'].length <= 0) return null;
 
-  let rnd     = Math.round(Math.random() * result['totalPercent']) + 1;
-  let percent = 0;
+  let rnd                   = Math.round(Math.random() * result['totalPercent']) + 1;
+  let percent               = 0;
+  let isGetAmountItemRedis  = true;
 
   // let tmpItem = config.ITEM_FILTER.find(e => { return e.maximum <= 0 });
   let tmpItem;
@@ -68,7 +80,7 @@ exports.getItemWithRmBox = async (idItemRm) => {
 
   if (tmpItem === null || tmpItem === undefined) return null;
   if (tmpItem['maximum'] <= -1) {
-    DS.DSIncreaseAmountItem(tmpItem['id']);
+    // DS.DSIncreaseAmountItem(tmpItem['id']);
     return tmpItem;
   }
 
@@ -76,15 +88,25 @@ exports.getItemWithRmBox = async (idItemRm) => {
   if (amountItem === null || amountItem === undefined) {
     let itemDS = await DS.DSGetDataGlobal('items', tmpItem['id']);
     if (itemDS === null || itemFS === undefined) return null;
-    amountItem = itemDS['amount'];
+    amountItem            = itemDS['amount'];
+    isGetAmountItemRedis  = false;
   }
 
   if (amountItem >= tmpItem['maximum']) {
     tmpItem = config.ARR_ITEM.find(e => { return e['maximum'] <= -1 });
   }
 
-  redisClient.incrItemBy(tmpItem['id']);
-  DS.DSIncreaseAmountItem(tmpItem['id']);
+  amountItem        += 1;
+  tmpItem['amount']  = amountItem;
+
+  if (!isGetAmountItemRedis) {
+    redisClient.incrByItemBy(tmpItem['id'], amountItem);
+  }
+  else {
+    redisClient.incrItemBy(tmpItem['id']);
+  }
+  DS.DSUpdateDataGlobal('items', tmpItem['id'], tmpItem);
+  // DS.DSIncreaseAmountItem(tmpItem['id']);
   return tmpItem;
 }
 

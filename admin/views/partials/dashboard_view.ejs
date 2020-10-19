@@ -29,16 +29,16 @@
           <!-- Tổng User Unique Tham Gia -->
           <div class="form-group row">
             <label class="col-sm-3 col-form-label">Tổng Unique User Tham Gia</label>
-            <div class="col-sm-2">
+            <div class="col-sm-3">
               <input type="date" id="start-date-range-user-unique" class="form-control" value="2020-09-12">
             </div>
             <div class="col-sm-1">
               <p style="margin-top: 10px; text-align: center; font-weight: bolder;">TO</p>
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-3">
               <input type="date" id="end-date-range-user-unique" class="form-control" value="2020-09-12">
             </div>
-            <div class="col-sm-3 total-statistical">
+            <div class="col-sm-2 total-statistical">
               <p id="total-user-unique"><%= total_unique_user %></p>
             </div>
           </div>
@@ -46,7 +46,7 @@
           <!-- User Mới Tham Gian Theo Ngày -->
           <div class="form-group row">
             <label class="col-sm-3 col-form-label">Tổng User Mới Tham Gia Theo Ngày</label>
-            <div class="col-sm-2">
+            <div class="col-sm-3">
               <input type="date" id="date-newbie-user" class="form-control" value="2020-09-12">
             </div>
             <div class="col-sm-6 total-statistical">
@@ -57,7 +57,7 @@
           <!-- Số Lượt Quay Tạo Ra Theo Ngày -->
           <div class="form-group row">
             <label class="col-sm-3 col-form-label">Tổng Số Lượt Quay Tạo Ra Theo Ngày</label>
-            <div class="col-sm-2">
+            <div class="col-sm-3">
               <input type="date" id="date-turn-created" class="form-control" value="2020-09-12">
             </div>
             <div class="col-sm-6 total-statistical">
@@ -68,7 +68,7 @@
           <!-- Số lượt quay được dùng theo ngày -->
           <div class="form-group row">
             <label class="col-sm-3 col-form-label">Tổng Số lượt quay được dùng theo ngày</label>
-            <div class="col-sm-2">
+            <div class="col-sm-3">
               <input type="date" id="date-turn-used" class="form-control" value="2020-09-12">
             </div>
             <div class="col-sm-6 total-statistical">
@@ -79,7 +79,7 @@
           <!-- Số lượt quay còn tồn theo ngày -->
           <div class="form-group row">
             <label class="col-sm-3 col-form-label">Tổng Số lượt quay còn tồn theo ngày</label>
-            <div class="col-sm-2">
+            <div class="col-sm-3">
               <input type="date" id="date-turn-remain" class="form-control" value="2020-09-12">
             </div>
             <div class="col-sm-6 total-statistical">
@@ -110,7 +110,209 @@
     $('#date-turn-used').val(strTime);
     $('#date-turn-remain').val(strTime);
 
+    getTotalUniqueUserJoinGame();
+    getTotalNewbieUser();
+    getTotalTurnCreate();
+    getTotalTurnUsed();
+    getTotalTurnRemain();
+
   });
+
+  function getTotalUniqueUserJoinGame() {
+    $('#start-date-range-user-unique').change(() => {
+      $('#loading').css('display', 'block');
+      let fromDate  = $('#start-date-range-user-unique').val();
+      let toDate    = $('#end-date-range-user-unique').val();
+      let tmpDateF  = new Date(fromDate);
+      let tmpDateT  = new Date(toDate);
+
+      if (!isNaN(tmpDateF.getTime()) && !isNaN(tmpDateT.getTime()) && tmpDateF.getTime() <= tmpDateT.getTime()) {
+
+        console.log('aaa');
+        $.ajax({
+          url           : 'http://' + window.location.host + '/api/v1/admin/dashboard/get-unique-user',
+          method        : 'POST',
+          contentType   : 'application/json; charset=utf-8',
+          data          : JSON.stringify({
+            from_date   : fromDate,
+            to_date     : toDate
+          })
+        })
+          .done((data) => {
+
+            console.log(data);
+            if (data['status_code'] !== 2000) {
+              alert(data['error']);
+              return;
+            }
+            $('#loading').css('display', 'none');
+            $('#total-user-unique').text(data['result']);
+
+          })
+          .fail(() => {});
+
+      }
+      else
+        $('#loading').css('display', 'none');
+
+    });
+
+    $('#end-date-range-user-unique').change(() => {
+      $('#loading').css('display', 'block');
+      let fromDate  = $('#start-date-range-user-unique').val();
+      let toDate    = $('#end-date-range-user-unique').val();
+      let tmpDateF  = new Date(fromDate);
+      let tmpDateT  = new Date(toDate);
+
+      if (!isNaN(tmpDateF.getTime()) && !isNaN(tmpDateT.getTime()) && tmpDateF.getTime() <= tmpDateT.getTime()) {
+
+        $.ajax({
+          url           : 'http://' + window.location.host + '/api/v1/admin/dashboard/get-unique-user',
+          method        : 'POST',
+          contentType   : 'application/json; charset=utf-8',
+          data          : JSON.stringify({
+            from_date   : fromDate,
+            to_date     : toDate
+          })
+        })
+          .done((data) => {
+
+            if (data['status_code'] !== 2000) {
+              alert(data['error']);
+              return;
+            }
+            $('#loading').css('display', 'none');
+            $('#total-user-unique').text(data['result']);
+
+          })
+          .fail(() => {});
+
+      }
+      else
+        $('#loading').css('display', 'none');
+
+    });
+  }
+
+  function getTotalNewbieUser() {
+    $('#date-newbie-user').change(() => {
+      $('#loading').css('display', 'block');
+      let dateStr = $('#date-newbie-user').val();
+      let tmpDate = new Date(dateStr);
+
+      if (!isNaN(tmpDate.getTime())) {
+        $.ajax({
+          url           : 'http://' + window.location.host + '/api/v1/admin/dashboard/get-newbie-user',
+          method        : 'POST',
+          contentType   : 'application/json; charset=utf-8',
+          data          : JSON.stringify({ date_str: dateStr })
+        })
+          .done((data) => {
+
+            if (data['status_code'] !== 2000) {
+              alert(data['error']);
+              return;
+            }
+            $('#loading').css('display', 'none');
+            $('#total-newbie-user').text(data['result']);
+
+          })
+          .fail(() => {});
+      }
+      else
+        $('#loading').css('display', 'none');
+    });
+  }
+
+  function getTotalTurnCreate() {
+    $('#date-turn-created').change(() => {
+      $('#loading').css('display', 'block');
+      let dateStr = $('#date-turn-created').val();
+      let tmpDate = new Date(dateStr);
+
+      if (!isNaN(tmpDate.getTime())) {
+        $.ajax({
+          url           : 'http://' + window.location.host + '/api/v1/admin/dashboard/get-total-turn-create',
+          method        : 'POST',
+          contentType   : 'application/json; charset=utf-8',
+          data          : JSON.stringify({ date_str: dateStr })
+        })
+          .done((data) => {
+
+            if (data['status_code'] !== 2000) {
+              alert(data['error']);
+              return;
+            }
+            $('#loading').css('display', 'none');
+            $('#total-turn-created').text(data['result']);
+
+          })
+          .fail(() => {});
+      }
+      else
+        $('#loading').css('display', 'none');
+    });
+  }
+
+  function getTotalTurnUsed() {
+    $('#date-turn-used').change(() => {
+      $('#loading').css('display', 'block');
+      let dateStr = $('#date-turn-used').val();
+      let tmpDate = new Date(dateStr);
+
+      if (!isNaN(tmpDate.getTime())) {
+        $.ajax({
+          url           : 'http://' + window.location.host + '/api/v1/admin/dashboard/get-total-turn-used',
+          method        : 'POST',
+          contentType   : 'application/json; charset=utf-8',
+          data          : JSON.stringify({ date_str: dateStr })
+        })
+          .done((data) => {
+
+            if (data['status_code'] !== 2000) {
+              alert(data['error']);
+              return;
+            }
+            $('#loading').css('display', 'none');
+            $('#total-turn-used').text(data['result']);
+
+          })
+          .fail(() => {});
+      }
+      else
+        $('#loading').css('display', 'none');
+    });
+  }
+
+  function getTotalTurnRemain() {
+    $('#date-turn-remain').change(() => {
+      $('#loading').css('display', 'block');
+      let dateStr = $('#date-turn-remain').val();
+      let tmpDate = new Date(dateStr);
+
+      if (!isNaN(tmpDate.getTime())) {
+        $.ajax({
+          url           : 'http://' + window.location.host + '/api/v1/admin/dashboard/get-total-turn-remain',
+          method        : 'POST',
+          contentType   : 'application/json; charset=utf-8',
+          data          : JSON.stringify({ date_str: dateStr })
+        })
+          .done((data) => {
+
+            if (data['status_code'] !== 2000) {
+              alert(data['error']);
+              return;
+            }
+            $('#loading').css('display', 'none');
+            $('#total-turn-remain').text(data['result']);
+
+          })
+          .fail(() => {});
+      }
+      else
+        $('#loading').css('display', 'none');
+    });
+  }
 
   function convertDateToStringInputDate(date, month, year) {
     let str = `${year}-`;

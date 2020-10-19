@@ -20,7 +20,9 @@ const dashboardRoute = async (app, opt) => {
       let totalNewbieUser = dashboardFunc.totalNewbieUserByDate(lsAllMegaID, lsAllDataUser, date.getTime());
       let totalTurnCreate = dashboardFunc.totalTurnCreateByDate(lsAllMegaID, lsAllDataUser, date.getTime());
       let totalTurnUsed   = dashboardFunc.totalTurnUsedByDate(lsAllMegaID, lsHisAllUser, date.getTime());
+
       let totalTurnRemain = totalTurnCreate - totalTurnUsed;
+      if (totalTurnRemain < 0) totalTurnRemain = 0;
 
       rep.view('/partials/dashboard_view.ejs', {
         total_unique_user   : totalUniqueUser,
@@ -35,6 +37,157 @@ const dashboardRoute = async (app, opt) => {
 
       rep.view('/partials/error_view.ejs', {
         title_error : err
+      });
+
+    }
+  });
+
+  app.post('/get-unique-user', async (req, rep) => {
+    try {
+
+      let fromDate    = req.body.from_date.toString().trim();
+      let toDate      = req.body.to_date.toString().trim();
+
+      let tmpDateF    = new Date(fromDate);
+      let tmpDateT    = new Date(toDate);
+      if (isNaN(tmpDateF.getTime()) || isNaN(tmpDateT.getTime()) || 
+          tmpDateF.getTime() > tmpDateT.getTime()) {
+        
+        throw `Invalid date!`;
+      
+      }
+
+      let lsAllMegaID     = await DS.DSGetAllUser();
+      let lsAllDataUser   = await dashboardFunc.getAllDataUser(lsAllMegaID);
+      let totalUniqueUser = dashboardFunc.totalUniqueUserJoinGame(lsAllMegaID, lsAllDataUser, tmpDateF, tmpDateT);
+
+      rep.send({
+        status_code : 2000,
+        result      : totalUniqueUser
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/get-newbie-user', async (req, rep) => {
+    try {
+
+      let date = new Date(req.body.date_str.toString().trim());
+      if (isNaN(date.getTime())) throw 'Invalid date!';
+
+      let lsAllMegaID     = await DS.DSGetAllUser();
+      let lsAllDataUser   = await dashboardFunc.getAllDataUser(lsAllMegaID);
+      let totalNewbieUser = dashboardFunc.totalNewbieUserByDate(lsAllMegaID, lsAllDataUser, date.getTime());
+
+      rep.send({
+        status_code : 2000,
+        result      : totalNewbieUser
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/get-total-turn-create', async (req, rep) => {
+    try {
+
+      let date = new Date(req.body.date_str.toString().trim());
+      if (isNaN(date.getTime())) throw 'Invalid date!';
+
+      let lsAllMegaID     = await DS.DSGetAllUser();
+      let lsAllDataUser   = await dashboardFunc.getAllDataUser(lsAllMegaID);
+      let totalTurnCreate = dashboardFunc.totalTurnCreateByDate(lsAllMegaID, lsAllDataUser, date.getTime());
+
+      rep.send({
+        status_code : 2000,
+        result      : totalTurnCreate
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/get-total-turn-used', async (req, rep) => {
+    try {
+
+      let date = new Date(req.body.date_str.toString().trim());
+      if (isNaN(date.getTime())) throw 'Invalid date!';
+
+      let lsAllMegaID     = await DS.DSGetAllUser();
+      let lsHisAllUser    = await dashboardFunc.getHistoryAllUser(lsAllMegaID);
+      let totalTurnUsed   = dashboardFunc.totalTurnUsedByDate(lsAllMegaID, lsHisAllUser, date.getTime());
+
+      rep.send({
+        status_code : 2000,
+        result      : totalTurnUsed
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/get-total-turn-remain', async (req, rep) => {
+    try {
+
+      let date = new Date(req.body.date_str.toString().trim());
+      if (isNaN(date.getTime())) throw 'Invalid date!';
+
+      let lsAllMegaID = await DS.DSGetAllUser();
+      let [lsAllDataUser, lsHisAllUser] = await Promise.all([
+        dashboardFunc.getAllDataUser(lsAllMegaID),
+        dashboardFunc.getHistoryAllUser(lsAllMegaID)
+      ]);
+
+      let totalTurnCreate = dashboardFunc.totalTurnCreateByDate(lsAllDataUser, lsAllDataUser, date.getTime());
+      let totalTurnUsed   = dashboardFunc.totalTurnUsedByDate(lsAllMegaID, lsHisAllUser, date.getTime());
+      let totalTurnRemain = totalTurnCreate - totalTurnUsed;
+
+      if (totalTurnRemain < 0) totalTurnRemain = 0;
+      rep.send({
+        status_code : 2000,
+        result      : totalTurnRemain
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
       });
 
     }

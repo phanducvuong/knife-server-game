@@ -30,30 +30,28 @@ exports.getHistoryAllUser = async (lsMegaID) => {
 }
 
 exports.totalUniqueUserJoinGame = (lsMegaID, lsDataUser, fromDate, toDate) => {
-  let fromD = new Date(fromDate);
-  let toD   = new Date(toDate);
-
   let total = 0;
   for (let u of lsMegaID) {
     let dataUserFind = lsDataUser.find(e => { return e['mega_code'] === u });
     if (dataUserFind !== null && dataUserFind !== undefined) {
       for (let milli of dataUserFind['data_user']['date_login']) {
-        if (chkTimeInRange(fromD.getTime(), toD.getTime(), milli)) {
+        if (chkTimeInRange(fromDate.getTime(), toDate.getTime(), milli)) {
           total += 1;
           break;
         }
       }
     }
   }
+  // console.log('\n------------------')
   return total;
 }
 
-exports.totalNewbieUserByDate = (lsMegaID, lsDataUser, date) => {
+exports.totalNewbieUserByDate = (lsMegaID, lsDataUser, milli) => {
   let total = 0;
   for (let u of lsMegaID) {
     let dataUserFind = lsDataUser.find(e => { return e['mega_code'] === u });
     if (dataUserFind !== null && dataUserFind !== undefined) {
-      if (util.chkTheSameDate(dataUserFind['data_user']['date_login'][0], date)) {
+      if (util.chkTheSameDate(dataUserFind['data_user']['date_login'][0], milli)) {
         total += 1;
       }
     }
@@ -61,19 +59,19 @@ exports.totalNewbieUserByDate = (lsMegaID, lsDataUser, date) => {
   return total;
 }
 
-exports.totalTurnCreateByDate = (lsMegaID, lsDataUser, date) => {
+exports.totalTurnCreateByDate = (lsMegaID, lsDataUser, milli) => {
   let total = 0;
   for (let u of lsMegaID) {
     let dataUserFind = lsDataUser.find(e => { return e['mega_code'] === u });
     if (dataUserFind !== null && dataUserFind !== undefined) {
-      total += getTotalTurnBy(date, dataUserFind['data_user']['log_get_turn']['from_mission']);
-      total += getTotalTurnBy(date, dataUserFind['data_user']['log_get_turn']['from_enter_code']);
+      total += getTotalTurnBy(milli, dataUserFind['data_user']['log_get_turn']['from_mission']);
+      total += getTotalTurnBy(milli, dataUserFind['data_user']['log_get_turn']['from_enter_code']);
     }
   }
   return total;
 }
 
-exports.totalTurnUsedByDate = (lsMegaID, lsHisAllUser, date) => {
+exports.totalTurnUsedByDate = (lsMegaID, lsHisAllUser, millisecond) => {
   let total = 0;
   for (let u of lsMegaID) {
     let hisUserFind = lsHisAllUser.find(e => { return e['mega_code'] === u });
@@ -81,7 +79,7 @@ exports.totalTurnUsedByDate = (lsMegaID, lsHisAllUser, date) => {
       for (let his of hisUserFind['histories']) {
         let json  = JSON.parse(his);
         let milli = json['time'] + 7 * 3600 * 1000;
-        if (util.chkTheSameDate(date, milli)) {
+        if (util.chkTheSameDate(millisecond, milli)) {
           total += 1;
         }
       }
@@ -93,22 +91,27 @@ exports.totalTurnUsedByDate = (lsMegaID, lsHisAllUser, date) => {
 //-------------------------------functional--------------------------------------
 function chkTimeInRange(fromMilli, toMilli, milli) {
   let changeTimeZoneMilli = milli + 7 * 3600 * 1000;
-  if (fromMilli === toMilli && util.chkTheSameDate(changeTimeZoneMilli, fromMilli)) {
+  let d = new Date(changeTimeZoneMilli);
+  d.setHours(0, 0, 0, 0);
+
+  if (fromMilli === toMilli && util.chkTheSameDate(d.getTime(), fromMilli)) {
+    // console.log(`from: ${fromMilli}]    to: ${toMilli}`);
     return true;
   }
-  else if (changeTimeZoneMilli >= fromMilli && changeTimeZoneMilli <= toMilli) {
-    return true
+  else if (d.getTime() >= fromMilli && d.getTime() <= toMilli) {
+    // console.log(`[change: ${changeTimeZoneMilli}     from: ${fromMilli}]    to: ${toMilli}`);
+    return true;
   }
   return false;
 }
 
-function getTotalTurnBy(date, lsFrom) {
+function getTotalTurnBy(millisecond, lsFrom) {
   let total = 0;
   for (let f of lsFrom) {
     let split = f.split('_');                                 //f = {id}_{new-turn-user}_{bonus-turn}_{timestamp}
     // let milli = parseInt(split[3], 10) + 7 * 3600 * 1000;
     let milli = parseInt(split[3], 10);
-    if (util.chkTheSameDate(milli, date)) {
+    if (util.chkTheSameDate(milli, millisecond)) {
       total += parseInt(split[2], 10);
     }
   }

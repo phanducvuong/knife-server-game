@@ -99,6 +99,11 @@ exports.incrItemBy = (key) => {
   insLsRedis[index].incr(`${key}`);
 }
 
+exports.incrByItemBy = (key, amount) => {
+  const index = parseInt(key, 10) % config.LENGTH_REDIS;
+  insLsRedis[index].incrby(`${key}`, amount);
+}
+
 exports.getAmountItem = (key) => {
   return new Promise((resv, rej) => {
     const index = parseInt(key, 10) % config.LENGTH_REDIS;
