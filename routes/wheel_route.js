@@ -110,9 +110,10 @@ const wheelRoute = async (app, opt) => {
       dataUser['inven']          = invenUpdate['invevntoryUpdate'];
 
       const strHis = JSON.stringify({
-        time    : new Date().getTime(),
-        id_item : item['id'],
-        amount  : invenUpdate['newAmount']
+        time      : new Date().getTime(),
+        id_item   : item['id'],
+        amount    : invenUpdate['newAmount'],
+        user_name : dataUser['name']
       });
       redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
       redisClient.updateHistoryUser(megaID, strHis);

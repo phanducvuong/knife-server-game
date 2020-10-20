@@ -60,7 +60,7 @@ exports.ARR_ID_ITEM_BL            = [];     //danh sách id item dành cho user 
 
 exports.BLACK_LIST                = [
   {
-    mega_code : 'MEGA1179262', status : 1
+    mega_code : 'MEGA1179262', status : 0
   }
 ];
 

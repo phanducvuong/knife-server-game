@@ -128,7 +128,6 @@
 
       if (!isNaN(tmpDateF.getTime()) && !isNaN(tmpDateT.getTime()) && tmpDateF.getTime() <= tmpDateT.getTime()) {
 
-        console.log('aaa');
         $.ajax({
           url           : 'http://' + window.location.host + '/api/v1/admin/dashboard/get-unique-user',
           method        : 'POST',
@@ -140,7 +139,6 @@
         })
           .done((data) => {
 
-            console.log(data);
             if (data['status_code'] !== 2000) {
               alert(data['error']);
               return;

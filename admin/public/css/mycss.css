@@ -132,3 +132,23 @@ input::-webkit-inner-spin-button {
   border-color: #8080802b;
   border-radius: 5px;
 }
+
+.btn-log {
+  width: 60px;
+  position: relative;
+  top: 17%;
+}
+
+#btn-log-excel {
+  left: 15px;
+}
+#btn-log-psd {
+  left: 20px;
+}
+
+#cap-detail-table {
+  caption-side: top;
+  text-align: center;
+  font-size: large;
+  font-weight: bold;
+}

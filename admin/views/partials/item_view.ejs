@@ -12,59 +12,201 @@
           </select>
 
           <label class="time-right">Thời Gian</label>
-          <input type="date" id="time-sel-item" class="col-3 time-right" value="2020-09-12">
+          <input style="outline-style: none;" type="date" id="time-sel-item" class="col-3 time-right" value="2020-09-12">
         </div>
 
-        <table id="table" class="footable table table-stripped">
+        <table id="total-amount-item-table" class="footable table table-stripped">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Position</th>
-              <th>Office</th>
-              <th>Age</th>
-              <th>Start date</th>
-              <th>Salary</th>
+              <th style="font-weight: bold;">ID</th>
+              <th style="font-weight: bold;">NAME</th>
+              <th style="font-weight: bold;">TYPE</th>
+              <th style="font-weight: bold;">TOTAL</th>
             </tr>
           </thead>
           <tbody>
+          </tfoot>
+        </table>
+      </div>
+
+      <h2 style="margin-top: 50px;">DETAILS</h2>
+      <div style="background-color: white;">
+        <div class="div-all-item">
+
+          <button class="btn btn-primary btn-log" id="btn-log-excel">EXCEL</button>
+          <button class="btn btn-primary btn-log" id="btn-log-psd">PSD</button>
+
+          <label class="time-right">Search</label>
+          <input style="outline-style: none;" type="text" placeholder="megaID/username" id="search-detail" class="col-3 time-right" value="">
+        </div>
+        
+        <table id="details-table" class="footable table table-stripped">
+          <caption style="display: none;" id="cap-detail-table">Danh Sách User Trúng Vật Phẩm</caption>
+          <thead>
             <tr>
-              <td>Tiger Nixon</td>
-              <td>System Architect</td>
-              <td>Edinburgh</td>
-              <td>61</td>
-              <td>2011/04/25</td>
-              <td>$320,800</td>
+              <th style="font-weight: bold;">MEGA ID</th>
+              <th style="font-weight: bold;">USERNAME</th>
+              <th style="font-weight: bold;">TIME</th>
             </tr>
-            <tr>
-              <td>Garrett Winters</td>
-              <td>Accountant</td>
-              <td>Tokyo</td>
-              <td>63</td>
-              <td>2011/07/25</td>
-              <td>$170,750</td>
-            </tr>
-            <tr>
-              <td>Ashton Cox</td>
-              <td>Junior Technical Author</td>
-              <td>San Francisco</td>
-              <td>66</td>
-              <td>2009/01/12</td>
-              <td>$86,000</td>
-            </tr>
-          </tbody>				  
+          </thead>
+          <tbody>
+          </tbody>
           <tfoot>
-            <tr>
-              <th>Name</th>
-              <th>Position</th>
-              <th>Office</th>
-              <th>Age</th>
-              <th>Start date</th>
-              <th>Salary</th>
-            </tr>
           </tfoot>
         </table>
       </div>
     </section>
   </div>
+
+  <script>
+    
+    $(document).ready(() => {
+
+      let date    = new Date();
+      let strTime = convertDateToStringInputDate(date.getDate(), date.getMonth() + 1, date.getFullYear());
+      $('#time-sel-item').val(strTime);
+
+      let idItem  = $('#sel-id-item').val();
+      let dateStr = $('#time-sel-item').val();
+      callApiGetTotalAmountItem(idItem, dateStr);
+
+      searchDetail();
+      exportDataTableToExcel();
+
+      $('#sel-id-item').on('change', () => {
+        let idItem  = $('#sel-id-item').val();
+        let dateStr = $('#time-sel-item').val();
+        callApiGetTotalAmountItem(idItem, dateStr);
+      });
+
+      $('#time-sel-item').on('change', () => {
+        let idItem  = $('#sel-id-item').val();
+        let dateStr = $('#time-sel-item').val();
+        callApiGetTotalAmountItem(idItem, dateStr);
+      });
+
+    });
+
+    function searchDetail() {
+      $('#search-detail').on('keyup', () => {
+        let txtSearch = $('#search-detail').val().toLowerCase();
+        let tr        = $('#details-table tbody tr');
+
+        for (let i=0; i<tr.length; i++) {
+          let isMatch = false;
+          for (let t of tr[i].getElementsByTagName('td')) {
+            if (t.textContent.toLowerCase().includes(txtSearch)) {
+              isMatch = true;
+              break;
+            }
+          }
+          
+          if (isMatch) {
+            tr[i].style.display = '';
+          }
+          else {
+            tr[i].style.display = 'none';
+          }
+        }
+      });
+    }
+
+    function callApiGetTotalAmountItem(idItem, dateStr) {
+      $('#loading').css('display', 'block');
+      $.ajax({
+        url           : 'http://' + window.location.host + '/api/v1/admin/item/get-total-amount-item-by-id',
+        method        : "POST",
+        contentType   : 'application/json; charset=utf-8',
+        data          : JSON.stringify({
+          id_item     : idItem,
+          date_str    : dateStr
+        })
+      })
+        .done((data) => {
+          
+          if (data['status_code'] !== 2000) {
+            alert(data['error']);
+            $('#loading').css('display', 'none');
+            return;
+          }
+          $('#loading').css('display', 'none');
+          setDataTotalAmountItemTable(data['item'], data['total']);
+          setDataDetailItemTable(data['details']);
+
+        })
+        .fail(() => {});
+    }
+
+    function setDataDetailItemTable(data) {         //data is json obj; data = [{mega_code: string, data: [json obj]}]
+      $('#details-table tbody').remove();
+
+      let markup = '<tbody>';
+      for (d of data) {
+        let megaID = d['mega_code'];
+        for (h of d['data']) {
+          let strTime = convertMillisecondToStrDate(h['time']);
+          markup += `
+            <tr>
+              <td>${megaID}</td>
+              <td>${h['user_name']}</td>
+              <td>${strTime}</td>
+            </tr>
+          `;
+        }
+      }
+      $('#details-table').append(markup);
+    }
+
+    function setDataTotalAmountItemTable(data, total) {
+      $('#total-amount-item-table tbody').remove();
+
+      let tmpTypeStr = 'Thẻ Cào';
+      if (data['type'] === 0) {
+        tmpTypeStr = 'Quà';
+      }
+
+      let markup = `
+        <tbody>
+          <tr>
+            <td>${data['id']}</td>
+            <td>${data['name']}</td>
+            <td>${tmpTypeStr}</td>
+            <td>${total}</td>
+          </tr>
+        </tbody>
+      `;
+      $('#total-amount-item-table').append(markup);
+    }
+
+    function convertDateToStringInputDate(date, month, year) {
+      let str = `${year}-`;
+      if (month < 10) str += `0${month}-`;
+      else            str += `${month}-`;
+
+      if (date < 10)  str += `0${date}`;
+      else            str += `${date}`;
+
+      return str;
+    }
+
+    function convertMillisecondToStrDate(millisecond) {
+      let d = new Date(millisecond + 7 * 3600 * 1000);
+      return `${d.getDate()}-${d.getMonth()}-${d.getFullYear()}`;
+    }
+
+    function exportDataTableToExcel() {
+      $('#btn-log-excel').click(() => {
+        let uri     = 'data:application/vnd.ms-excel;base64,'
+        , template  = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+        , base64    = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+        , format    = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+        
+        let table = $('#details-table');
+        let ctx = {worksheet: name || 'Worksheet', table: table[0].innerHTML};
+        window.location.href = uri + base64(format(template, ctx));
+      });
+    }
+
+  </script>
 
 <%- include('../layouts/footer') %>
