@@ -33,9 +33,9 @@ exports.getRndItem = async () => {
   }
 
   let amountItem = await redisClient.getAmountItem(tmpItem['id']);
-  if (amountItem === null || amountItem === undefined) {
+  if (amountItem === null || amountItem === undefined || isNaN(amountItem)) {
     let itemDS = await DS.DSGetDataGlobal('items', tmpItem['id']);
-    if (itemDS === null || itemFS === undefined) return null;
+    if (itemDS === null || itemDS === undefined) return null;
     amountItem            = itemDS['amount'];
     isGetAmountItemRedis  = false;
   }
@@ -85,9 +85,9 @@ exports.getItemWithRmBox = async (idItemRm) => {
   }
 
   let amountItem = await redisClient.getAmountItem(tmpItem['id']);
-  if (amountItem === null || amountItem === undefined) {
+  if (amountItem === null || amountItem === undefined || isNaN(amountItem)) {
     let itemDS = await DS.DSGetDataGlobal('items', tmpItem['id']);
-    if (itemDS === null || itemFS === undefined) return null;
+    if (itemDS === null || itemDS === undefined) return null;
     amountItem            = itemDS['amount'];
     isGetAmountItemRedis  = false;
   }
