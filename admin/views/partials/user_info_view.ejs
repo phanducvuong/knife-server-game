@@ -1,0 +1,210 @@
+<%- include('../layouts/header') %>
+
+  <div class="content-wrapper">
+    <section class="content-header">
+      <h1>USERS PROFILE</h1>
+    </section>
+    
+    <section class="content">
+      <div style="background-color: white;">
+        <div class="div-all-item">
+          <label class="time-right">Search</label>
+          <input style="outline-style: none;" type="text" placeholder="megaID/username" id="search-user" class="col-3 time-right" value="">
+        </div>
+
+        <table id="user-info-table" class="footable table table-stripped">
+          <thead>
+            <tr>
+              <th style="font-weight: bold;">MEGA ID</th>
+              <th style="font-weight: bold;">USERNAME</th>
+              <th style="font-weight: bold;">PHONE</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for(d of data) { %>
+              <tr>
+                <td><%= d['mega_id'] %></td>
+                <td><%= d['user_name'] %></td>
+                <td><%= d['phone'] %></td>
+                <td class="text-right">
+                  <div class="btn-group">
+                      <a href="#" class="edtPartition" data-id="<%= d['mega_id'] %>" data-toggle="modal"
+                          data-target="#modal-detail-user-info">Detail</a>
+                  </div>
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+          <tfoot>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="modal fade" id="modal-detail-user-info">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content" style="border-radius: .3rem;">
+            <div class="modal-header">
+              <h4>Detail User Info</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+              
+              <div class="container" style="text-align: center;">
+                <!-- <div class="form-group row"> -->
+                  <button class="col-sm-2 btn-tab active" id="btn-tab-turn">Lượt Chơi</button>
+                  <button class="col-sm-2 btn-tab" id="btn-tab-gift">Quà</button>
+                  <button class="col-sm-2 btn-tab" id="btn-tab-tele-card" style="font-size: 12.8px;">Thẻ Điện Thoại</button>
+                  <button class="col-sm-2 btn-tab" id="btn-tab-mission">Nhiệm Vụ</button>
+                <!-- </div> -->
+              </div>
+
+              <!-- search and range time -->
+              <div class="div-all-item" style="margin-top: 30px;">
+                <div class="form-group row">
+                  <label class="col-sm-1 col-form-lable" style="margin: auto 0; padding-left: 30px;">FROM</label>
+                  <div class="col-sm-3">
+                    <input type="date" id="tab-from-date" class="form-control">
+                  </div>
+
+                  <label class="col-sm-1 col-form-lable" style="margin: auto 0; padding-left: 50px;">TO</label>
+                  <div class="col-sm-3">
+                    <input type="date" id="tab-to-date" class="form-control" value="2020-12-23">
+                  </div>
+
+                  <label class="col-sm-1 col-form-lable" style="margin: auto 0; padding-left: 20px;">Search</label>
+                  <div class="col-sm-3">
+                    <input type="text" id="search-tab-content-table" placeholder="Search" class="form-control">
+                  </div>
+                  
+                </div>
+              </div>
+
+              <!-- tab content play turning -->
+              <table id="tab-content-table" class="footable table table-stripped">
+                <thead>
+                  <tr>
+                    <th style="font-weight: bold;">MEGA ID</th>
+                    <th style="font-weight: bold;">USERNAME</th>
+                    <th style="font-weight: bold;">PHONE</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% for(d of data) { %>
+                    <tr>
+                      <td><%= d['mega_id'] %></td>
+                      <td><%= d['user_name'] %></td>
+                      <td><%= d['phone'] %></td>
+                      <td class="text-right">
+                        <div class="btn-group">
+                            <a href="#" class="edtPartition" data-id="<%= d['mega_id'] %>" data-toggle="modal"
+                                data-target="#modal-detail-user-info">Detail</a>
+                        </div>
+                      </td>
+                    </tr>
+                  <% } %>
+                </tbody>
+                <tfoot>
+                </tfoot>
+              </table>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </div>
+
+  <script>
+    
+    $(document).ready(() => {
+
+      $(".modal").on("hidden.bs.modal", () => {
+        $('#tab-from-date').val('');
+        $('#tab-to-date').val('');
+      });
+
+      liveSearchTableUserInfo();
+      eventBtnTabClick();
+
+    });
+
+    function eventBtnTabClick() {
+      $('#btn-tab-turn').click(() => {
+        let value = $('#btn-tab-turn').attr('class');
+        if (value.includes('active')) return;
+
+        removeAndAddClassActiveBtnTab('#btn-tab-turn');
+      });
+
+      $('#btn-tab-gift').click(() => {
+        let value = $('#btn-tab-gift').attr('class');
+        if (value.includes('active')) return;
+        
+        removeAndAddClassActiveBtnTab('#btn-tab-gift');
+      });
+
+      $('#btn-tab-tele-card').click(() => {
+        let value = $('#btn-tab-tele-card').attr('class');
+        if (value.includes('active')) return;
+
+        removeAndAddClassActiveBtnTab('#btn-tab-tele-card');
+      });
+
+      $('#btn-tab-mission').click(() => {
+        let value = $('#btn-tab-mission').attr('class');
+        if (value.includes('active')) return;
+
+        removeAndAddClassActiveBtnTab('#btn-tab-mission');
+      });
+    }
+
+    function liveSearchTableUserInfo() {
+      $('#search-user').on('keyup', () => {
+        let txtSearch = $('#search-user').val().toLowerCase();
+        let tr        = $('#user-info-table tbody tr');
+
+        let isMatch = false;
+        for (let i=0; i<tr.length; i++) {
+          isMatch = false;
+          for (let t of tr[i].getElementsByTagName('td')) {
+            if (t.textContent.toLowerCase().includes(txtSearch)) {
+              isMatch = true;
+              break;
+            }
+          }
+          
+          if (isMatch) {
+            tr[i].style.display = '';
+          }
+          else {
+            tr[i].style.display = 'none';
+          }
+        }
+      });
+    }
+
+    function removeAndAddClassActiveBtnTab(key) {
+      $('#btn-tab-turn').removeClass('active');
+      $('#btn-tab-gift').removeClass('active');
+      $('#btn-tab-tele-card').removeClass('active');
+      $('#btn-tab-mission').removeClass('active');
+
+      $(key).addClass('active');
+    }
+
+    function convertDateToStringInputDate(date, month, year) {
+      let str = `${year}-`;
+      if (month < 10) str += `0${month}-`;
+      else            str += `${month}-`;
+
+      if (date < 10)  str += `0${date}`;
+      else            str += `${date}`;
+
+      return str;
+    }
+
+  </script>
+
+<%- include('../layouts/footer') %>

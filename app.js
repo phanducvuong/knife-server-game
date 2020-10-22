@@ -71,6 +71,7 @@ app.register(require('./routes/profile_user_route'),      { prefix: '/api/v1/pro
 app.register(require('./admin/route/dashboard_route'),    { prefix: '/api/v1/admin/dashboard' });
 app.register(require('./admin/route/setup_route'),        { prefix: '/api/v1/admin/setup' });
 app.register(require('./admin/route/item_route'),         { prefix: '/api/v1/admin/item' });
+app.register(require('./admin/route/user_info_route'),    { prefix: '/api/v1/admin/user-info' });
 
 //route test
 app.register(require('./test/global_route'),              { prefix: '/api/v1/test' });
@@ -81,7 +82,7 @@ schedule.scheDataGlobal();
 
 schedule.updatePartition()
         .then(() => {
-          const PORT = process.env.PORT || 8080;
+          const PORT = process.env.PORT || 3000;
           app.listen(PORT, '0.0.0.0', async (err, address) => {
           
             console.log(`app listening on port ${PORT}`);

@@ -152,3 +152,24 @@ input::-webkit-inner-spin-button {
   font-size: large;
   font-weight: bold;
 }
+
+.btn-tab {
+  white-space: normal;
+  overflow-wrap: break-word;
+  border-style: none;
+  height: 40px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.btn-tab:focus {
+  outline: none;
+}
+.btn-tab:hover {
+  background-color: #b5b7b6;
+  color: white;
+}
+
+.active {
+  background-color: #b5b7b6;
+  color: white;
+}

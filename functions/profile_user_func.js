@@ -126,57 +126,6 @@ exports.getBonusFromMissionOrEvent = (obj, dataUser) => {
   }
 }
 
-// exports.filterHistory = (lsInventory) => {
-//   let lsGift  = [];
-//   let lsCard  = [];
-
-//   for (let e of lsInventory) {
-//     let tmp     = e.split('_');
-//     let id      = parseInt(tmp[0], 10);
-//     let amount  = parseInt(tmp[1], 10);
-
-//     if (!isNaN(id) && !isNaN(amount)) {
-//       let tmpItem = config.ARR_ITEM.find(e => { return e['id'] === id });
-//       if (tmpItem !== null && tmpItem !== undefined) {
-
-//         let tmpP = config.PARTITIONS.data.find(ee => { return ee['id'] === tmpItem['id']});
-//         if (tmpP === null || tmpP === undefined) {
-//           return {
-//             lsGift  : lsGift,
-//             lsCard  : lsCard
-//           };
-//         }
-//         switch(tmpItem['type']) {
-//           case 0: {
-//             lsGift.push({
-//               id          : id,
-//               description : tmpItem['name'],
-//               amount      : amount,
-//               region      : tmpP['region']
-//             });
-//             break;
-//           }
-//           case 1: {
-//             lsCard.push({
-//               id          : id,
-//               description : tmpItem['name'],
-//               amount      : amount,
-//               region      : tmpP['region']
-//             });
-//             break;
-//           }
-//         }
-        
-//       }
-//     }
-//   }
-
-//   return {
-//     lsGift  : lsGift,
-//     lsCard  : lsCard
-//   }
-// }
-
 exports.filterHistory = (lsHistory) => {
   let lsGift = [];
   let lsCard = [];

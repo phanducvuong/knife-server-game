@@ -49,12 +49,15 @@ exports.chkUserExistInBlackList = (mega_code, lsBlackList) => {
   return false;
 }
 
-exports.convertTimeToString = (mili) => {
-  let time  = new Date(mili);
-  let month = time.getMonth() + 1;
-  let date  = time.getDate();
-  let year  = time.getFullYear();
-  return `${date}/${month}/${year}`;
+exports.convertTimeToString = (milli) => {
+  let time    = new Date(milli + 7 * 3600 * 1000);
+  let month   = time.getMonth() + 1;
+  let date    = time.getDate();
+  let year    = time.getFullYear();
+  let hour    = time.getHours();
+  let minute  = time.getMinutes();
+  let second  = time.getSeconds();
+  return `${date}/${month}/${year}  ${hour}:${minute}:${second}`;
 }
 
 exports.chkTheSameDate = (milli1, milli2) => {
