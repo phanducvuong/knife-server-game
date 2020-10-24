@@ -28,7 +28,7 @@
                 <td><%= d['phone'] %></td>
                 <td class="text-right">
                   <div class="btn-group">
-                      <a href="#" class="edtPartition" data-id="<%= d['mega_id'] %>" data-toggle="modal"
+                      <a href="#" class="btn-detail" data-id="<%= d['mega_id'] %>" data-toggle="modal"
                           data-target="#modal-detail-user-info">Detail</a>
                   </div>
                 </td>
@@ -52,7 +52,7 @@
               
               <div class="container" style="text-align: center;">
                 <!-- <div class="form-group row"> -->
-                  <button class="col-sm-2 btn-tab active" id="btn-tab-turn">Lượt Chơi</button>
+                  <button class="col-sm-2 btn-tab actived" id="btn-tab-turn">Lượt Chơi</button>
                   <button class="col-sm-2 btn-tab" id="btn-tab-gift">Quà</button>
                   <button class="col-sm-2 btn-tab" id="btn-tab-tele-card" style="font-size: 12.8px;">Thẻ Điện Thoại</button>
                   <button class="col-sm-2 btn-tab" id="btn-tab-mission">Nhiệm Vụ</button>
@@ -90,19 +90,6 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <% for(d of data) { %>
-                    <tr>
-                      <td><%= d['mega_id'] %></td>
-                      <td><%= d['user_name'] %></td>
-                      <td><%= d['phone'] %></td>
-                      <td class="text-right">
-                        <div class="btn-group">
-                            <a href="#" class="edtPartition" data-id="<%= d['mega_id'] %>" data-toggle="modal"
-                                data-target="#modal-detail-user-info">Detail</a>
-                        </div>
-                      </td>
-                    </tr>
-                  <% } %>
                 </tbody>
                 <tfoot>
                 </tfoot>
@@ -123,38 +110,72 @@
       $(".modal").on("hidden.bs.modal", () => {
         $('#tab-from-date').val('');
         $('#tab-to-date').val('');
+        $('#search-tab-content-table').val('');
+
+        removeAndAddClassActiveBtnTab('#btn-tab-turn');
       });
 
+      eventBtnDetail();
       liveSearchTableUserInfo();
       eventBtnTabClick();
 
     });
 
+    function eventBtnDetail() {
+      $('body').delegate('.btn-detail', 'click', (event) => {
+        let value = event.currentTarget.attributes.getNamedItem('data-id').value;
+        if (value === null || value === undefined) {
+          alert('Failed!');
+          return;
+        }
+
+        window.megaID = value;
+        $.ajax({
+          url             : 'http://' + window.location.host + '/api/v1/admin/user-info/detail',
+          method          : 'POST',
+          contentType     : 'application/json; charset=utf-8',
+          data            : JSON.stringify({ mega_id: value })
+        })
+          .done((data) => {
+
+            if (data['status_code'] !== 2000) {
+              alert(data['error']);
+              return;
+            }
+            window.detail_ls_gift         = data['detail_ls_gift'];
+            window.detail_ls_tele_card    = data['detail_ls_tele_card'];
+            window.detail_get_bonus_turn  = data['detail_get_bonus_turn'];
+
+          })
+          .fail(() => {});
+      });
+    }
+
     function eventBtnTabClick() {
       $('#btn-tab-turn').click(() => {
         let value = $('#btn-tab-turn').attr('class');
-        if (value.includes('active')) return;
+        if (value.includes('actived')) return;
 
         removeAndAddClassActiveBtnTab('#btn-tab-turn');
       });
 
       $('#btn-tab-gift').click(() => {
         let value = $('#btn-tab-gift').attr('class');
-        if (value.includes('active')) return;
+        if (value.includes('actived')) return;
         
         removeAndAddClassActiveBtnTab('#btn-tab-gift');
       });
 
       $('#btn-tab-tele-card').click(() => {
         let value = $('#btn-tab-tele-card').attr('class');
-        if (value.includes('active')) return;
+        if (value.includes('actived')) return;
 
         removeAndAddClassActiveBtnTab('#btn-tab-tele-card');
       });
 
       $('#btn-tab-mission').click(() => {
         let value = $('#btn-tab-mission').attr('class');
-        if (value.includes('active')) return;
+        if (value.includes('actived')) return;
 
         removeAndAddClassActiveBtnTab('#btn-tab-mission');
       });
@@ -186,12 +207,12 @@
     }
 
     function removeAndAddClassActiveBtnTab(key) {
-      $('#btn-tab-turn').removeClass('active');
-      $('#btn-tab-gift').removeClass('active');
-      $('#btn-tab-tele-card').removeClass('active');
-      $('#btn-tab-mission').removeClass('active');
+      $('#btn-tab-turn').removeClass('actived');
+      $('#btn-tab-gift').removeClass('actived');
+      $('#btn-tab-tele-card').removeClass('actived');
+      $('#btn-tab-mission').removeClass('actived');
 
-      $(key).addClass('active');
+      $(key).addClass('actived');
     }
 
     function convertDateToStringInputDate(date, month, year) {
@@ -203,6 +224,10 @@
       else            str += `${date}`;
 
       return str;
+    }
+
+    function addDataTabTurn() {
+      
     }
 
   </script>

@@ -30,15 +30,26 @@ exports.getDetailInfoUser = async (megaID) => {
     DS.DSGetDataUser(megaID, 'turn_inven')
   ]);
 
-  if (lsHistory === null || lsHistory === undefined || lsHistory['history'] === null || lsHistory['history'] === undefined ||
-      dataUser  === null || dataUser  === undefined) {
-    return { status: false, msg: 'Get Data User Failed!' };
+  if (dataUser === null || dataUser === undefined) {
+    return { status: false, msg: 'Data User Not Exist!' };
   }
 
-  let detainGetBonusTurn      = getDetailBonusTurn(dataUser['log_get_turn']['from_mission'], dataUser['log_get_turn']['from_enter_code']);
-  let detailGiftsAndTeleCards = getDetailGiftAndTeleCard(lsHistory['history']);
-  let lsTeleCard          = [];
-  let missionComplete     = [];
+  let detailGetBonusTurn;
+  let detailGiftsAndTeleCards;
+  if (lsHistory === null || lsHistory === undefined) {
+    detailGiftsAndTeleCards = getDetailGiftAndTeleCard([]);
+  }
+  else {
+    detailGiftsAndTeleCards = getDetailGiftAndTeleCard(lsHistory['history']);
+  }
+  detailGetBonusTurn = getDetailBonusTurn(dataUser['log_get_turn']['from_mission'], dataUser['log_get_turn']['from_enter_code']);
+
+  return {
+    status              : true,
+    detailGetBonusTurn  : detailGetBonusTurn,
+    lsGift              : detailGiftsAndTeleCards['lsGift'],
+    lsTeleCard          : detailGiftsAndTeleCards['lsTeleCard']
+  }
 }
 
 //--------------------------------------------functional-----------------------------------
@@ -50,9 +61,9 @@ function getDetailBonusTurn(fromMission, fromEnterCode) {
     let missionFind = config.MISSIONS.find(e => { return e['id'] === parseInt(strValue[0], 10) });
     if (missionFind !== null && missionFind !== undefined) {
       lsFromMission.push({
-        id_mission  : strValue,
+        id_mission  : strValue[0],
         description : missionFind['description'],
-        turn        : strValue[1],
+        new_turn    : strValue[1],
         bonus       : strValue[2],
         time        : parseInt(strValue[3], 10)
       });

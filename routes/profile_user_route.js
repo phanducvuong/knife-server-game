@@ -1,6 +1,8 @@
 const DS            = require('../repository/datastore');
 const redisClient   = require('../redis/redis_client');
 const profileFunc   = require('../functions/profile_user_func');
+const util          = require('../utils/util');
+const logger        = require('fluent-logger');
 
 const profileUserRoute = async (app, opt) => {
 
@@ -151,6 +153,75 @@ const profileUserRoute = async (app, opt) => {
 
     }
     catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/enter-code', async (req, rep) => {
+    try {
+
+      // const platform  = req.body.platform.toString().trim();
+      let token       = req.body.token.toString().trim();
+      let megaID      = req.body.megaID.toString().trim();
+      let code        = req.body.code.toString().trim();
+
+      if (token   === null || token   === undefined || token  === '' ||
+          megaID  === null || megaID  === undefined || megaID === '') {
+        throw `Check info user! ${megaID}`;
+      }
+
+      let dataUser = JSON.parse(await redisClient.getTurnAndInvenUser(megaID));
+      if (dataUser === null || dataUser === undefined) {
+        dataUser = await DS.DSGetDataUser(megaID, 'turn_inven');
+        if (dataUser === null || dataUser === undefined) throw `User not exist ${megaID}`;
+      }
+
+      let codes = await DS.DSGetDataGlobal('enter_code', 'enter_code');
+      if (codes === null || codes === undefined) {
+        throw `Codes not exist! ${code}`;
+      }
+
+      let result = util.isValidEntetCode(code, codes['codes']);
+      if (!result['status']) throw `Invalid code! ${code}`;
+
+      dataUser['turn'] += 1;
+      dataUser['log_get_turn']['from_enter_code'].push(`${result['code']}_${dataUser['turn']}_1_${new Date().getTime()}`);
+
+      redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
+      DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
+      DS.DSUpdateDataGlobal('enter_code', 'enter_code', { codes: codes });
+
+      //logger
+      logger.emit('log', {
+        action  : '[PROFILE][ENTER-CODE]',
+        time    : new Date().toLocaleString(),
+        detail  : 'enter code',
+        data    : {
+          mega_id   : megaID,
+          code      : code
+        }
+      });
+
+      rep.send({
+        status_code : 2000,
+        turn        : dataUser['turn']
+      });
+
+    }
+    catch(err) {
+
+      logger.emit('log', {
+        action  : '[PROFILE][ENTER-CODE]',
+        time    : new Date().toLocaleString(),
+        detail  : err,
+        data    : {}
+      });
 
       console.log(err);
       rep.send({

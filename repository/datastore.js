@@ -1,4 +1,5 @@
 const {Datastore}     = require('@google-cloud/datastore');
+const util            = require('../utils/util');
 
 const dbClient        = new Datastore();
 

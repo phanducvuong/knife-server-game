@@ -2,6 +2,7 @@ const DS            = require('../repository/datastore');
 const redis         = require('../redis/redis_client');
 const eventFunc     = require('../functions/event_func');
 const util          = require('../utils/util');
+const logger        = require('fluent-logger');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -73,7 +74,7 @@ const eventRoute = async (app, opt) => {
       if (token   === null || token   === undefined || token  === '' ||
           megaID  === null || megaID  === undefined || megaID === '' ||
           isNaN(idEvent)) {
-        throw `Pls check info user!`;
+        throw `Pls check info user! ${megaID} ${idEvent}`;
       }
 
       if (!util.chkTimeEvent(config.EVENTS.start, config.EVENTS.end)) {
@@ -90,6 +91,18 @@ const eventRoute = async (app, opt) => {
 
       let resultJoinEvent = eventFunc.joinEvent(dataUser, idEvent);
       if (resultJoinEvent['status'] === false) {
+
+        //logger
+        logger.emit('log', {
+          action  : '[EVENT][JOIN-EVENT]',
+          time    : new Date().toLocaleString(),
+          detail  : resultJoinEvent['msg'],
+          data    : {
+            user_id   : megaID,
+            id_event  : idEvent
+          }
+        });
+
         rep.send({
           status_code : 2500,
           msg         : resultJoinEvent['msg']
@@ -99,6 +112,19 @@ const eventRoute = async (app, opt) => {
 
       redis.updateTurnAndInvenUser(megaID, JSON.stringify(resultJoinEvent['dataUserUpdate']));
       DS.DSUpdateDataUser(megaID, 'turn_inven', resultJoinEvent['dataUserUpdate']);
+
+      //logger
+      logger.emit('log', {
+        action  : '[EVENT][JOIN-EVENT]',
+        time    : new Date().toLocaleString(),
+        detail  : 'join event',
+        data    : {
+          id_event  : idEvent,
+          user_id   : megaID,
+          bonus     : resultJoinEvent['bonusStr'],
+          new_turn  : resultJoinEvent['dataUserUpdate']['turn']
+        }
+      });
 
       let lsFilter   = eventFunc.filterLsEventWithSpItem(resultJoinEvent['dataUserUpdate']['events']);
       rep.send({
@@ -110,6 +136,14 @@ const eventRoute = async (app, opt) => {
 
     }
     catch(err) {
+
+      //logger
+      logger.emit('log', {
+        action  : '[EVENT][JOIN-EVENT]',
+        time    : new Date().toLocaleString(),
+        detail  : err,
+        data    : {}
+      });
 
       console.log(err);
       rep.send({

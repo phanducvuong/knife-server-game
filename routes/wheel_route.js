@@ -4,6 +4,7 @@ const util                  = require('../utils/util');
 const wheelFunc             = require('../functions/wheel_func');
 const profileUserFunc       = require('../functions/profile_user_func');
 const generateStr           = require('../utils/generate_string');
+const logger                = require('fluent-logger');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -19,23 +20,24 @@ const wheelRoute = async (app, opt) => {
 
     try {
 
+      const platform    = req.body.platform;
       const token       = req.body.token.toString().trim();
       const partition   = parseInt(req.body.partition, 10);
       const megaID      = req.body.megaID.toString().trim();
       const idItemRm    = req.body.idItemRm;
 
       if (partition !== config.PARTITIONS['partition'] || config.PARTITIONS['data'].length !== config.PARTITIONS['partition']) {
-        throw `please reload game to update config!`;
+        throw `please reload game to update config! ${megaID}`;
       }
 
       let time      = new Date();
       let dataUser  = JSON.parse(await redisClient.getTurnAndInvenUser(megaID));
       if (dataUser === null || dataUser === undefined) {
         dataUser = await DS.DSGetDataUser(megaID, 'turn_inven');
-        if (dataUser === null || dataUser === undefined) throw `user is not exist`;
+        if (dataUser === null || dataUser === undefined) throw `user is not exist! ${megaID}`;
       } //get dataUser from redis. if user redis is not exist => get it from fs.
 
-      if (dataUser['token'] !== token || dataUser['turn'] <= 0) throw 'unvalid token or turn is zero';
+      if (dataUser['token'] !== token || dataUser['turn'] <= 0) throw `unvalid token or turn is zero! ${megaID}`;
 
       let item;
       let resultUpdateLsSpItem;
@@ -86,7 +88,7 @@ const wheelRoute = async (app, opt) => {
         item = await wheelFunc.getRndItem();
       }
 
-      if (item === null || item === undefined) throw 'item is not exist';
+      if (item === null || item === undefined) throw `item is not exist! ${megaID}`;
 
       if (item['type'] === 2) {
         let strGenerate = generateStr.getStringGenerate();
@@ -110,7 +112,7 @@ const wheelRoute = async (app, opt) => {
       dataUser['inven']          = invenUpdate['invevntoryUpdate'];
 
       const strHis = JSON.stringify({
-        time      : new Date().getTime(),
+        time      : time.getTime(),
         id_item   : item['id'],
         amount    : invenUpdate['newAmount'],
         user_name : dataUser['name']
@@ -128,6 +130,66 @@ const wheelRoute = async (app, opt) => {
       let region = config.PARTITIONS['data'].find(e => { return e['id'] === item['id'] });
       if (region === null || region === undefined) throw `Can not get region by ${item['id']}`;
 
+      //logger
+      logger.emit('log', {
+        action  : '[WHEEL][GET-ITEM]',
+        time    : time.toLocaleString(),
+        detail  : 'get item',
+        data    : {
+          user_id   : megaID,
+          item      : item
+        }
+      });
+
+      let app_id  = '5f3127be11618e00ce0d48b1';
+      if (platform === 'ios') {
+        app_id  = '5f6862281fe6ec0060d4d3b6';
+      }
+      logger.emit('log', {
+        action  : '[KPI][GET-SDK]',
+        time    : time.toLocaleString(),
+        detail  : 'get SDK log',
+        data    : {
+          "app_id": app_id,
+          "app_key": "25b37d3b23a001a4567b4883e02776c5",
+          "data": {
+            "advertiser_id": dataUser.userID,
+            "android_id": "",
+            "app_code": "",
+            "app_id": app_id,
+            "app_key": "a00d3ba497f7158f1ad5f14e9d8ee4c8",
+            "app_version": "1.0.0",
+            "brand": "",
+            "bundle_identifier": "",
+            "carrier": "",
+            "country_code": "VN",
+            "cpu_abi": "",
+            "cpu_abi2": "",
+            "device": "",
+            "device_model": "",
+            "device_type": "user",
+            "display": "",
+            "event_value": { "login_count": 0, "price": 0, "success": true },
+            "fcm": "",
+            "finger_print": "",
+            "install_time": "",
+            "language": "Tiếng Việt",
+            "last_update_time": "",
+            "operator": "",
+            "os_version": "",
+            "platform": platform,
+            "product": "",
+            "sdk": "23",
+            "sdk_version": "1.0.0",
+            "server_timestamp": time.getTime(),
+            "time_zone": "UTC",
+            "timestamp": time.getTime()
+          },
+          "event_type": "4",
+          "user_id": dataUser.userID
+        }
+      });
+
       rep.send({
         status_code     : 2000,
         turn            : dataUser['turn'],
@@ -138,6 +200,15 @@ const wheelRoute = async (app, opt) => {
 
     }
     catch(err) {
+
+      logger.emit('log', {
+        action  : '[WHEEL][GET-ITEM]',
+        time    : new Date().toLocaleString(),
+        detail  : 'error get item',
+        data    : {
+          error : err
+        }
+      });
 
       console.log(err);
       rep.send({

@@ -2,6 +2,7 @@ const verifyTokenFunc     = require('../functions/verify_user_func');
 const redisClient         = require('../redis/redis_client');
 const DS                  = require('../repository/datastore');
 const profileFunc         = require('../functions/profile_user_func');
+const logger              = require('fluent-logger');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -48,8 +49,9 @@ const verifyUserRoute = async (app, opt) => {
     
     try {
 
-      const token   = req.body.token.toString().trim();
-      const result  = await verifyTokenFunc.verifyTokenUser(token);
+      const token     = req.body.token.toString().trim();
+      const platform  = req.body.platform;
+      const result    = await verifyTokenFunc.verifyTokenUser(token);
 
       if (result === null || result === undefined || token === null || token === undefined) {
         throw 'unvalid token';
@@ -92,6 +94,79 @@ const verifyUserRoute = async (app, opt) => {
       let amountSpItem        = 0;
       let resultAmountSpItem  = profileFunc.getSpItemById(dataUser['sp_item'], 0);
       if (resultAmountSpItem['status']) amountSpItem = resultAmountSpItem['amount'];
+
+      //logger
+      logger.emit('log', {
+        action  : '[USER][VERIFY-USER]',
+        time    : date.toLocaleDateString(),
+        detail  : 'user login game',
+        data    : { mega_id: result.mega1_code }
+      });
+
+      let app_id  = '5f3127be11618e00ce0d48b1';
+      if (platform === 'ios') {
+        app_id  = '5f6862281fe6ec0060d4d3b6';
+      }
+
+      let dataLog = {
+        "advertiser_id": result.user_id,
+        "android_id": "",
+        "app_code": "",
+        "app_id": app_id,
+        "app_key": "a00d3ba497f7158f1ad5f14e9d8ee4c8",
+        "app_version": "1.0.0",
+        "brand": "",
+        "bundle_identifier": "",
+        "carrier": "",
+        "country_code": "VN",
+        "cpu_abi": "",
+        "cpu_abi2": "",
+        "device": "",
+        "device_model": "",
+        "device_type": "user",
+        "display": "",
+        "event_value": { "login_count": 0, "price": 0, "success": true },
+        "fcm": "",
+        "finger_print": "",
+        "install_time": "",
+        "language": "Tiếng Việt",
+        "last_update_time": "",
+        "operator": "",
+        "os_version": "",
+        "platform": platform,
+        "product": "",
+        "sdk": "23",
+        "sdk_version": "1.0.0",
+        "server_timestamp": date.getTime(),
+        "time_zone": "UTC",
+        "timestamp": date.getTime()
+      }
+
+      logger.emit('log', {
+        action  : '[KPI][GET-SDK]',
+        time    : date.toLocaleString(),
+        detail  : 'get SDK log',
+        data    : {
+          "app_id": "5f3127be11618e00ce0d48b1",
+          "app_key": "25b37d3b23a001a4567b4883e02776c5",
+          "data": dataLog,
+          "event_type": "1",
+          "user_id": result.user_id
+        }
+      });
+
+      logger.emit('log', {
+        action  : '[KPI][GET-SDK]',
+        time    : date.toLocaleString(),
+        detail  : 'get SDK log',
+        data    : {
+          "app_id": app_id,
+          "app_key": "25b37d3b23a001a4567b4883e02776c5",
+          "data": dataLog,
+          "event_type": "2",
+          "user_id": result.user_id
+        }
+      });
 
       rep.send({
         status_code     : 2000,

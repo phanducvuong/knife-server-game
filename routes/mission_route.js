@@ -1,6 +1,7 @@
 const redis             = require('../redis/redis_client');
 const DS                = require('../repository/datastore');
 const missionFunc       = require('../functions/mission_func');
+const logger            = require('fluent-logger');
 
 const missionRoute = async (app, opt) => {
 
@@ -51,7 +52,7 @@ const missionRoute = async (app, opt) => {
         if (dataUser === null || dataUser === undefined) throw `User not exist with ${megaID}!`;
       }
 
-      if (dataUser['token'] !== token) throw `Invalid token!`;
+      if (dataUser['token'] !== token) throw `Invalid token! ${megaID}`;
 
       let bonusFromMission = missionFunc.getBonusFromMission(idMission, dataUser);
       if (bonusFromMission['status'] === false) {
@@ -65,6 +66,19 @@ const missionRoute = async (app, opt) => {
       let missionFilter = missionFunc.filterMisisonWithSpItem(bonusFromMission['dataUserUpdate']['mission'], bonusFromMission['dataUserUpdate']['actions']);
       DS.DSUpdateDataUser(megaID, 'turn_inven', bonusFromMission['dataUserUpdate']);
       redis.updateTurnAndInvenUser(megaID, JSON.stringify(bonusFromMission['dataUserUpdate']));
+
+      //logger
+      logger.emit('log', {
+        action  : '[MISSION][JOIN-MISSION]',
+        time    : new Date().toLocaleString(),
+        detail  : 'join mission',
+        data    : {
+          id_mission  : idMission,
+          user_id     : megaID,
+          bonus       : bonusFromMission['bonusStr'],
+          new_turn    : bonusFromMission['dataUserUpdate']['turn']
+        }
+      });
       
       rep.send({
         status_code     : 2000,

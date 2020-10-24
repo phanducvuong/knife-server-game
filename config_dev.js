@@ -21,12 +21,17 @@
 
 
 exports.URL_VALID_TOKEN           = 'http://demo8992960.mockable.io/verify-token';
+// exports.URL_VALID_TOKEN           = 'http://mega1-gameportal-dev.yeah1group.com/service_gameportal/v1/user/info';
+exports.URL_TOPUP                 = 'https://topup-gw-dev-api.yeah1group.com/api/v1/topup';
+exports.APP_ID_TOPUP              = 'jEaTJp4FauQWLOl0';
+exports.PRIVATE_KEY_TOPUP         = '1x9T7QlA5MWu9RPHaREeK7+5ynABS7ShlF43urYudeYStGgWmYJTYcU8IhFBwg2z';
 
 exports.LENGTH_REDIS              = 1;
 exports.initLsRedis = () => {
   let lsRedis = [];
   lsRedis.push({
     port  : 6379,
+    // host  : '10.235.1.11'
     host  : '127.0.0.1'
     // host  : '54.151.144.72'
   });
@@ -52,11 +57,16 @@ exports.PARTITIONS                = {
   data              : []
 }
 
+//fluent logger
+exports.TAG_LOGGER                = 'phi-dao-dev';
+exports.HOST_LOG                  = '10.10.11.11';
+exports.PORT_LOG                  = 24224;
 
 exports.TOTAL_PERCENT             = 0;
 exports.ARR_ITEM                  = [];
 exports.ITEM_FILTER               = [];     //danh sách item có trong list partition
 exports.ARR_ID_ITEM_BL            = [];     //danh sách id item dành cho user nằm trong blacklist
+exports.ARR_ENTER_CODE            = [];     //danh sách list code. user nhập vào để lấy lượt
 
 exports.BLACK_LIST                = [
   {

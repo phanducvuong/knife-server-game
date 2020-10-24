@@ -1,8 +1,9 @@
-const FS            = require('../repository/firestore');
 const DS            = require('../repository/datastore');
 const redisClient   = require('../redis/redis_client');
 const strGenerate   = require('../utils/generate_string');
 const profileFunc   = require('../functions/profile_user_func');
+const util          = require('../utils/util');
+const logger        = require('fluent-logger');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -299,6 +300,11 @@ const partition     = {
 const globalRoute = async (app, opt) => {
 
   app.get('/quickly-config', async (req, rep) => {
+    if (process.env.NODE_ENV !== dev) {
+      rep.send('Failed!');
+      return;
+    }
+
     for (i of lsItem) {
       redisClient.initItemBy(i['id']);
       DS.DSUpdateDataGlobal('items', i['id'], i);
@@ -308,6 +314,11 @@ const globalRoute = async (app, opt) => {
   });
 
   app.post('/init-user', async (req, rep) => {
+
+    if (process.env.NODE_ENV !== dev) {
+      rep.send('Failed!');
+      return;
+    }
 
     let megaID  = req.body.megaID;
     let name    = req.body.name;
@@ -330,14 +341,6 @@ const globalRoute = async (app, opt) => {
 
   app.get('/partition', async (req, rep) => {
     rep.send(config.PARTITIONS);
-  });
-
-  app.post('/init-item', async (req, rep) => {
-    const data = req.body.data;
-    for (e of data) {
-      FS.FSUpdateARRItemBy(e['id'], e);
-    }
-    rep.send('ok');
   });
 
   app.get('/get-all-item', async (req, rep) => {
@@ -369,6 +372,11 @@ const globalRoute = async (app, opt) => {
   });
 
   app.post('/set-turn-user', async (req, rep) => {
+    if (process.env.NODE_ENV !== dev) {
+      rep.send('Failed!');
+      return;
+    }
+
     const megaID  = req.body.megaID;
     const turn    = req.body.turn;
 
@@ -383,6 +391,11 @@ const globalRoute = async (app, opt) => {
   });
 
   app.post('/empty-mission', async (req, rep) => {
+    if (process.env.NODE_ENV !== dev) {
+      rep.send('Failed!');
+      return;
+    }
+
     let megaID          = req.body.megaID;
     let dataUser        = JSON.parse(await redisClient.getTurnAndInvenUser(megaID));
     dataUser['mission'] = [];
@@ -394,6 +407,11 @@ const globalRoute = async (app, opt) => {
   });
 
   app.post('/update-sp-item', async (req, rep) => {
+    if (process.env.NODE_ENV !== dev) {
+      rep.send('Failed!');
+      return;
+    }
+
     let megaID    = req.body.megaID;
     let idSpItem  = req.body.idSpItem;
     let amount    = req.body.amount;
@@ -421,6 +439,8 @@ const globalRoute = async (app, opt) => {
 
   app.post('/reset-event-user', async (req, rep) => {
     try {
+
+      if (process.env.NODE_ENV !== 'dev') throw 'Failed!';
 
       let megaID    = req.body.megaID.toString().trim();
       let dataUser  = await DS.DSGetDataUser(megaID, 'turn_inven');
@@ -464,12 +484,41 @@ const globalRoute = async (app, opt) => {
     rep.send('ok');
   });
 
-  app.get('/gen-random-string', async (req, rep) => {
-    const hrtime1        = process.hrtime();
-    const hrtime2        = process.hrtime();
-    let str1 = strGenerate.getStringGenerate(hrtime1);
-    let str2 = strGenerate.getStringGenerate(hrtime2);
-    rep.send(`${str1}\n${str2}`);
+  // app.get('/gen-random-string', async (req, rep) => {
+  //   const hrtime1        = process.hrtime();
+  //   const hrtime2        = process.hrtime();
+  //   let str1 = strGenerate.getStringGenerate(hrtime1);
+  //   let str2 = strGenerate.getStringGenerate(hrtime2);
+  //   rep.send(`${str1}\n${str2}`);
+  // });
+
+  // app.post('/hash-code', async (req, rep) => {
+  //   let codes   = req.body.codes;
+  //   let arrCode = [];
+    
+  //   for (c of codes) {
+  //     let resultHash = util.genEnterCode(c);
+  //     arrCode.push({
+  //       code  : resultHash,
+  //       used  : 0
+  //     });
+  //   }
+
+  //   DS.DSUpdateDataGlobal('enter_code', 'enter_code', { codes: arrCode });
+  //   rep.send(arrCode);
+  // });
+
+  app.get('/test-log', async (req, rep) => {
+    //logger
+    logger.emit('log', {
+      action  : '[TEST][TEST-LOG]',
+      time    : new Date().toLocaleString(),
+      detail  : 'test-log',
+      data    : {
+        log   : 'test log'
+      }
+    });
+    rep.send('ok');
   });
 
 }
