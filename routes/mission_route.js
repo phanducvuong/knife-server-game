@@ -84,7 +84,8 @@ const missionRoute = async (app, opt) => {
         status_code     : 2000,
         mission_update  : missionFilter,
         bonus_str       : bonusFromMission['bonusStr'],
-        turn            : bonusFromMission['dataUserUpdate']['turn']
+        turn            : bonusFromMission['dataUserUpdate']['turn'],
+        bonus_sp_item   : bonusFromMission['bonusSPItem']
       });
 
     }

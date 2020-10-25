@@ -96,6 +96,7 @@ exports.getBonusFromMissionOrEvent = (obj, dataUser) => {
       status          : true,
       bonus_str       : str,
       bonus_turn      : obj['bonus_turn'],
+      bonus_sp_item   : obj['bonus_sp_item'],
       lsSpItemUpdate  : resultBonus['data']
     }
   }
@@ -108,6 +109,7 @@ exports.getBonusFromMissionOrEvent = (obj, dataUser) => {
       status          : true,
       bonus_str       : str,
       bonus_turn      : 0,
+      bonus_sp_item   : obj['bonus_sp_item'],
       lsSpItemUpdate  : resultBonus['data']
     }
   }
@@ -117,6 +119,7 @@ exports.getBonusFromMissionOrEvent = (obj, dataUser) => {
       status          : true,
       bonus_str       : str,
       bonus_turn      : obj['bonus_turn'],
+      bonus_sp_item   : 0,
       lsSpItemUpdate  : dataUser['sp_item']
     }
   }

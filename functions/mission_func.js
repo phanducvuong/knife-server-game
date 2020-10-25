@@ -108,6 +108,7 @@ exports.getBonusFromMission = (idMission, dataUser) => {
   return {
     status          : true,
     bonusStr        : resultBonus['bonus_str'],
+    bonusSPItem     : resultBonus['bonus_sp_item'],
     dataUserUpdate  : dataUser
   };
 }
