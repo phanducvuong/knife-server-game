@@ -48,6 +48,64 @@ const userInfoRoute = async (app, opt) => {
     }
   });
 
+  app.get('/general', async (req, rep) => {
+    try {
+
+      let lsAllDataUser = await userInfoFunc.getAllDataUser();
+      let lsGeneral     = userInfoFunc.getGeneralInfo(lsAllDataUser);
+      rep.view('/partials/user_general_info_view.ejs', {
+        data: lsGeneral
+      });
+
+    }
+    catch(err) {
+
+      rep.view('/partials/error_view.ejs', {
+        title_error : err
+      });
+
+    }
+  });
+
+  app.get('/turnning', async (req, rep) => {
+    try {
+
+      let lsAllDataUser     = await userInfoFunc.getAllDataUser();
+      let lsHistoryAllUser  = await userInfoFunc.getHistoryAllUser(lsAllDataUser);
+      let result            = userInfoFunc.getTurnningInfo(lsHistoryAllUser);
+      rep.view('/partials/user_info_turnning_view.ejs', {
+        data  : result
+      });
+
+    }
+    catch(err) {
+
+      rep.view('/partials/error_view.ejs', {
+        title_error : err
+      });
+
+    }
+  });
+
+  app.get('/enter-code', async (req, rep) => {
+    try {
+
+      let lsAllDataUser = await userInfoFunc.getAllDataUser();
+      let result        = userInfoFunc.getEnterCodeInfo(lsAllDataUser);
+      rep.view('/partials/user_enter_code_view.ejs', {
+        data  : result
+      });
+
+    }
+    catch(err) {
+
+      rep.view('/partials/error_view.ejs', {
+        title_error : err
+      });
+
+    }
+  });
+
 }
 
 module.exports = userInfoRoute;

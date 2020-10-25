@@ -23,7 +23,6 @@ const dataInitUser = {
   lucky_code    : [],
   sp_item       : [],
   mission       : [],
-  newbie        : [],                         //lưu lại thời gian đăng nhập nếu user lần đầu chơi game
   date_login    : [],                         //lưu lại ngày đăng nhập (mỗi ngày lưu lại một lần nếu user có vào game ngày hôm đó),
   log_get_turn  : {                           //lưu lại thời gian và lượt chơi mới sau mỗi lần user làm nhiệm vụ get code hoặc nhập mã code được bonus lượt
     from_mission    : [],
@@ -74,16 +73,6 @@ const lsItem        = [
       "amount": 12,
       "save": true,
       "type": 0
-  },
-  {
-      "special_item": false,
-      "percent": 1000,
-      "type": -1,
-      "id": 13,
-      "save": true,
-      "name": "ALskas",
-      "maximum": 1500,
-      "amount": 0
   },
   {
       "id": 2,
@@ -300,7 +289,7 @@ const partition     = {
 const globalRoute = async (app, opt) => {
 
   app.get('/quickly-config', async (req, rep) => {
-    if (process.env.NODE_ENV !== dev) {
+    if (process.env.NODE_ENV !== 'dev') {
       rep.send('Failed!');
       return;
     }
@@ -492,21 +481,21 @@ const globalRoute = async (app, opt) => {
   //   rep.send(`${str1}\n${str2}`);
   // });
 
-  // app.post('/hash-code', async (req, rep) => {
-  //   let codes   = req.body.codes;
-  //   let arrCode = [];
+  app.post('/hash-code', async (req, rep) => {
+    let codes   = req.body.codes;
+    let arrCode = [];
     
-  //   for (c of codes) {
-  //     let resultHash = util.genEnterCode(c);
-  //     arrCode.push({
-  //       code  : resultHash,
-  //       used  : 0
-  //     });
-  //   }
+    for (c of codes) {
+      let resultHash = util.genEnterCode(c);
+      arrCode.push({
+        code  : resultHash,
+        used  : 0
+      });
+    }
 
-  //   DS.DSUpdateDataGlobal('enter_code', 'enter_code', { codes: arrCode });
-  //   rep.send(arrCode);
-  // });
+    DS.DSUpdateDataGlobal('admin', 'enter_code', { codes: arrCode });
+    rep.send(arrCode);
+  });
 
   app.get('/test-log', async (req, rep) => {
     //logger

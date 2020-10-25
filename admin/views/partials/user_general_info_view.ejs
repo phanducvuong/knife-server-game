@@ -1,0 +1,78 @@
+<%- include('../layouts/header') %>
+
+  <div class="content-wrapper">
+    <section class="content-header">
+      <h1>USERS PROFILE</h1>
+    </section>
+    
+    <section class="content">
+      <div style="background-color: white;">
+        <div class="div-all-item row">
+          <!-- search -->
+          <div class="filter-info-user">
+            <label>Search</label>
+            <input type="text" placeholder="megaID/username" id="search-user" value="">
+          </div>
+
+          <!-- select column filter -->
+          <div class="filter-info-user">
+            <label>Select Column</label>
+            <select id="filter-sel-column">
+              <option selected value="-1">none</option>
+              <option value="0">code đã nhập</option>
+              <option value="1">lượt chơi còn</option>
+              <option value="2">lượt chơi đã sử dụng</option>
+            </select>
+          </div>
+
+          <!-- min -->
+          <div class="filter-info-user">
+            <label>Min</label>
+            <input type="text" placeholder="min" step="0" min="0" id="search-user" value="">
+          </div>
+
+          <!-- max -->
+          <div class="filter-info-user">
+            <label>Max</label>
+            <input type="text" placeholder="max" step="0" min="0" id="search-user" value="">
+          </div>
+        </div>
+
+        <table id="user-info-table" class="footable table table-stripped">
+          <thead>
+            <tr>
+              <th style="font-weight: bold;">MEGA ID</th>
+              <th style="font-weight: bold;">SĐT</th>
+              <th style="font-weight: bold;">SỐ CODE ĐÃ NHẬP</th>
+              <th style="font-weight: bold;">LƯỢT CHƠI TỔNG</th>
+              <th style="font-weight: bold;">LƯỢT CHƠI CÒN</th>
+              <th style="font-weight: bold;">LƯỢT CHƠI ĐÃ SỬ DỤNG</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for (let d of data) { %>
+              <tr>
+                <td><%= d['mega_code'] %></td>
+                <td><%= d['phone'] %></td>
+                <td><%= d['amount_enter_code'] %></td>
+                <td><%= d['total_turn'] %></td>
+                <td><%= d['turn_remain'] %></td>
+                <td><%= d['total_turned'] %></td>
+              </tr>
+            <% } %>
+          </tbody>
+          <tfoot>
+          </tfoot>
+        </table>
+      </div>
+
+    </section>
+  </div>
+
+  <script>
+    
+    
+
+  </script>
+
+<%- include('../layouts/footer') %>

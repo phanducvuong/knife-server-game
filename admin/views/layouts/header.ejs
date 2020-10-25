@@ -8,7 +8,7 @@
     <meta name="author" content="">
     <link rel="icon" href="images/favicon.ico">
 
-    <title>Unique Admin - Dashboard</title>
+    <title>Phi Tieu Game - Admin Tool</title>
     
 	<!-- Bootstrap 4.0-->
   <link rel="stylesheet" href="/public/vendor_components/bootstrap/dist/css/bootstrap.css">
@@ -102,7 +102,7 @@
         <li class="header nav-small-cap">PERSONAL</li>
 
         <!-- Trang chủ -->
-        <li class="active">
+        <li>
           <a href="/api/v1/admin/dashboard">
             <i class="fa fa-dashboard"></i> <span>TRANG CHỦ</span>
             <span class="pull-right-container">
@@ -133,13 +133,18 @@
         </li>
 
         <!-- THÔNG TIN USER -->
-        <li>
-          <a href="/api/v1/admin/user-info">
+        <li class="treeview">
+          <a href="#">
             <i class="fa fa-envelope"></i> <span>THÔNG TIN USERS</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-right pull-right"></i>
             </span>
           </a>
+          <ul class="treeview-menu">
+            <li><a href="/api/v1/admin/user-info/general">Thông Tin Chung</a></li>
+            <li><a href="/api/v1/admin/user-info/turnning">Lượt Chơi</a></li>
+            <li><a href="/api/v1/admin/user-info/enter-code">Nhập Code</a></li>
+          </ul>
         </li>
 
         <!-- CONFIG -->

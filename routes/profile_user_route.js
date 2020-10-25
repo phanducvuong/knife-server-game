@@ -182,9 +182,9 @@ const profileUserRoute = async (app, opt) => {
         if (dataUser === null || dataUser === undefined) throw `User not exist ${megaID}`;
       }
 
-      let codes = await DS.DSGetDataGlobal('enter_code', 'enter_code');
-      if (codes === null || codes === undefined) {
-        throw `Codes not exist! ${code}`;
+      let codes = await DS.DSGetDataGlobal('admin', 'enter_code');
+      if (codes === null || codes === undefined || codes['codes'] === null || codes['codes'] === undefined) {
+        throw `Array code not exist! ${code}`;
       }
 
       let result = util.isValidEntetCode(code, codes['codes']);
@@ -195,7 +195,7 @@ const profileUserRoute = async (app, opt) => {
 
       redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
       DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
-      DS.DSUpdateDataGlobal('enter_code', 'enter_code', { codes: codes });
+      DS.DSUpdateDataGlobal('admin', 'enter_code', { codes: result['lsEnterCode'] });
 
       //logger
       logger.emit('log', {
@@ -222,6 +222,41 @@ const profileUserRoute = async (app, opt) => {
         detail  : err,
         data    : {}
       });
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/get-history-enter-code', async (req, rep) => {
+    try {
+
+       let token       = req.body.token.toString().trim();
+       let megaID      = req.body.megaID.toString().trim();
+ 
+       if (token   === null || token   === undefined || token  === '' ||
+           megaID  === null || megaID  === undefined || megaID === '') {
+         throw `Check info user! ${megaID}`;
+       }
+ 
+       let dataUser = JSON.parse(await redisClient.getTurnAndInvenUser(megaID));
+       if (dataUser === null || dataUser === undefined) {
+         dataUser = await DS.DSGetDataUser(megaID, 'turn_inven');
+         if (dataUser === null || dataUser === undefined) throw `User not exist ${megaID}`;
+       }
+
+       let result = profileFunc.getHistoryEnterCode(dataUser['log_get_turn']['from_enter_code']);
+       rep.send({
+        status_code : 2000,
+        result      : result
+       });
+
+    }
+    catch(err) {
 
       console.log(err);
       rep.send({

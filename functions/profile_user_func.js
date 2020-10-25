@@ -36,10 +36,6 @@ exports.updateInventory = (inventory, item) => {
   };;
 }
 
-exports.updateLsLuckyCode = (lsLuckyCode) => {
-
-}
-
 exports.descSpItemInLsSpItemById = (lsSpItem, idSpItem) => {
   for (let i=0; i<lsSpItem.length; i++) {
     let tmpStr  = lsSpItem[i].split('_');
@@ -214,4 +210,17 @@ exports.getSpItemById = (lsSpItem, idSpItem) => {
     }
   }
   return { status: false, msg: 'idSpItem not exist!' };
+}
+
+exports.getHistoryEnterCode = (lsHistoryEnterCode) => {
+  let his = [];
+  for (let e of lsHistoryEnterCode) {
+    let str         = e.split('_');
+    let timeConvert = util.convertTimeToString(parseInt(str[3], 10));
+    his.push({
+      code  : str[0],
+      time  : timeConvert
+    });
+  }
+  return his;
 }
