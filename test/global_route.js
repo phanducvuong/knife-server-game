@@ -304,7 +304,7 @@ const globalRoute = async (app, opt) => {
 
   app.post('/init-user', async (req, rep) => {
 
-    if (process.env.NODE_ENV !== dev) {
+    if (process.env.NODE_ENV !== 'dev') {
       rep.send('Failed!');
       return;
     }
@@ -361,7 +361,7 @@ const globalRoute = async (app, opt) => {
   });
 
   app.post('/set-turn-user', async (req, rep) => {
-    if (process.env.NODE_ENV !== dev) {
+    if (process.env.NODE_ENV !== 'dev') {
       rep.send('Failed!');
       return;
     }
@@ -380,7 +380,7 @@ const globalRoute = async (app, opt) => {
   });
 
   app.post('/empty-mission', async (req, rep) => {
-    if (process.env.NODE_ENV !== dev) {
+    if (process.env.NODE_ENV !== 'dev') {
       rep.send('Failed!');
       return;
     }
@@ -396,7 +396,7 @@ const globalRoute = async (app, opt) => {
   });
 
   app.post('/update-sp-item', async (req, rep) => {
-    if (process.env.NODE_ENV !== dev) {
+    if (process.env.NODE_ENV !== 'dev') {
       rep.send('Failed!');
       return;
     }
@@ -488,8 +488,9 @@ const globalRoute = async (app, opt) => {
     for (c of codes) {
       let resultHash = util.genEnterCode(c);
       arrCode.push({
-        code  : resultHash,
-        used  : 0
+        code_hash   : resultHash,
+        code        : c,
+        used        : 0
       });
     }
 

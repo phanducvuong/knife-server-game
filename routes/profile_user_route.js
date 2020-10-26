@@ -166,7 +166,7 @@ const profileUserRoute = async (app, opt) => {
   app.post('/enter-code', async (req, rep) => {
     try {
 
-      // const platform  = req.body.platform.toString().trim();
+      // let platform    = req.body.platform;
       let token       = req.body.token.toString().trim();
       let megaID      = req.body.megaID.toString().trim();
       let code        = req.body.code.toString().trim();
@@ -190,8 +190,9 @@ const profileUserRoute = async (app, opt) => {
       let result = util.isValidEntetCode(code, codes['codes']);
       if (!result['status']) throw `Invalid code! ${code}`;
 
+      let date          = new Date();
       dataUser['turn'] += 1;
-      dataUser['log_get_turn']['from_enter_code'].push(`${result['code']}_${dataUser['turn']}_1_${new Date().getTime()}`);
+      dataUser['log_get_turn']['from_enter_code'].push(`${result['code']}_${dataUser['turn']}_1_${date.getTime()}`);
 
       redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
       DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
@@ -200,11 +201,66 @@ const profileUserRoute = async (app, opt) => {
       //logger
       logger.emit('log', {
         action  : '[PROFILE][ENTER-CODE]',
-        time    : new Date().toLocaleString(),
+        time    : date.toLocaleString(),
         detail  : 'enter code',
         data    : {
           mega_id   : megaID,
           code      : code
+        }
+      });
+
+      let app_id  = '5f758539deed4200bc1cfe20';
+      if (platform === 'ios') {
+        app_id  = '5f7585522f638b00cf560e22';
+      }
+
+      let dataLog = {
+        "advertiser_id": dataUser['userID'],
+        "android_id": "",
+        "app_code": "",
+        "app_id": app_id,
+        "app_key": "21d7a592e0845117c8dba8e3bc94e869",
+        "app_version": "1.0.0",
+        "brand": "",
+        "bundle_identifier": "",
+        "carrier": "",
+        "country_code": "VN",
+        "cpu_abi": "",
+        "cpu_abi2": "",
+        "device": "",
+        "device_model": "",
+        "device_type": "user",
+        "display": "",
+        "event_value": { "login_count": 0, "price": 0, "success": true },
+        "fcm": "",
+        "finger_print": "",
+        "install_time": "",
+        "language": "Tiếng Việt",
+        "last_update_time": "",
+        "operator": "",
+        "os_version": "",
+        "platform": platform,
+        "product": "",
+        "sdk": "23",
+        "sdk_version": "1.0.0",
+        "server_timestamp": date.getTime(),
+        "time_zone": "UTC",
+        "timestamp": date.getTime()
+      }
+
+      logger.emit('log', {
+        action  : '[KPI][GET-SDK]',
+        time    : date.toLocaleString(),
+        detail  : 'get SDK log',
+        data    : {
+          "app_id": app_id,
+          "app_key": "21d7a592e0845117c8dba8e3bc94e869",
+          "data": dataLog,
+          "event_type": "6",
+          "event_value": {
+            "quantity": 1
+          },
+          "user_id": dataUser['userID']
         }
       });
 

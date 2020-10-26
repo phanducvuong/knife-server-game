@@ -103,7 +103,7 @@ exports.isValidEntetCode = (code, lsEnterCode) => {
   let result  = crypto.createHash('md5').update(hash1).digest('hex');
   
   for (let c of lsEnterCode) {
-    if (result === c['code'] && c['used'] === 0) {
+    if (result === c['code_hash'] && c['used'] === 0) {
       c['used'] = 1;
       return {
         status      : true,

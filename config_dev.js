@@ -20,8 +20,8 @@
  */
 
 
-exports.URL_VALID_TOKEN           = 'http://demo8992960.mockable.io/verify-token';
-// exports.URL_VALID_TOKEN           = 'http://mega1-gameportal-dev.yeah1group.com/service_gameportal/v1/user/info';
+// exports.URL_VALID_TOKEN           = 'http://demo8992960.mockable.io/verify-token';
+exports.URL_VALID_TOKEN           = 'https://mega1-gameportal-dev.yeah1group.com/service_gameportal/v1/user/info';
 exports.URL_TOPUP                 = 'https://topup-gw-dev-api.yeah1group.com/api/v1/topup';
 exports.APP_ID_TOPUP              = 'jEaTJp4FauQWLOl0';
 exports.PRIVATE_KEY_TOPUP         = '1x9T7QlA5MWu9RPHaREeK7+5ynABS7ShlF43urYudeYStGgWmYJTYcU8IhFBwg2z';
@@ -31,8 +31,9 @@ exports.initLsRedis = () => {
   let lsRedis = [];
   lsRedis.push({
     port  : 6379,
-    // host  : '10.235.1.11'
+    db    : 0,
     host  : '127.0.0.1'
+    // host  : '10.235.1.11'
     // host  : '54.151.144.72'
   });
 
@@ -114,7 +115,10 @@ exports.EVENTS                    = {
       sp_item       : null,
       bonus_sp_item : 0,
       status        : 1,
-      type          : 0
+      type          : 0,
+      type          : 0,
+      from_time     : '2020-09-30 00:00:00',
+      to_time       : '2020-10-30 23:59:59'
     }
   ]
 }

@@ -183,6 +183,24 @@
                   </div>
                 </div>
 
+                <!-- FROM TIME -->
+                <div class="form-group" id="modal-div-from-date" style="display: none;">
+                  <label class="col-md-4 control-label">FROM DATE</label>
+                  <div class="col-md-12">
+                    <input  id="modal-input-from-time" placeholder=""
+                            class="form-control input-md" type="datetime-local">
+                  </div>
+                </div>
+
+                <!-- END TIME -->
+                <div class="form-group" id="modal-div-to-date" style="display: none;">
+                  <label class="col-md-4 control-label">TO DATE</label>
+                  <div class="col-md-12">
+                    <input  id="modal-input-to-time" placeholder=""
+                            class="form-control input-md" type="datetime-local">
+                  </div>
+                </div>
+
                 <!-- STATUS MISSION -->
                 <div class="form-group">
                   <label class="col-md-12 control-label" for="product_name_fr">STATUS</label>
@@ -239,6 +257,11 @@
         if (dataID === '') {
           alert('Edit event failed!');
           return;
+        }
+
+        if (dataID === '0') {
+          $('#modal-div-from-date').css('display', 'block');
+          $('#modal-div-to-date').css('display', 'block');
         }
 
         $('#title-event').text('EDIT EVENT');
@@ -304,6 +327,11 @@
         let spItem      = $('#modal-sel-sp-item-event').val();
         let bonusSpItem = $('#modal-input-bonus-sp-item-event').val();
         let status      = $('#modal-input-status-event').val();
+        
+        let fromDate    = $('#modal-input-from-time').val();
+        let toDate      = $('#modal-input-to-time').val();
+
+        console.log(`from time: ${fromDate}    to time: ${toDate}`)
 
         if (id     === '' || description === '' || target === '' ||
             status === '' || bonusTurn   === '' || spItem === '' || type === '') {
@@ -321,33 +349,33 @@
           url = 'http://' + window.location.host + '/api/v1/admin/setup/update-event';
         }
 
-        $.ajax({
-        url           : url,
-        method        : 'POST',
-        contentType   : 'application/json; charset=utf-8',
-        data          : JSON.stringify({
-          id            : id,
-          description   : description,
-          target        : target,
-          bonus_turn    : bonusTurn,
-          sp_item       : spItem,
-          bonus_sp_item : bonusSpItem,
-          status        : status,
-          type          : type
-        })
-      })
-        .done((data) => {
+      //   $.ajax({
+      //   url           : url,
+      //   method        : 'POST',
+      //   contentType   : 'application/json; charset=utf-8',
+      //   data          : JSON.stringify({
+      //     id            : id,
+      //     description   : description,
+      //     target        : target,
+      //     bonus_turn    : bonusTurn,
+      //     sp_item       : spItem,
+      //     bonus_sp_item : bonusSpItem,
+      //     status        : status,
+      //     type          : type
+      //   })
+      // })
+      //   .done((data) => {
 
-          if (data['status_code'] !== 2000) {
-            alert(data['error']);
-            return;
-          }
+      //     if (data['status_code'] !== 2000) {
+      //       alert(data['error']);
+      //       return;
+      //     }
 
-          $('#modal-event').modal('hide');
-          updateTableEvent(data['eventUpdate']);
+      //     $('#modal-event').modal('hide');
+      //     updateTableEvent(data['eventUpdate']);
 
-        })
-        .fail(() => {});
+      //   })
+      //   .fail(() => {});
 
       });
     }
@@ -484,6 +512,9 @@
 
         $('#modal-sel-type-event').val('-1');
         $('#modal-sel-type-event').removeAttr('disabled');
+        
+        $('#modal-div-from-date').css('display', 'none');
+        $('#modal-div-to-date').css('display', 'none');
       });
     }
 

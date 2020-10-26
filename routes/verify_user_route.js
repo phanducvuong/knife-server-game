@@ -103,9 +103,9 @@ const verifyUserRoute = async (app, opt) => {
         data    : { mega_id: result.mega1_code }
       });
 
-      let app_id  = '5f3127be11618e00ce0d48b1';
+      let app_id  = '5f758539deed4200bc1cfe20';
       if (platform === 'ios') {
-        app_id  = '5f6862281fe6ec0060d4d3b6';
+        app_id  = '5f7585522f638b00cf560e22';
       }
 
       let dataLog = {
@@ -113,7 +113,7 @@ const verifyUserRoute = async (app, opt) => {
         "android_id": "",
         "app_code": "",
         "app_id": app_id,
-        "app_key": "a00d3ba497f7158f1ad5f14e9d8ee4c8",
+        "app_key": "21d7a592e0845117c8dba8e3bc94e869",
         "app_version": "1.0.0",
         "brand": "",
         "bundle_identifier": "",
@@ -147,8 +147,8 @@ const verifyUserRoute = async (app, opt) => {
         time    : date.toLocaleString(),
         detail  : 'get SDK log',
         data    : {
-          "app_id": "5f3127be11618e00ce0d48b1",
-          "app_key": "25b37d3b23a001a4567b4883e02776c5",
+          "app_id": app_id,
+          "app_key": "21d7a592e0845117c8dba8e3bc94e869",
           "data": dataLog,
           "event_type": "1",
           "user_id": result.user_id
@@ -161,7 +161,7 @@ const verifyUserRoute = async (app, opt) => {
         detail  : 'get SDK log',
         data    : {
           "app_id": app_id,
-          "app_key": "25b37d3b23a001a4567b4883e02776c5",
+          "app_key": "21d7a592e0845117c8dba8e3bc94e869",
           "data": dataLog,
           "event_type": "2",
           "user_id": result.user_id

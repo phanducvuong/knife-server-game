@@ -14,7 +14,8 @@ var lsRedis         = config.initLsRedis();
 for (let ele of lsRedis) {
   let tmpRedisClient = redisClient.createClient({
     port  : ele.port,
-    host  : ele.host
+    host  : ele.host,
+    db    : ele.db
   });
   insLsRedis.push(tmpRedisClient);
 }

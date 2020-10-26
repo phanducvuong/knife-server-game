@@ -5,6 +5,7 @@ const wheelFunc             = require('../functions/wheel_func');
 const profileUserFunc       = require('../functions/profile_user_func');
 const generateStr           = require('../utils/generate_string');
 const logger                = require('fluent-logger');
+const response              = require('../utils/response');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -37,7 +38,10 @@ const wheelRoute = async (app, opt) => {
         if (dataUser === null || dataUser === undefined) throw `user is not exist! ${megaID}`;
       } //get dataUser from redis. if user redis is not exist => get it from fs.
 
-      if (dataUser['token'] !== token || dataUser['turn'] <= 0) throw `unvalid token or turn is zero! ${megaID}`;
+      if (dataUser['token'] !== token || dataUser['turn'] <= 0) {
+        response.response(rep, 2700, `unvalid token or turn is zero! ${megaID}`);
+        return;
+      };
 
       let item;
       let resultUpdateLsSpItem;
@@ -141,54 +145,75 @@ const wheelRoute = async (app, opt) => {
         }
       });
 
-      let app_id  = '5f3127be11618e00ce0d48b1';
+      let app_id  = '5f758539deed4200bc1cfe20';
       if (platform === 'ios') {
-        app_id  = '5f6862281fe6ec0060d4d3b6';
+        app_id  = '5f7585522f638b00cf560e22';
       }
+
+      let dataLog = {
+        "advertiser_id": dataUser['userID'],
+        "android_id": "",
+        "app_code": "",
+        "app_id": app_id,
+        "app_key": "21d7a592e0845117c8dba8e3bc94e869",
+        "app_version": "1.0.0",
+        "brand": "",
+        "bundle_identifier": "",
+        "carrier": "",
+        "country_code": "VN",
+        "cpu_abi": "",
+        "cpu_abi2": "",
+        "device": "",
+        "device_model": "",
+        "device_type": "user",
+        "display": "",
+        "event_value": { "login_count": 0, "price": 0, "success": true },
+        "fcm": "",
+        "finger_print": "",
+        "install_time": "",
+        "language": "Tiếng Việt",
+        "last_update_time": "",
+        "operator": "",
+        "os_version": "",
+        "platform": platform,
+        "product": "",
+        "sdk": "23",
+        "sdk_version": "1.0.0",
+        "server_timestamp": date.getTime(),
+        "time_zone": "UTC",
+        "timestamp": date.getTime()
+      }
+
       logger.emit('log', {
         action  : '[KPI][GET-SDK]',
         time    : time.toLocaleString(),
         detail  : 'get SDK log',
         data    : {
           "app_id": app_id,
-          "app_key": "25b37d3b23a001a4567b4883e02776c5",
-          "data": {
-            "advertiser_id": dataUser.userID,
-            "android_id": "",
-            "app_code": "",
-            "app_id": app_id,
-            "app_key": "a00d3ba497f7158f1ad5f14e9d8ee4c8",
-            "app_version": "1.0.0",
-            "brand": "",
-            "bundle_identifier": "",
-            "carrier": "",
-            "country_code": "VN",
-            "cpu_abi": "",
-            "cpu_abi2": "",
-            "device": "",
-            "device_model": "",
-            "device_type": "user",
-            "display": "",
-            "event_value": { "login_count": 0, "price": 0, "success": true },
-            "fcm": "",
-            "finger_print": "",
-            "install_time": "",
-            "language": "Tiếng Việt",
-            "last_update_time": "",
-            "operator": "",
-            "os_version": "",
-            "platform": platform,
-            "product": "",
-            "sdk": "23",
-            "sdk_version": "1.0.0",
-            "server_timestamp": time.getTime(),
-            "time_zone": "UTC",
-            "timestamp": time.getTime()
-          },
+          "app_key": "21d7a592e0845117c8dba8e3bc94e869",
+          "data": dataLog,
           "event_type": "4",
-          "user_id": dataUser.userID
+          "user_id": dataUser['userID']
         }
       });
+
+      if (item['type'] >= 0) {
+        logger.emit('log', {
+          action  : '[KPI][GET-SDK]',
+          time    : time.toLocaleString(),
+          detail  : 'get SDK log',
+          data    : {
+            "app_id": app_id,
+            "app_key": "21d7a592e0845117c8dba8e3bc94e869",
+            "data": dataLog,
+            "event_type": "7",
+            "event_value": {
+              "id": item['id']
+            },
+            "user_id": dataUser['userID']
+          }
+        });
+      }
 
       rep.send({
         status_code     : 2000,
