@@ -29,7 +29,7 @@ const dataInitUser = {
   total_turned  : 0,
   token         :'',
   actions       : [0, 0],
-  events        : [0, 0, 0],
+  events        : [0, 0, 0],                  //lưu lại số lần nhập code, phóng phi tiêu của user => nhận bonus
   lucky_code    : [],
   sp_item       : [],
   mission       : [],

@@ -1,4 +1,5 @@
 const profileFunc             = require('./profile_user_func');
+const util                    = require('../utils/util');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -12,10 +13,15 @@ exports.filterLsEventWithSpItem = (lsEvent) => {
   let filter = [];
   for (let m of config.EVENTS.data) {
     if (m['status'] === 1) {
-      let did = 0;
+      let did     = 0;
       if (m['type'] === 0)      did = lsEvent[0];
       else if (m['type'] === 1) did = lsEvent[1];
       else if (m['type'] === 2) did = lsEvent[2];
+
+      let status  = true;
+      if (m['id'] === 0 && !util.isEligibleEventById0(m['from_date'], m['to_date'])) {
+        status = false;
+      }
       
       if (m['sp_item'] !== null && m['bonus_turn'] > 0) {
         filter.push({
@@ -23,6 +29,7 @@ exports.filterLsEventWithSpItem = (lsEvent) => {
           description   : m['description'],
           target        : m['target'],
           did           : did,
+          status        : status,
           bonus_str_1   : `${m['bonus_turn']} lượt`,
           bonus_str_2   : `${m['bonus_sp_item']} ${m['sp_item']['description']}`
         });
@@ -33,6 +40,7 @@ exports.filterLsEventWithSpItem = (lsEvent) => {
           description   : m['description'],
           target        : m['target'],
           did           : did,
+          status        : status,
           bonus_str_1   : '',
           bonus_str_2   : `${m['bonus_sp_item']} ${m['sp_item']['description']}`
         });
@@ -43,6 +51,7 @@ exports.filterLsEventWithSpItem = (lsEvent) => {
           description   : m['description'],
           target        : m['target'],
           did           : did,
+          status        : status,
           bonus_str_1   : `${m['bonus_turn']} Lượt`,
           bonus_str_2   : ''
         });
@@ -60,7 +69,9 @@ exports.joinEvent = (dataUser, idEvent) => {
   switch (tmpEvent['type']) {
     case 0: {
 
-      if (dataUser['events'][0] < tmpEvent['target']) return { status: false, msg: 'Not eligible yet!' };
+      if (dataUser['events'][0] < tmpEvent['target'] || !util.isEligibleEventById0(tmpEvent['from_date'], tmpEvent['to_date']))
+        return { status: false, msg: 'Not eligible yet!' };
+
       resultBonus            = profileFunc.getBonusFromMissionOrEvent(tmpEvent, dataUser);
       dataUser['events'][0] -= tmpEvent['target'];
 

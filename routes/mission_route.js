@@ -40,7 +40,7 @@ const missionRoute = async (app, opt) => {
   app.post('/join-mission', async (req, rep) => {
     try {
 
-      // const platform  = req.body.platform;
+      const platform  = req.body.platform;
       const token     = req.body.token.toString().trim();
       const megaID    = req.body.megaID.toString().trim();
       const idMission = parseInt(req.body.idMission, 10);
@@ -69,9 +69,10 @@ const missionRoute = async (app, opt) => {
       redis.updateTurnAndInvenUser(megaID, JSON.stringify(bonusFromMission['dataUserUpdate']));
 
       //logger
+      let date = new Date();
       logger.emit('log', {
         action  : '[MISSION][JOIN-MISSION]',
-        time    : new Date().toLocaleString(),
+        time    : date.toLocaleString(),
         detail  : 'join mission',
         data    : {
           id_mission  : idMission,

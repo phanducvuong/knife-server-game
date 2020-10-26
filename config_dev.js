@@ -14,6 +14,8 @@
  * 1  -> Phóng Phi Tiêu
  * 2  -> Mời Bạn
  * 
+ * @key target evevnt: đạt đủ target mới được nhận bonus
+ * 
  * @key code, status
  * code -> mega_code
  * status -> 1: ok, 0: no
@@ -105,7 +107,7 @@ exports.MISSIONS                  = [
 
 exports.EVENTS                    = {
   start     : '2020-09-30',
-  end       : '2020-10-30',
+  end       : '2020-10-01',
   data      : [
     {
       id            : 0,
@@ -116,9 +118,8 @@ exports.EVENTS                    = {
       bonus_sp_item : 0,
       status        : 1,
       type          : 0,
-      type          : 0,
-      from_time     : '2020-09-30 00:00:00',
-      to_time       : '2020-10-30 23:59:59'
+      from_date     : '2020-09-29 17:00:00',
+      to_date       : '2020-09-30 16:59:59'                       //convert UTC time to localtime
     }
   ]
 }

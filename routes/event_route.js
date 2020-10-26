@@ -67,7 +67,7 @@ const eventRoute = async (app, opt) => {
   app.post('/join-event', async (req, rep) => {
     try {
 
-      // let platform  = req.body.platform;
+      let platform  = req.body.platform;
       let token     = req.body.token.toString().trim();
       let megaID    = req.body.megaID.toString().trim();
       let idEvent   = parseInt(req.body.idEvent, 10);
@@ -82,7 +82,8 @@ const eventRoute = async (app, opt) => {
         throw 'Event is comming soon!';
       }
 
-      let dataUser = JSON.parse(await redis.getTurnAndInvenUser(megaID));
+      let date      = new Date();
+      let dataUser  = JSON.parse(await redis.getTurnAndInvenUser(megaID));
       if (dataUser === null || dataUser === undefined) {
         dataUser = await DS.DSGetDataUser(megaID, 'turn_inven');
         if (dataUser === null || dataUser === undefined) throw `User not exist with ${megaID}!`;
@@ -96,7 +97,7 @@ const eventRoute = async (app, opt) => {
         //logger
         logger.emit('log', {
           action  : '[EVENT][JOIN-EVENT]',
-          time    : new Date().toLocaleString(),
+          time    : date.toLocaleString(),
           detail  : resultJoinEvent['msg'],
           data    : {
             user_id   : megaID,
@@ -117,7 +118,7 @@ const eventRoute = async (app, opt) => {
       //logger
       logger.emit('log', {
         action  : '[EVENT][JOIN-EVENT]',
-        time    : new Date().toLocaleString(),
+        time    : date.toLocaleString(),
         detail  : 'join event',
         data    : {
           id_event  : idEvent,

@@ -4,6 +4,14 @@ const profileFunc   = require('../functions/profile_user_func');
 const util          = require('../utils/util');
 const logger        = require('fluent-logger');
 
+var config;
+if (process.env.NODE_ENV === 'production') {
+  config = require('../config_prod');
+}
+else {
+  config = require('../config_dev');
+}
+
 const profileUserRoute = async (app, opt) => {
 
   app.post('/get-history', async (req, rep) => {
@@ -166,7 +174,7 @@ const profileUserRoute = async (app, opt) => {
   app.post('/enter-code', async (req, rep) => {
     try {
 
-      // let platform    = req.body.platform;
+      let platform    = req.body.platform;
       let token       = req.body.token.toString().trim();
       let megaID      = req.body.megaID.toString().trim();
       let code        = req.body.code.toString().trim();
@@ -193,6 +201,10 @@ const profileUserRoute = async (app, opt) => {
       let date          = new Date();
       dataUser['turn'] += 1;
       dataUser['log_get_turn']['from_enter_code'].push(`${result['code']}_${dataUser['turn']}_1_${date.getTime()}`);
+
+      if (util.isEligibleEventById0(config.EVENTS['data'][0]['from_date'], config.EVENTS['data'][0]['to_date'])) {
+        dataUser['events'][0] += 1;
+      }
 
       redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
       DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);

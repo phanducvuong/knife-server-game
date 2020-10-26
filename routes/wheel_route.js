@@ -179,9 +179,9 @@ const wheelRoute = async (app, opt) => {
         "product": "",
         "sdk": "23",
         "sdk_version": "1.0.0",
-        "server_timestamp": date.getTime(),
+        "server_timestamp": time.getTime(),
         "time_zone": "UTC",
-        "timestamp": date.getTime()
+        "timestamp": time.getTime()
       }
 
       logger.emit('log', {

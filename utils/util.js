@@ -43,6 +43,7 @@ exports.chkTimeEvent = (start, end) => {
   let timeS = new Date(`${start} 00:00:00`);
   let timeE = new Date(`${end} 23:59:59`);
 
+  // let convertMilli = time.getTime();
   let convertMilli = time.getTime() + 7 * 3600 * 1000;
   if (convertMilli >= timeS.getTime() && convertMilli <= timeE.getTime()) {
     return true;
@@ -68,6 +69,17 @@ exports.convertTimeToString = (milli) => {
   let minute  = time.getMinutes();
   let second  = time.getSeconds();
   return `${date}/${month}/${year}  ${hour}:${minute}:${second}`;
+}
+
+exports.isEligibleEventById0 = (fromDate, toDate) => {
+  let tmpFromDate = new Date(fromDate);
+  let tmpToDate   = new Date(toDate);
+  let dateNow     = new Date();
+
+  if (dateNow.getTime() >= tmpFromDate.getTime() && dateNow.getTime() <= tmpToDate.getTime()) {
+    return true;
+  }
+  return false;
 }
 
 exports.chkTheSameDate = (milli1, milli2) => {

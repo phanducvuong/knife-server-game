@@ -331,8 +331,6 @@
         let fromDate    = $('#modal-input-from-time').val();
         let toDate      = $('#modal-input-to-time').val();
 
-        console.log(`from time: ${fromDate}    to time: ${toDate}`)
-
         if (id     === '' || description === '' || target === '' ||
             status === '' || bonusTurn   === '' || spItem === '' || type === '') {
           alert('Check info mission client!');
@@ -349,33 +347,35 @@
           url = 'http://' + window.location.host + '/api/v1/admin/setup/update-event';
         }
 
-      //   $.ajax({
-      //   url           : url,
-      //   method        : 'POST',
-      //   contentType   : 'application/json; charset=utf-8',
-      //   data          : JSON.stringify({
-      //     id            : id,
-      //     description   : description,
-      //     target        : target,
-      //     bonus_turn    : bonusTurn,
-      //     sp_item       : spItem,
-      //     bonus_sp_item : bonusSpItem,
-      //     status        : status,
-      //     type          : type
-      //   })
-      // })
-      //   .done((data) => {
+        $.ajax({
+        url           : url,
+        method        : 'POST',
+        contentType   : 'application/json; charset=utf-8',
+        data          : JSON.stringify({
+          id            : id,
+          description   : description,
+          target        : target,
+          bonus_turn    : bonusTurn,
+          sp_item       : spItem,
+          bonus_sp_item : bonusSpItem,
+          status        : status,
+          type          : type,
+          from_date     : fromDate,
+          to_date       : toDate
+        })
+      })
+        .done((data) => {
 
-      //     if (data['status_code'] !== 2000) {
-      //       alert(data['error']);
-      //       return;
-      //     }
+          if (data['status_code'] !== 2000) {
+            alert(data['error']);
+            return;
+          }
 
-      //     $('#modal-event').modal('hide');
-      //     updateTableEvent(data['eventUpdate']);
+          $('#modal-event').modal('hide');
+          updateTableEvent(data['eventUpdate']);
 
-      //   })
-      //   .fail(() => {});
+        })
+        .fail(() => {});
 
       });
     }

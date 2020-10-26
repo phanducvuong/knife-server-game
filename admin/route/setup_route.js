@@ -1107,10 +1107,12 @@ const setupRoute = async (app, opt) => {
       let spItem      = parseInt(req.body.sp_item, 10);
       let bonusSpItem = parseInt(req.body.bonus_sp_item, 10);
       let status      = parseInt(req.body.status, 10);
+      let fromDate    = req.body.from_date;
+      let toDate      = req.body.to_date;
 
       if (isNaN(id) || isNaN(target) || isNaN(bonusTurn) || isNaN(status)        || isNaN(spItem)             || isNaN(bonusSpItem)       ||
           id < 0    || target <= 0   || bonusTurn < 0    || description === null || description === undefined || description === '') {
-        throw 'Check info mission!';
+        throw 'Check info event!';
       }
       else if (bonusTurn === 0 && bonusSpItem <= 0) {
         throw 'Check info bonus turn or bonus sp item';
@@ -1157,6 +1159,19 @@ const setupRoute = async (app, opt) => {
         eventFind['bonus_turn']     = bonusTurn;
         eventFind['bonus_sp_item']  = bonusSpItem;
         eventFind['status']         = status;
+      }
+
+      //update time if idEvent is 0
+      if (id === 0) {
+        let tmpFromDate = new Date(fromDate);
+        let tmpToDate   = new Date(toDate);
+
+        if (isNaN(tmpFromDate.getTime()) || isNaN(tmpToDate.getTime()) || tmpFromDate.getTime() >= tmpToDate.getTime()) {
+          throw `Update event failed! Date`;
+        }
+
+        eventFind['from_date']  = fromDate;
+        eventFind['to_date']    = toDate;
       }
 
       DS.DSUpdateDataGlobal('admin', 'events', events);
