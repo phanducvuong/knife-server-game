@@ -66,6 +66,19 @@ exports.ITEM_FILTER               = [];     //danh sách item có trong list par
 exports.ARR_ID_ITEM_BL            = [];     //danh sách id item dành cho user nằm trong blacklist
 exports.ARR_ENTER_CODE            = [];     //danh sách list code. user nhập vào để lấy lượt
 
+exports.BONUS_ENTER_CODE          = {
+  bonus_1 : {
+    bonus_turn    : 2,
+    bonus_sp_item : 0,
+    id_sp_item    : 0
+  },
+  bonus_2 : {
+    bonus_turn    : 5,
+    bonus_sp_item : 1,
+    id_sp_item    : 0
+  }
+}
+
 exports.BLACK_LIST                = [
   {
     mega_code : 'MEGA1179262', status : 0
@@ -112,7 +125,9 @@ exports.EVENTS                    = {
       sp_item       : null,
       bonus_sp_item : 0,
       status        : 1,
-      type          : 0
+      type          : 0,
+      from_date     : '2020-09-29 17:00:00',
+      to_date       : '2020-09-30 16:59:59'
     }
   ]
 }

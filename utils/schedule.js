@@ -81,6 +81,8 @@ exports.updatePartition = async () => {
     config.BLACK_LIST = [];
     config.BLACK_LIST.push(...blackList['black_list']);
   }
+
+  //TODO: update bonus enter code
 }
 
 function filterItemHaveInListPartition(lsPartition, lsItem) {

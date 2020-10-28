@@ -90,7 +90,7 @@
 
           <tfoot>
             <tr>
-              <td colspan="6" style="text-align: center;">
+              <td colspan="12" style="text-align: center;">
                 <button type="button" data-toggle="modal" data-target="#modal-event" class="btn btn-success">ADD</button>
               </td>
             </tr>
@@ -331,7 +331,7 @@
         let fromDate    = $('#modal-input-from-time').val();
         let toDate      = $('#modal-input-to-time').val();
 
-        if (id     === '' || description === '' || target === '' ||
+        if (id     === '' || description === '' || target === '' || type === '-1' ||
             status === '' || bonusTurn   === '' || spItem === '' || type === '') {
           alert('Check info mission client!');
           return;

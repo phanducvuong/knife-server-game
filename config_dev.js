@@ -22,8 +22,8 @@
  */
 
 
-// exports.URL_VALID_TOKEN           = 'http://demo8992960.mockable.io/verify-token';
-exports.URL_VALID_TOKEN           = 'https://mega1-gameportal-dev.yeah1group.com/service_gameportal/v1/user/info';
+exports.URL_VALID_TOKEN           = 'http://demo8992960.mockable.io/verify-token';
+// exports.URL_VALID_TOKEN           = 'https://mega1-gameportal-dev.yeah1group.com/service_gameportal/v1/user/info';
 exports.URL_TOPUP                 = 'https://topup-gw-dev-api.yeah1group.com/api/v1/topup';
 exports.APP_ID_TOPUP              = 'jEaTJp4FauQWLOl0';
 exports.PRIVATE_KEY_TOPUP         = '1x9T7QlA5MWu9RPHaREeK7+5ynABS7ShlF43urYudeYStGgWmYJTYcU8IhFBwg2z';
@@ -71,6 +71,19 @@ exports.ITEM_FILTER               = [];     //danh sách item có trong list par
 exports.ARR_ID_ITEM_BL            = [];     //danh sách id item dành cho user nằm trong blacklist
 exports.ARR_ENTER_CODE            = [];     //danh sách list code. user nhập vào để lấy lượt
 
+exports.BONUS_ENTER_CODE          = {
+  bonus_1 : {
+    bonus_turn    : 2,
+    bonus_sp_item : 0,
+    id_sp_item    : 0
+  },
+  bonus_2 : {
+    bonus_turn    : 5,
+    bonus_sp_item : 1,
+    id_sp_item    : 0
+  }
+}
+
 exports.BLACK_LIST                = [
   {
     mega_code : 'MEGA1179262', status : 0
@@ -107,7 +120,7 @@ exports.MISSIONS                  = [
 
 exports.EVENTS                    = {
   start     : '2020-09-30',
-  end       : '2020-10-01',
+  end       : '2020-10-30',
   data      : [
     {
       id            : 0,

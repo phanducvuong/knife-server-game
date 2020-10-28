@@ -1017,7 +1017,7 @@ const setupRoute = async (app, opt) => {
       let status      = parseInt(req.body.status, 10);
       let type        = parseInt(req.body.type, 10);
 
-      if (isNaN(id) || isNaN(target) || isNaN(bonusTurn) || isNaN(status)        || isNaN(spItem)             || isNaN(bonusSpItem) || isNaN(type) ||
+      if (isNaN(id) || isNaN(target) || isNaN(bonusTurn) || isNaN(status)        || isNaN(spItem)             || isNaN(bonusSpItem) || isNaN(type) || type < 0 ||
           id < 0    || target <= 0   || bonusTurn < 0    || description === null || description === undefined || description === '') {
         throw 'Check info mission!';
       }

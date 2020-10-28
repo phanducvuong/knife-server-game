@@ -18,7 +18,9 @@ exports.filterLsEventWithSpItem = (lsEvent) => {
       else if (m['type'] === 1) did = lsEvent[1];
       else if (m['type'] === 2) did = lsEvent[2];
 
-      let status  = true;
+      let status    = true;
+      let fromDate  = (m['from_date'] !== undefined && m['from_date'] !== null) ? convertStrDateEvent(m['from_date'], true) : '';
+      let toDate    = (m['to_date'] !== undefined && m['to_date'] !== null) ? convertStrDateEvent(m['to_date'], false) : '';
       if (m['id'] === 0 && !util.isEligibleEventById0(m['from_date'], m['to_date'])) {
         status = false;
       }
@@ -31,7 +33,9 @@ exports.filterLsEventWithSpItem = (lsEvent) => {
           did           : did,
           status        : status,
           bonus_str_1   : `${m['bonus_turn']} lượt`,
-          bonus_str_2   : `${m['bonus_sp_item']} ${m['sp_item']['description']}`
+          bonus_str_2   : `${m['bonus_sp_item']} ${m['sp_item']['description']}`,
+          from_date     : fromDate,
+          to_date       : toDate
         });
       }
       else if (m['sp_item'] !== null && m['bonus_turn'] <= 0) {
@@ -42,7 +46,9 @@ exports.filterLsEventWithSpItem = (lsEvent) => {
           did           : did,
           status        : status,
           bonus_str_1   : '',
-          bonus_str_2   : `${m['bonus_sp_item']} ${m['sp_item']['description']}`
+          bonus_str_2   : `${m['bonus_sp_item']} ${m['sp_item']['description']}`,
+          from_date     : fromDate,
+          to_date       : toDate
         });
       }
       else if (m['bonus_turn'] > 0) {
@@ -53,7 +59,9 @@ exports.filterLsEventWithSpItem = (lsEvent) => {
           did           : did,
           status        : status,
           bonus_str_1   : `${m['bonus_turn']} Lượt`,
-          bonus_str_2   : ''
+          bonus_str_2   : '',
+          from_date     : fromDate,
+          to_date       : toDate
         });
       }
     }
@@ -99,4 +107,12 @@ exports.joinEvent = (dataUser, idEvent) => {
     bonusStr        : resultBonus['bonus_str'],
     dataUserUpdate  : dataUser
   };
+}
+
+//----------------------------------functional-----------------------------------------
+function convertStrDateEvent(strDate, isFrom) {
+  if (isFrom) {
+    return strDate.split(' ')[0] + ' 00:00';
+  }
+  return strDate.split(' ')[0] + ' 23:59';
 }

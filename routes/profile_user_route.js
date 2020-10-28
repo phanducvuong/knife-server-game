@@ -3,6 +3,7 @@ const redisClient   = require('../redis/redis_client');
 const profileFunc   = require('../functions/profile_user_func');
 const util          = require('../utils/util');
 const logger        = require('fluent-logger');
+const generateStr   = require('../utils/generate_string');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -198,13 +199,27 @@ const profileUserRoute = async (app, opt) => {
       let result = util.isValidEntetCode(code, codes['codes']);
       if (!result['status']) throw `Invalid code! ${code}`;
 
+      //bonus by condition
       let date          = new Date();
-      dataUser['turn'] += 1;
+      if (dataUser['log_get_turn']['from_enter_code'].length % 2 === 0) {
+        dataUser['turn'] += config.BONUS_ENTER_CODE['bonus_1']['bonus_turn'];
+        if (config.BONUS_ENTER_CODE['bonus_1']['bonus_sp_item'] > 0) {
+          let str = generateStr.getStringGenerate();
+          dataUser['lucky_code'].push(`${str}_${date.getTime()}`);
+        }
+      }
+      else {
+        dataUser['turn'] += config.BONUS_ENTER_CODE['bonus_2']['bonus_turn'];
+        if (config.BONUS_ENTER_CODE['bonus_2']['bonus_sp_item'] > 0) {
+          let str = generateStr.getStringGenerate();
+          dataUser['lucky_code'].push(`${str}_${date.getTime()}`);
+        }
+      }
       dataUser['log_get_turn']['from_enter_code'].push(`${result['code']}_${dataUser['turn']}_1_${date.getTime()}`);
 
       if (util.isEligibleEventById0(config.EVENTS['data'][0]['from_date'], config.EVENTS['data'][0]['to_date'])) {
         dataUser['events'][0] += 1;
-      }
+      } //cập nhật events nếu events đang diễn ra
 
       redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
       DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
