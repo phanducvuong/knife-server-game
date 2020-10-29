@@ -248,7 +248,7 @@
 			$('#btnEditPartition').css('display', 'none');
 
 			$.ajax({
-				url					: 'http://' + window.location.host + '/api/v1/admin/setup/get-all-item',
+				url					: env.http + window.location.host + '/api/v1/admin/setup/get-all-item',
 				method			: 'GET'
 			})
 				.done((data) => {
@@ -273,7 +273,7 @@
 
 		//add new partition by item
 		$('#btnAddPartition').click(() => {
-			let url = 'http://' + window.location.host + '/api/v1/admin/setup/add-partition';
+			let url = env.http + window.location.host + '/api/v1/admin/setup/add-partition';
 			addOrEditPartition(url);
 		});
 	}
@@ -336,7 +336,7 @@
 			}
 
 			$.ajax({
-				url					: 'http://' + window.location.host + '/api/v1/admin/setup/delete-partition',
+				url					: env.http + window.location.host + '/api/v1/admin/setup/delete-partition',
 				method			: 'POST',
 				contentType	: 'application/json; charset=utf-8',
 				data				: JSON.stringify({ pos	: pos })
@@ -371,7 +371,7 @@
 			}
 
 			$.ajax({
-				url					: 'http://' + window.location.host + '/api/v1/admin/setup/get-partition-by-id',
+				url					: env.http + window.location.host + '/api/v1/admin/setup/get-partition-by-id',
 				method			: 'POST',
 				contentType	: 'application/json; charset=utf-8',
 				data				: JSON.stringify({ pos	: pos })
@@ -412,7 +412,7 @@
 
 		//update partitio by pos
 		$('#btnEditPartition').click(() => {
-			let url = 'http://' + window.location.host + '/api/v1/admin/setup/update-partition';
+			let url = env.http + window.location.host + '/api/v1/admin/setup/update-partition';
 			addOrEditPartition(url);
 		});
 	}
@@ -431,7 +431,7 @@
 			}
 
 			$.ajax({
-				url					: 'http://' + window.location.host + '/api/v1/admin/setup/update-board',
+				url					: env.http + window.location.host + '/api/v1/admin/setup/update-board',
 				method			: 'POST',
 				contentType	: 'application/json; charset=utf-8',
 				data				: JSON.stringify({

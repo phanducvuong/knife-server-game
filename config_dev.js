@@ -25,8 +25,8 @@
 exports.URL_VALID_TOKEN           = 'http://demo8992960.mockable.io/verify-token';
 // exports.URL_VALID_TOKEN           = 'https://mega1-gameportal-dev.yeah1group.com/service_gameportal/v1/user/info';
 exports.URL_TOPUP                 = 'https://topup-gw-dev-api.yeah1group.com/api/v1/topup';
-exports.APP_ID_TOPUP              = 'jEaTJp4FauQWLOl0';
-exports.PRIVATE_KEY_TOPUP         = '1x9T7QlA5MWu9RPHaREeK7+5ynABS7ShlF43urYudeYStGgWmYJTYcU8IhFBwg2z';
+exports.APP_ID_TOPUP              = 'GL5KFS29iJycYRjP';
+exports.PRIVATE_KEY_TOPUP         = 'N4OQ2JHouBwJb3ceZedx7gYR/RWYfJhes5DF6Gt64EKYyjG6VZQtD8t1KhmSp+EZ';
 
 exports.LENGTH_REDIS              = 1;
 exports.initLsRedis = () => {
@@ -73,14 +73,12 @@ exports.ARR_ENTER_CODE            = [];     //danh sách list code. user nhập 
 
 exports.BONUS_ENTER_CODE          = {
   bonus_1 : {
-    bonus_turn    : 2,
-    bonus_sp_item : 0,
-    id_sp_item    : 0
+    bonus_turn        : 2,
+    bonus_lucky_code  : 1
   },
   bonus_2 : {
-    bonus_turn    : 5,
-    bonus_sp_item : 1,
-    id_sp_item    : 0
+    bonus_turn        : 5,
+    bonus_lucky_code  : 1
   }
 }
 
@@ -127,12 +125,13 @@ exports.EVENTS                    = {
       description   : 'x2 Lượt Chơi Khi Nhập Code',
       bonus_turn    : 2,
       target        : 1,
+      mul           : 2,                                          // cấp số nhân bonus turn
       sp_item       : null,
       bonus_sp_item : 0,
       status        : 1,
       type          : 0,
       from_date     : '2020-09-29 17:00:00',
-      to_date       : '2020-09-30 16:59:59'                       //convert UTC time to localtime
+      to_date       : '2020-10-30 16:59:59'                       //convert UTC time to localtime
     }
   ]
 }

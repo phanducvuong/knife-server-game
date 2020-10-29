@@ -21,6 +21,8 @@ else {
  * index at 0 -> nhập code
  * index at 1 -> phóng phi tiêu
  * index at 2 -> mời bạn
+ * 
+ * @key xX_bonus_turn -> array[{bonus_geted}]: mảng chứa các bonus_turn khi user nhập code. dùng value đó nhân với số lần lượt được tặng nếu tồn tại event (event x2 lượt chơi)
  */
 
 const dataInitUser = {
@@ -30,6 +32,7 @@ const dataInitUser = {
   token         :'',
   actions       : [0, 0],
   events        : [0, 0, 0],                  //lưu lại số lần nhập code, phóng phi tiêu của user => nhận bonus
+  xX_bonus_turn : [],
   lucky_code    : [],
   sp_item       : [],
   mission       : [],

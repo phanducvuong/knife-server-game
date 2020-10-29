@@ -21,9 +21,10 @@
 
 
 exports.URL_VALID_TOKEN           = 'https://mega1vip.mega1.vn/service_gameportal/v1/user/info';
-exports.URL_TOPUP                 = 'https://topup-gw-dev-api.yeah1group.com/api/v1/topup';
-exports.APP_ID_TOPUP              = 'jEaTJp4FauQWLOl0';
-exports.PRIVATE_KEY_TOPUP         = '1x9T7QlA5MWu9RPHaREeK7+5ynABS7ShlF43urYudeYStGgWmYJTYcU8IhFBwg2z';
+// exports.URL_TOPUP                 = 'https://topup-gw-dev-api.yeah1group.com/api/v1/topup';
+exports.URL_TOPUP                 = 'https://topup-gw-master-api.yeah1group.com';
+exports.APP_ID_TOPUP              = '9sPw+H16kZSsrOrn';
+exports.PRIVATE_KEY_TOPUP         = 'Nts7UOjNTDW8u4Vu9zK5gZGWBpYlW9KOko7h4C8bd+n5A/MCLuaDXmEhYGLkT1Gu';
 
 exports.LENGTH_REDIS              = 1;
 exports.initLsRedis = () => {
@@ -31,6 +32,7 @@ exports.initLsRedis = () => {
   lsRedis.push({
     port  : 6379,
     host  : '10.149.0.19',
+    // host  : '127.0.0.1',
     db    : 1
   });
 
@@ -56,7 +58,7 @@ exports.PARTITIONS                = {
 }
 
 //fluent logger
-exports.TAG_LOGGER                = 'phi-dao-dev';
+exports.TAG_LOGGER                = 'phi-dao-prod';
 exports.HOST_LOG                  = '10.10.11.11';
 exports.PORT_LOG                  = 24224;
 
@@ -68,14 +70,12 @@ exports.ARR_ENTER_CODE            = [];     //danh sách list code. user nhập 
 
 exports.BONUS_ENTER_CODE          = {
   bonus_1 : {
-    bonus_turn    : 2,
-    bonus_sp_item : 0,
-    id_sp_item    : 0
+    bonus_turn        : 2,
+    bonus_lucky_code  : 1
   },
   bonus_2 : {
-    bonus_turn    : 5,
-    bonus_sp_item : 1,
-    id_sp_item    : 0
+    bonus_turn        : 5,
+    bonus_lucky_code  : 1
   }
 }
 

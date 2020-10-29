@@ -314,7 +314,7 @@
         }
 
         $.ajax({
-          url             : 'http://' + window.location.host + '/api/v1/admin/setup/add-item',
+          url             : env.http + window.location.host + '/api/v1/admin/setup/add-item',
           method          : 'POST',
           contentType     : 'application/json; charset=utf-8',
           data            : JSON.stringify(dataJson)
@@ -330,9 +330,7 @@
             updateTableItem(data['lsItem']);
 
           })
-          .fail(() => {
-
-          });
+          .fail(() => {});
         
       });
     }
@@ -410,7 +408,7 @@
         }
 
         $.ajax({
-            url     : 'http://' + window.location.host + '/api/v1/admin/setup/delete-item',
+            url     : env.http + window.location.host + '/api/v1/admin/setup/delete-item',
             method  : 'POST',
             contentType : 'application/json; charset=utf-8',
             data        : JSON.stringify(itemJs)
@@ -433,7 +431,7 @@
         let id = event.currentTarget.attributes.getNamedItem('data-id').value;
 
         $.ajax({
-          url     : 'http://' + window.location.host + '/api/v1/admin/setup/get-item-by-id',
+          url     : env.http + window.location.host + '/api/v1/admin/setup/get-item-by-id',
           method  : 'POST',
           contentType : 'application/json; charset=utf-8',
           data        : JSON.stringify({
@@ -490,7 +488,7 @@
         }
 
         $.ajax({
-          url         : 'http://' + window.location.host + '/api/v1/admin/setup/update-item',
+          url         : env.http + window.location.host + '/api/v1/admin/setup/update-item',
           method      : 'POST',
           contentType : 'application/json; charset=utf-8',
           data        : JSON.stringify({

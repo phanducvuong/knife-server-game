@@ -121,7 +121,7 @@
       }
 
       $.ajax({
-        url           : 'http://' + window.location.host + '/api/v1/admin/setup/del-user-black-list-by-mega-code',
+        url           : env.http + window.location.host + '/api/v1/admin/setup/del-user-black-list-by-mega-code',
         method        : 'POST',
         contentType   : 'application/json',
         data          : JSON.stringify({ mega_code: megaCode })
@@ -148,7 +148,7 @@
       }
 
       $.ajax({
-        url           : 'http://' + window.location.host + '/api/v1/admin/setup/get-user-black-list-by-mega-code',
+        url           : env.http + window.location.host + '/api/v1/admin/setup/get-user-black-list-by-mega-code',
         method        : 'POST',
         contentType   : 'application/json; charset=utf-8',
         data          : JSON.stringify({ mega_code: megaCode })
@@ -179,10 +179,10 @@
         return;
       }
 
-      let url           = 'http://' + window.location.host + '/api/v1/admin/setup/add-user-black-list';
+      let url           = env.http + window.location.host + '/api/v1/admin/setup/add-user-black-list';
       let valBtnSubmit  = $('#btn-submit').val();
       if (valBtnSubmit === '1') {
-        url = 'http://' + window.location.host + '/api/v1/admin/setup/edit-user-black-list'
+        url = env.http + window.location.host + '/api/v1/admin/setup/edit-user-black-list'
       }
 
       $.ajax({

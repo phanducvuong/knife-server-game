@@ -145,6 +145,12 @@ exports.getNotificaBanner = () => {
   });
 }
 
+exports.flushall = () => {
+  for (let i=0; i<insLsRedis.length; i++) {
+    insLsRedis[i].flushall();
+  }
+}
+
 //-----------------------------------------functional-----------------------------------------------
 function getIndex(key) {
   let index = Math.abs(hashCode(key)) % config.LENGTH_REDIS;

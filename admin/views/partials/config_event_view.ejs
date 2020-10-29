@@ -269,7 +269,7 @@
         $('#modal-input-id-event').attr('readonly', 'readonly');
 
         $.ajax({
-          url           : 'http://' + window.location.host + '/api/v1/admin/setup/get-event-by-id',
+          url           : env.http + window.location.host + '/api/v1/admin/setup/get-event-by-id',
           method        : 'POST',
           contentType   : 'application/json; charset=utf-8',
           data          : JSON.stringify({
@@ -298,7 +298,7 @@
         }
 
         $.ajax({
-          url         : 'http://' + window.location.host + '/api/v1/admin/setup/delete-event',
+          url         : env.http + window.location.host + '/api/v1/admin/setup/delete-event',
           method      : 'POST',
           contentType : 'application/json; charset=utf-8',
           data        : JSON.stringify({ id: dataID })
@@ -341,10 +341,10 @@
 
         let url = '';
         if ($('#modal-btn-submit-event').text() === 'ADD') {
-          url = 'http://' + window.location.host + '/api/v1/admin/setup/add-event';
+          url = env.http + window.location.host + '/api/v1/admin/setup/add-event';
         }
         else if ($('#modal-btn-submit-event').text() === 'UPDATE') {
-          url = 'http://' + window.location.host + '/api/v1/admin/setup/update-event';
+          url = env.http + window.location.host + '/api/v1/admin/setup/update-event';
         }
 
         $.ajax({
@@ -396,7 +396,7 @@
         }
 
         $.ajax({
-          url         : 'http://' + window.location.host + '/api/v1/admin/setup/update-time-event',
+          url         : env.http + window.location.host + '/api/v1/admin/setup/update-time-event',
           method      : 'POST',
           contentType : 'application/json; charset=utf-8',
           data        : JSON.stringify({

@@ -125,6 +125,23 @@ exports.getBonusFromMissionOrEvent = (obj, dataUser) => {
   }
 }
 
+exports.getBonusFromEventX2 = (obj, dataUser) => {
+  if (!util.isEligibleEventById0(config.EVENTS['data'][0]['from_date'], config.EVENTS['data'][0]['to_date']) ||
+      dataUser['xX_bonus_turn'].length <= 0) {
+    return { status: false, msg: 'event by id 0 is failed!' };
+  }
+
+  let bonusTurn  = obj['mul'] * dataUser['xX_bonus_turn'][0];
+  let str         = `${bonusTurn} lượt`;
+  return {
+    status          : true,
+    bonus_str       : str,
+    bonus_turn      : bonusTurn,
+    bonus_sp_item   : 0,
+    lsSpItemUpdate  : dataUser['sp_item']
+  }
+}
+
 exports.filterHistory = (lsHistory) => {
   let lsGift = [];
   let lsCard = [];
@@ -219,11 +236,26 @@ exports.getHistoryEnterCode = (lsHistoryEnterCode) => {
   let his = [];
   for (let e of lsHistoryEnterCode) {
     let str         = e.split('_');
-    let timeConvert = util.convertTimeToString(parseInt(str[3], 10));
+    let timeConvert = convertMilliToStr(parseInt(str[3], 10));
     his.push({
-      code  : str[0],
+      code  : hideCodeXXX(str[0]),
       time  : timeConvert
     });
   }
   return his;
+}
+
+//-------------------------------------functional-----------------------------------------
+function hideCodeXXX(code) {
+  return code.substring(0, 5) + 'XXXXX';
+}
+
+function convertMilliToStr(milli) {
+  let time    = new Date(milli + 7 * 3600 * 1000);
+  let month   = (time.getMonth() + 1) < 10 ? `0${time.getMonth() + 1}` : time.getMonth();
+  let date    = time.getDate() < 10 ? `0${time.getDate()}` : time.getDate();
+  let year    = time.getFullYear();
+  let hour    = time.getHours() < 10 ? `0${time.getHours()}` : time.getHours();
+  let minute  = time.getMinutes() < 10 ? `0${time.getMinutes()}` : time.getMinutes();
+  return `${hour}:${minute} ${date}/${month}/${year}`;
 }

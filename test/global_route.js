@@ -5,6 +5,7 @@ const profileFunc   = require('../functions/profile_user_func');
 const util          = require('../utils/util');
 const logger        = require('fluent-logger');
 const sendMail      = require('../utils/send_mail');
+const topup         = require('../repository/topup');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -515,6 +516,29 @@ const globalRoute = async (app, opt) => {
   app.get('/send-mail', async (req, rep) => {
     sendMail.sendTokenForMailer('abcbs', 'vuong.phan1269@gmail.com');
     rep.send('ok');
+  });
+
+  app.get('/flushall', async (req, rep) => {
+    redisClient.flushall();
+    rep.send('ok');
+  });
+
+  app.post('/test-topup', async (req, rep) => {
+    let teleCard  = parseInt(req.body.tele_card, 10);
+    let megaID    = req.body.megaID;
+    let phone     = req.body.phone;
+    
+    topup.requestTopupCardPhone(teleCard, phone, megaID);
+    rep.send('ok');
+  });
+
+  app.post('/topup', async (req, rep) => {
+    let teleCard  = parseInt(req.body.tele_card, 10);
+    let megaID    = req.body.megaID;
+    let phone     = req.body.phone;
+    
+    let result = await topup.requestTopupCardPhoneTEST(teleCard, phone, megaID);
+    rep.send(result);
   });
 
 }

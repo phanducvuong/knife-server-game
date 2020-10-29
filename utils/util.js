@@ -133,3 +133,15 @@ exports.genEnterCode = (code) => {
   let result  = crypto.createHash('md5').update(hash1).digest('hex');
   return result;
 }
+
+exports.getAmountTeleCardByRegion = (region) => {
+  switch(region) {
+    case '10k': return 10000;
+    case '20k': return 10000;
+    case '50k': return 10000;
+    case '100k': return 10000;
+    case '200k': return 10000;
+    case '500k': return 10000;
+    default: return 'none';
+  }
+}

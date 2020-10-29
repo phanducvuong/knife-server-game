@@ -140,3 +140,17 @@ exports.DSGetAllUser = async () => {
     return [];
   }
 }
+
+exports.DSTestSaveData = async (data) => {
+  try {
+    let keyEntity = dbClient.key([`abc`, `abc`]);
+    let result    = await dbClient.save({
+      key     : keyEntity,
+      data    : data
+    });
+    return result;
+  }
+  catch(err) {
+    return err;
+  }
+}

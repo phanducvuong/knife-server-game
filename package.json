@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "NODE_ENV=dev GOOGLE_APPLICATION_CREDENTIALS=./knife-service-account.json node app.js",
-    "prod": "NODE_ENV=production node app.js"
+    "prod": "NODE_ENV=production GOOGLE_APPLICATION_CREDENTIALS=./knife-service-account.json node app.js"
   },
   "author": "",
   "license": "ISC",

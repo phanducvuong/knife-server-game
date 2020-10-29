@@ -206,7 +206,7 @@
       $('#input-id-add-mission').attr('readonly', 'readonly');
 
       $.ajax({
-        url           : 'http://' + window.location.host + '/api/v1/admin/setup/get-config-mission-by-id',
+        url           : env.http + window.location.host + '/api/v1/admin/setup/get-config-mission-by-id',
         method        : 'POST',
         contentType   : 'application/json; charset=utf-8',
         data          : JSON.stringify({
@@ -250,10 +250,10 @@
 
       let url = '';
       if ($('#btn-add-mission').text() === 'ADD') {
-        url = 'http://' + window.location.host + '/api/v1/admin/setup/add-mission';
+        url = env.http + window.location.host + '/api/v1/admin/setup/add-mission';
       }
       else if ($('#btn-add-mission').text() === 'UPDATE') {
-        url = 'http://' + window.location.host + '/api/v1/admin/setup/update-mission';
+        url = env.http + window.location.host + '/api/v1/admin/setup/update-mission';
       }
 
       $.ajax({
@@ -295,7 +295,7 @@
       }
 
       $.ajax({
-        url         : 'http://' + window.location.host + '/api/v1/admin/setup/delete-mission',
+        url         : env.http + window.location.host + '/api/v1/admin/setup/delete-mission',
         method      : 'POST',
         contentType : 'application/json; charset=utf-8',
         data        : JSON.stringify({ id: dataID })

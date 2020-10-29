@@ -41,7 +41,7 @@ const eventRoute = async (app, opt) => {
 
       if (dataUser['token'] !== token) throw `Invalid token!`;
 
-      let lsFilter   = eventFunc.filterLsEventWithSpItem(dataUser['events']);
+      let lsFilter   = eventFunc.filterLsEventWithSpItem(dataUser['events'], dataUser['xX_bonus_turn'].length);
       rep.send({
         status_code : 2000,
         ls_event    : lsFilter,

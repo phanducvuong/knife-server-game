@@ -131,7 +131,7 @@
 
         window.megaID = value;
         $.ajax({
-          url             : 'http://' + window.location.host + '/api/v1/admin/user-info/detail',
+          url             : env.http + window.location.host + '/api/v1/admin/user-info/detail',
           method          : 'POST',
           contentType     : 'application/json; charset=utf-8',
           data            : JSON.stringify({ mega_id: value })

@@ -113,7 +113,7 @@
     function callApiGetTotalAmountItem(idItem, dateStr) {
       $('#loading').css('display', 'block');
       $.ajax({
-        url           : 'http://' + window.location.host + '/api/v1/admin/item/get-total-amount-item-by-id',
+        url           : env.http + window.location.host + '/api/v1/admin/item/get-total-amount-item-by-id',
         method        : "POST",
         contentType   : 'application/json; charset=utf-8',
         data          : JSON.stringify({

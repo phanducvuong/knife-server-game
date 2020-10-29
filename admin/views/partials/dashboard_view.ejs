@@ -129,7 +129,7 @@
       if (!isNaN(tmpDateF.getTime()) && !isNaN(tmpDateT.getTime()) && tmpDateF.getTime() <= tmpDateT.getTime()) {
 
         $.ajax({
-          url           : 'http://' + window.location.host + '/api/v1/admin/dashboard/get-unique-user',
+          url           : env.http + window.location.host + '/api/v1/admin/dashboard/get-unique-user',
           method        : 'POST',
           contentType   : 'application/json; charset=utf-8',
           data          : JSON.stringify({
@@ -165,7 +165,7 @@
       if (!isNaN(tmpDateF.getTime()) && !isNaN(tmpDateT.getTime()) && tmpDateF.getTime() <= tmpDateT.getTime()) {
 
         $.ajax({
-          url           : 'http://' + window.location.host + '/api/v1/admin/dashboard/get-unique-user',
+          url           : env.http + window.location.host + '/api/v1/admin/dashboard/get-unique-user',
           method        : 'POST',
           contentType   : 'application/json; charset=utf-8',
           data          : JSON.stringify({
@@ -200,7 +200,7 @@
 
       if (!isNaN(tmpDate.getTime())) {
         $.ajax({
-          url           : 'http://' + window.location.host + '/api/v1/admin/dashboard/get-newbie-user',
+          url           : env.http + window.location.host + '/api/v1/admin/dashboard/get-newbie-user',
           method        : 'POST',
           contentType   : 'application/json; charset=utf-8',
           data          : JSON.stringify({ date_str: dateStr })
@@ -230,7 +230,7 @@
 
       if (!isNaN(tmpDate.getTime())) {
         $.ajax({
-          url           : 'http://' + window.location.host + '/api/v1/admin/dashboard/get-total-turn-create',
+          url           : env.http + window.location.host + '/api/v1/admin/dashboard/get-total-turn-create',
           method        : 'POST',
           contentType   : 'application/json; charset=utf-8',
           data          : JSON.stringify({ date_str: dateStr })
@@ -260,7 +260,7 @@
 
       if (!isNaN(tmpDate.getTime())) {
         $.ajax({
-          url           : 'http://' + window.location.host + '/api/v1/admin/dashboard/get-total-turn-used',
+          url           : env.http + window.location.host + '/api/v1/admin/dashboard/get-total-turn-used',
           method        : 'POST',
           contentType   : 'application/json; charset=utf-8',
           data          : JSON.stringify({ date_str: dateStr })
@@ -290,7 +290,7 @@
 
       if (!isNaN(tmpDate.getTime())) {
         $.ajax({
-          url           : 'http://' + window.location.host + '/api/v1/admin/dashboard/get-total-turn-remain',
+          url           : env.http + window.location.host + '/api/v1/admin/dashboard/get-total-turn-remain',
           method        : 'POST',
           contentType   : 'application/json; charset=utf-8',
           data          : JSON.stringify({ date_str: dateStr })

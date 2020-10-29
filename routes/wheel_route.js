@@ -6,6 +6,7 @@ const profileUserFunc       = require('../functions/profile_user_func');
 const generateStr           = require('../utils/generate_string');
 const logger                = require('fluent-logger');
 const response              = require('../utils/response');
+const topup                 = require('../repository/topup');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -133,6 +134,12 @@ const wheelRoute = async (app, opt) => {
 
       let region = config.PARTITIONS['data'].find(e => { return e['id'] === item['id'] });
       if (region === null || region === undefined) throw `Can not get region by ${item['id']}`;
+
+      //topup tele card when item is tele
+      let amountTeleCard = util.getAmountTeleCardByRegion(region);
+      if (!isNaN(amountTeleCard)) {
+        topup.requestTopupCardPhone(amountTeleCard, dataUser['phone'], megaID);
+      }
 
       //logger
       logger.emit('log', {
