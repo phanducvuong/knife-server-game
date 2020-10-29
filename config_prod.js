@@ -122,12 +122,13 @@ exports.EVENTS                    = {
       description   : 'x2 Lượt Chơi Khi Nhập Code',
       bonus_turn    : 2,
       target        : 1,
+      mul           : 2,                                          // cấp số nhân bonus turn
       sp_item       : null,
       bonus_sp_item : 0,
       status        : 1,
       type          : 0,
       from_date     : '2020-09-29 17:00:00',
-      to_date       : '2020-09-30 16:59:59'
+      to_date       : '2020-10-30 16:59:59'                       //convert UTC time to localtime
     }
   ]
 }

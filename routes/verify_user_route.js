@@ -56,8 +56,9 @@ const verifyUserRoute = async (app, opt) => {
       const platform  = req.body.platform;
       const result    = await verifyTokenFunc.verifyTokenUser(token);
 
-      if (result === null || result === undefined || token === null || token === undefined) {
-        throw 'unvalid token';
+      if (result === null || result === undefined || token === null || token === undefined ||
+          result.mega1_code === null || result.mega1_code === undefined) {
+        throw `unvalid token or undefined mega1_code! ${result}`;
       }
 
       if (config.PARTITIONS['data'].length !== config.PARTITIONS['partition']) {
@@ -90,6 +91,7 @@ const verifyUserRoute = async (app, opt) => {
       if (!verifyTokenFunc.checkDateIsExistIn(date.getTime(), dataUser['date_login'])) {
         dataUser['date_login'].push(date.getTime());
       }
+
       redisClient.updateTurnAndInvenUser(`${result.mega1_code}`, JSON.stringify(dataUser));
       DS.DSUpdateDataUser(`${result.mega1_code}`, 'turn_inven', dataUser);
 
