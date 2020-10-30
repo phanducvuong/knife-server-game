@@ -161,11 +161,23 @@ input::-webkit-inner-spin-button {
   overflow: hidden;
   cursor: pointer;
 }
-.btn-tab:focus {
+.btn-tab:focus, .btn-update-global:focus {
   outline: none;
 }
 .btn-tab:hover {
   background-color: #b5b7b6;
+  color: white;
+}
+
+.btn-update-global {
+  border-style: none;
+  height: 40px;
+  font-weight: bolder;
+  border-radius: 2px;
+}
+
+.btn-update-global:hover {
+  background-color: #398bf7;
   color: white;
 }
 

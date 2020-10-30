@@ -57,17 +57,49 @@
               </tr>
             <% } %>
           </tbody>
-          <tfoot>
-          </tfoot>
         </table>
+        <div id="pagination">
+          
+        </div>
       </div>
 
     </section>
   </div>
 
   <script>
-    
-    
+
+    $(document).ready(() => {
+
+      getPagination();
+
+    });
+
+    function getPagination() {
+      let rowsShown = 10;
+      let rowsTotal = $('#user-info-table tbody tr').length;
+      let numPages  = rowsTotal / rowsShown;
+      for (let i=0; i<numPages; i++) {
+        $('#pagination').append(`<a href="#" class="page" data-id="${i}">${i+1}</a>`);
+      }
+
+      $('#user-info-table tbody tr').hide();
+      $('#user-info-table tbody tr').slice(0, rowsShown).show();
+
+      $('body').delegate('.page', 'click', (event) => {
+        let currPage  = event.currentTarget.attributes.getNamedItem('data-id').value;
+        let startItem = currPage * rowsShown;
+        let endItem   = startItem + rowsShown;
+
+        console.log($('#user-info-table tbody tr').length);
+
+        $('#user-info-table tbody tr')
+          .css('opacity', '0.0')
+          .hide()
+          .slice(startItem, endItem)
+          .css('display', '')
+          .animate({ opacity: 1 }, 300);
+      });
+    }
 
   </script>
 

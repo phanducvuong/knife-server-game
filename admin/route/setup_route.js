@@ -1,6 +1,7 @@
 const DS                = require('../../repository/datastore');
 const redisClient       = require('../../redis/redis_client');
 const setupFunc         = require('../functions/setup_func');
+const util              = require('../../utils/util');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -1428,6 +1429,116 @@ const setupRoute = async (app, opt) => {
     }
   });
 
+  //update countdown
+  app.get('/get-config-global', async (req, rep) => {
+    try {
+
+      let [countDownDS, bonusEnterCodeDS] = await Promise.all([
+        DS.DSGetDataGlobal('admin', 'count_down'),
+        DS.DSGetDataGlobal('admin', 'bonus_enter_code')
+      ]);
+
+      let countDown = config.COUNT_DOWN;
+      if (countDownDS !== null && countDownDS !== undefined) {
+        countDown = countDownDS['count_down'];
+      }
+
+      let bonusEnterCode = config.BONUS_ENTER_CODE;
+      if (bonusEnterCodeDS !== null && bonusEnterCodeDS !== undefined) {
+        bonusEnterCode = bonusEnterCodeDS;
+      }
+
+      rep.view('/partials/config_global_view.ejs', {
+        count_down          : `${countDown.split(' ')[0]}T${countDown.split(' ')[1]}`,
+        bonus_turn_1        : bonusEnterCode['bonus_1']['bonus_turn'],
+        bonus_lucky_code_1  : bonusEnterCode['bonus_1']['bonus_lucky_code'],
+        bonus_turn_2        : bonusEnterCode['bonus_2']['bonus_turn'],
+        bonus_lucky_code_2  : bonusEnterCode['bonus_2']['bonus_lucky_code']
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.view('/partials/error_view.ejs', {
+        title_error : err
+      });
+
+    }
+  });
+
+  app.post('/update-count-down', async (req, rep) => {
+    try {
+
+      let countDown = req.body.count_down;
+      let time      = new Date(countDown);
+      if (isNaN(time.getTime())) throw `Invalid date! ${countDown}`;
+
+      let month   = (time.getMonth() + 1) < 10 ? `0${time.getMonth() + 1}` : time.getMonth() + 1;
+      let date    = time.getDate() < 10 ? `0${time.getDate()}` : time.getDate();
+      let year    = time.getFullYear();
+      let hour    = time.getHours() < 10 ? `0${time.getHours()}` : time.getHours();
+      let minute  = time.getMinutes() < 10 ? `0${time.getMinutes()}` : time.getMinutes();
+
+      countDown = `${year}-${month}-${date} ${hour}:${minute}`;
+      DS.DSUpdateDataGlobal('admin', 'count_down', { count_down: countDown });
+      rep.send({
+        status_code : 2000,
+        msg         : 'Success'
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  //update bonus enter code
+  app.post('/update-bonus-enter-code', async (req, rep) => {
+    try {
+
+      let bonusTurn1          = parseInt(req.body.bonus_turn_1, 10);
+      let bonusTurn2          = parseInt(req.body.bonus_turn_2, 10);
+      let bonusLuckyCode1     = parseInt(req.body.bonus_lucky_code_1, 10);
+      let bonusLuckyCode2     = parseInt(req.body.bonus_lucky_code_2, 10);
+
+      if (isNaN(bonusTurn1) || isNaN(bonusLuckyCode1) || isNaN(bonusTurn2) || isNaN(bonusLuckyCode2)) {
+        throw 'Update Failed!';
+      }
+
+      let bonusEnterCode = await DS.DSGetDataGlobal('admin', 'bonus_enter_code');
+      if (bonusEnterCode === null || bonusEnterCode === undefined) {
+        bonusEnterCode = config.BONUS_ENTER_CODE;
+      }
+
+      bonusEnterCode['bonus_1']['bonus_turn']       = bonusTurn1;
+      bonusEnterCode['bonus_2']['bonus_turn']       = bonusTurn2;
+      bonusEnterCode['bonus_1']['bonus_lucky_code'] = bonusLuckyCode1;
+      bonusEnterCode['bonus_2']['bonus_lucky_code'] = bonusLuckyCode2;
+
+      DS.DSUpdateDataGlobal('admin', 'bonus_enter_code', bonusEnterCode);
+      rep.send({
+        status_code : 2000,
+        msg         : 'Success'
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
 }
 
 module.exports = setupRoute;

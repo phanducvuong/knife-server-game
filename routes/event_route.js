@@ -183,7 +183,7 @@ const eventRoute = async (app, opt) => {
         }
       });
 
-      let lsFilter   = eventFunc.filterLsEventWithSpItem(resultJoinEvent['dataUserUpdate']['events']);
+      let lsFilter   = eventFunc.filterLsEventWithSpItem(resultJoinEvent['dataUserUpdate']['events'], resultJoinEvent['dataUserUpdate']['xX_bonus_turn'].length);
       rep.send({
         status_code   : 2000,
         bonus_str     : resultJoinEvent['bonusStr'],

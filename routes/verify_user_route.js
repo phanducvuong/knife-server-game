@@ -173,13 +173,15 @@ const verifyUserRoute = async (app, opt) => {
         }
       });
 
+      let countDownSplit = config.COUNT_DOWN.split(' ');
       rep.send({
         status_code     : 2000,
         result          : result,
         turn            : dataUser['turn'],
         amount_sp_item  : amountSpItem,
         config          : config.PARTITIONS,
-        noti_banner     : arrNotifica
+        noti_banner     : arrNotifica,
+        count_down_str  : `${countDownSplit[1]} ${countDownSplit[0]}`
       });
 
     }

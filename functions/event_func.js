@@ -41,7 +41,7 @@ exports.filterLsEventWithSpItem = (lsEvent, didX2BonusTurn) => {
           target        : m['target'],
           did           : did,
           status        : status,
-          bonus_str_1   : `${m['bonus_turn']} lượt`,
+          bonus_str_1   : `${m['bonus_turn']} LƯỢT`,
           bonus_str_2   : `${m['bonus_sp_item']} ${m['sp_item']['description']}`,
           from_date     : fromDate,
           to_date       : toDate
@@ -67,7 +67,7 @@ exports.filterLsEventWithSpItem = (lsEvent, didX2BonusTurn) => {
           target        : m['target'],
           did           : did,
           status        : status,
-          bonus_str_1   : `${m['bonus_turn']} Lượt`,
+          bonus_str_1   : `${m['bonus_turn']} LƯỢT`,
           bonus_str_2   : '',
           from_date     : fromDate,
           to_date       : toDate

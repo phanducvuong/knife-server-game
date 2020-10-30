@@ -14,7 +14,7 @@ else {
 exports.scheDataGlobal = () => {
   setInterval(async () => {
     await this.updatePartition();
-  }, 3600000);
+  }, 36000000);
 }
 
 exports.scheResetDataUser = async () => {
@@ -82,7 +82,17 @@ exports.updatePartition = async () => {
     config.BLACK_LIST.push(...blackList['black_list']);
   }
 
+  //update countdown
+  let countDown = await DS.DSGetDataGlobal('admin', 'count_down');
+  if (countDown !== null && countDown !== undefined) {
+    config.COUNT_DOWN = countDown['count_down'];
+  }
+
   //TODO: update bonus enter code
+  let bonusEnterCode = await DS.DSGetDataGlobal('admin', 'bonus_enter_code');
+  if (bonusEnterCode !== null && bonusEnterCode !== undefined) {
+    config.BONUS_ENTER_CODE = bonusEnterCode;
+  }
 }
 
 function filterItemHaveInListPartition(lsPartition, lsItem) {

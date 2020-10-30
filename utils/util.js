@@ -62,13 +62,13 @@ exports.chkUserExistInBlackList = (mega_code, lsBlackList) => {
 
 exports.convertTimeToString = (milli) => {
   let time    = new Date(milli + 7 * 3600 * 1000);
-  let month   = time.getMonth() + 1;
-  let date    = time.getDate();
+  let month   = (time.getMonth() + 1) < 10 ? `0${time.getMonth() + 1}` : time.getMonth() + 1;
+  let date    = time.getDate() < 10 ? `0${time.getDate()}` : time.getDate();
   let year    = time.getFullYear();
-  let hour    = time.getHours();
-  let minute  = time.getMinutes();
-  let second  = time.getSeconds();
-  return `${date}/${month}/${year}  ${hour}:${minute}:${second}`;
+  let hour    = time.getHours() < 10 ? `0${time.getHours()}` : time.getHours();
+  let minute  = time.getMinutes() < 10 ? `0${time.getMinutes()}` : time.getMinutes();
+  // let second  = time.getSeconds();
+  return `${date}/${month}/${year}  ${hour}:${minute}`;
 }
 
 exports.isEligibleEventById0 = (fromDate, toDate) => {
@@ -136,12 +136,21 @@ exports.genEnterCode = (code) => {
 
 exports.getAmountTeleCardByRegion = (region) => {
   switch(region) {
-    case '10k': return 10000;
-    case '20k': return 10000;
-    case '50k': return 10000;
-    case '100k': return 10000;
-    case '200k': return 10000;
-    case '500k': return 10000;
-    default: return 'none';
+    case '10k'  : return 10000;
+    case '20k'  : return 10000;
+    case '50k'  : return 10000;
+    case '100k' : return 10000;
+    case '200k' : return 10000;
+    case '500k' : return 10000;
+    default     : return 'none';
   }
+}
+
+exports.chkCountdown = () => {
+  let dateNow       = new Date();
+  let dateCountDown = new Date(config.COUNT_DOWN);
+  if ((dateNow.getTime() + 7 * 3600 * 1000) < dateCountDown.getTime()) {
+    return false;
+  }
+  return true;
 }

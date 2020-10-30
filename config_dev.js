@@ -65,6 +65,8 @@ exports.TAG_LOGGER                = 'phi-dao-dev';
 exports.HOST_LOG                  = '10.10.11.11';
 exports.PORT_LOG                  = 24224;
 
+exports.COUNT_DOWN                = '2020-10-30 09:00';
+
 exports.TOTAL_PERCENT             = 0;
 exports.ARR_ITEM                  = [];
 exports.ITEM_FILTER               = [];     //danh sách item có trong list partition

@@ -1,0 +1,169 @@
+<%- include('../layouts/header') %>
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      Dashboard
+      <small>Control panel</small>
+    </h1>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+      <li class="breadcrumb-item active">Dashboard</li>
+    </ol>
+  </section>
+
+  <!-- Main content -->
+  <!-- Task Manager -->
+  <section class="content">
+  <div class="row">
+    <div class="col-xl-12 col-12">
+      <div class="box" style="box-shadow: 1px 0 10px rgba(0,0,0,0.1);">
+        <div class="panel-body">
+
+          <!-- Countdown -->
+          <div class="form-group row">
+            <label class="col-sm-3 col-form-label">Countdown</label>
+            <div class="col-sm-3">
+              <input type="datetime-local" id="date-countdown" class="form-control" value="<%= count_down %>">
+            </div>
+            <div class="col-sm-2">
+              <button class="btn-update-global" id="btn-update-countdown">Cập Nhật</button>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-12 col-12">
+      <div class="box" style="box-shadow: 1px 0 10px rgba(0,0,0,0.1);">
+        <div class="panel-body">
+
+          <!-- Bonus enter code -->
+          <div class="form-group row">
+            <label class="col-sm-3 col-form-label">NHẬP LẦN 1</label>
+            <div class="col-sm-3">
+              <label>Lượt Chơi</label>
+              <input type="number" id="input-bonus-turn-1" min="0" step="1" class="form-control" value="<%= bonus_turn_1 %>">
+            </div>
+            <div class="col-sm-3">
+              <label>Thẻ Bỏ Ô</label>
+              <input type="number" id="input-bonus-lucky-code-1" min="0" step="1" class="form-control" value="<%= bonus_lucky_code_1 %>">
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label class="col-sm-3 col-form-label">NHẬP LẦN 2</label>
+            <div class="col-sm-3">
+              <label>Lượt Chơi</label>
+              <input type="number" id="input-bonus-turn-2" min="0" step="1" class="form-control" value="<%= bonus_turn_2 %>">
+            </div>
+            <div class="col-sm-3">
+              <label>Thẻ Bỏ Ô</label>
+              <input type="number" id="input-bonus-lucky-code-2" min="0" step="1" class="form-control" value="<%= bonus_lucky_code_2 %>">
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <div class="col-sm-12" style="text-align: center;">
+              <button class="btn-update-global" id="btn-update-enter-code">Cập Nhật</button>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+  <!-- /.content -->
+</div>
+
+<script>
+
+  $(document).ready(() => {
+
+    updateCountDown();
+    updateBonusEnterCode();
+
+  });
+
+  function updateCountDown() {
+    $('#btn-update-countdown').click(() => {
+      $('#loading').css('display', 'block');
+      let value = $('#date-countdown').val();
+      
+      let date  = new Date(value);
+      if (isNaN(date.getTime())) {
+        $('#loading').css('display', 'none');
+        alert('Check time!');
+        return;
+      }
+
+      let countDownStr = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+
+      $.ajax({
+        url           : env.http + window.location.host + '/api/v1/admin/setup/update-count-down',
+        method        : 'POST',
+        contentType   : 'application/json; charset=utf-8',
+        data          : JSON.stringify({ count_down: countDownStr })
+      })
+        .done((data) => {
+
+          if (data['status_code'] !== 2000) {
+            $('#loading').css('display', 'none');
+            alert(data['error']);
+            return;
+          }
+          $('#loading').css('display', 'none');
+
+        })
+        .fail(() => {});
+    });
+  }
+
+  function updateBonusEnterCode() {
+    $('#btn-update-enter-code').click(() => {
+      $('#loading').css('display', 'block');
+
+      let bonusTurn1      = $('#input-bonus-turn-1').val();
+      let bonusLuckyCode1 = $('#input-bonus-lucky-code-1').val();
+      let bonusTurn2      = $('#input-bonus-turn-2').val();
+      let bonusLuckyCode2 = $('#input-bonus-lucky-code-2').val();
+
+      if (bonusTurn1 === '' || bonusLuckyCode1 === '' ||
+          bonusTurn2 === '' || bonusLuckyCode2 === '') {
+        alert('Check info!');
+        $('#loading').css('display', 'none');
+        return;
+      }
+
+      $.ajax({
+        url           : env.http + window.location.host + '/api/v1/admin/setup/update-bonus-enter-code',
+        method        : 'POST',
+        contentType   : 'application/json; charset=utf-8',
+        data          : JSON.stringify({
+          bonus_turn_1        : bonusTurn1,
+          bonus_turn_2        : bonusTurn2,
+          bonus_lucky_code_1  : bonusLuckyCode1,
+          bonus_lucky_code_2  : bonusLuckyCode2
+        })
+      })
+        .done((data) => {
+
+          if (data['status_code'] !== 2000) {
+            alert(data['error']);
+            $('#loading').css('display', 'none');
+            return;
+          }
+          $('#loading').css('display', 'none');
+
+        })
+        .fail(() => {});
+    });
+  }
+
+</script>
+
+<%- include('../layouts/footer') %>
