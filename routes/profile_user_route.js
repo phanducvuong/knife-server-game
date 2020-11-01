@@ -204,7 +204,7 @@ const profileUserRoute = async (app, opt) => {
       let strGenerate   = '';
       let bonusTurn     = 0;
       if (dataUser['log_get_turn']['from_enter_code'].length % 2 === 0) {
-        dataUser['turn'] += config.BONUS_ENTER_CODE['bonus_1']['bonus_turn'];
+        // dataUser['turn'] += config.BONUS_ENTER_CODE['bonus_1']['bonus_turn'];
         bonusTurn         = config.BONUS_ENTER_CODE['bonus_1']['bonus_turn'];
         if (config.BONUS_ENTER_CODE['bonus_1']['bonus_lucky_code'] > 0) {
           strGenerate   = generateStr.getStringGenerate();
@@ -212,7 +212,7 @@ const profileUserRoute = async (app, opt) => {
         }
       }
       else {
-        dataUser['turn'] += config.BONUS_ENTER_CODE['bonus_2']['bonus_turn'];
+        // dataUser['turn'] += config.BONUS_ENTER_CODE['bonus_2']['bonus_turn'];
         bonusTurn         = config.BONUS_ENTER_CODE['bonus_2']['bonus_turn'];
         if (config.BONUS_ENTER_CODE['bonus_2']['bonus_lucky_code'] > 0) {
           strGenerate   = generateStr.getStringGenerate();
@@ -227,8 +227,12 @@ const profileUserRoute = async (app, opt) => {
       }// cập nhật mảng event khi user nhập code (normal event)
 
       if (util.isEligibleEventById0(config.EVENTS['data'][0]['from_date'], config.EVENTS['data'][0]['to_date'])) {
-        dataUser['xX_bonus_turn'].push(bonusTurn);
+        bonusTurn *= config.EVENTS['data'][0]['mul'];
+        dataUser['turn'] += bonusTurn;
       } //cập nhật x2_bonus_turn nếu events đang diễn ra
+      else {
+        dataUser['turn'] += bonusTurn;
+      }
 
       redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
       DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);

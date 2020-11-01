@@ -58,8 +58,14 @@
             <% } %>
           </tbody>
         </table>
-        <div id="pagination">
-          
+        <div class="pagination-custom">
+          <a href="#" id="previous-page">&laquo;</a>
+        </div>
+        <div class="pagination-custom" id="pagination">
+          <!-- <a href="#" class="three-dot">...</a> -->
+        </div>
+        <div class="pagination-custom">
+          <a href="#" id="next-page" data-id="0">&raquo;</a>
         </div>
       </div>
 
@@ -71,34 +77,90 @@
     $(document).ready(() => {
 
       getPagination();
+      nextPage();
+      previousPage();
 
     });
 
     function getPagination() {
-      let rowsShown = 10;
       let rowsTotal = $('#user-info-table tbody tr').length;
-      let numPages  = rowsTotal / rowsShown;
-      for (let i=0; i<numPages; i++) {
-        $('#pagination').append(`<a href="#" class="page" data-id="${i}">${i+1}</a>`);
+      let numPages  = parseInt(rowsTotal / env.rows_show, 10);
+
+      if ((rowsTotal % env.rows_show) !== 0) {
+        numPages += 1;
       }
 
+      let markup = '';
+      if (numPages <= env.max_page) {
+        for (let i=0; i<numPages; i++) {
+          if (i === 0) {
+            markup += `<a href="#" class="page active-page" data-id="${i}">${i+1}</a>`;
+            continue;
+          }
+          markup += `<a href="#" class="page" data-id="${i}">${i+1}</a>`
+        }
+      }
+      else {
+        for (let i=0; i<env.max_page; i++) {
+          if (i === 0) {
+            markup += `<a href="#" class="page active-page" data-id="${i}">${i+1}</a>`;
+            continue;
+          }
+          markup += `<a href="#" class="page" data-id="${i}">${i+1}</a>`;
+        }
+        markup += '<a href="#" class="three-dot">...</a>';
+        markup += `<a href="#" class="page" data-id="${numPages-1}">${numPages}</a>`
+      }
+      $('#pagination').append(markup);
+
       $('#user-info-table tbody tr').hide();
-      $('#user-info-table tbody tr').slice(0, rowsShown).show();
+      $('#user-info-table tbody tr').slice(0, env.rows_show).show();
 
       $('body').delegate('.page', 'click', (event) => {
         let currPage  = event.currentTarget.attributes.getNamedItem('data-id').value;
-        let startItem = currPage * rowsShown;
-        let endItem   = startItem + rowsShown;
+        showDataTableBy(currPage);
+      });
+    }
 
-        console.log($('#user-info-table tbody tr').length);
+    function nextPage() {
+      $('#next-page').click(() => {
+        removePageActive();
+        let currPage  = parseInt($('#next-page').attr('data-id'), 10) + 1;
+        let element   = $('#pagination a')[currPage].setAttribute('class', 'page active-page');
 
-        $('#user-info-table tbody tr')
+        $('#next-page').attr('data-id', currPage);
+        showDataTableBy(currPage);
+      });
+    }
+
+    function previousPage() {
+      $('#previous-page').click(() => {
+        removePageActive();
+        let element   = $('#pagination a')[3].setAttribute('class', 'page active-page');
+        let currPage  = $('#next-page').attr('data-id');
+        console.log(currPage);
+      });
+    }
+
+    function removePageActive() {
+      for (let e of $('#pagination a')) {
+        let c = e.getAttribute('class');
+        if (c.includes('active-page')) {
+          e.setAttribute('class', 'page');
+          return;
+        }
+      }
+    }
+
+    function showDataTableBy(currPage) {
+      let startItem = currPage * env.rows_show;
+      let endItem   = startItem + env.rows_show;
+      $('#user-info-table tbody tr')
           .css('opacity', '0.0')
           .hide()
           .slice(startItem, endItem)
           .css('display', '')
           .animate({ opacity: 1 }, 300);
-      });
     }
 
   </script>

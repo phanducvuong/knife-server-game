@@ -25,14 +25,6 @@ const eventRoute = async (app, opt) => {
         throw `Pls check info user!`;
       }
 
-      if (!util.chkTimeEvent(config.EVENTS.start, config.EVENTS.end)) {
-        rep.send({
-          status_code : 2500,
-          msg         : 'Event is comming soon!'
-        });
-        return;
-      }
-
       let dataUser = JSON.parse(await redis.getTurnAndInvenUser(megaID));
       if (dataUser === null || dataUser === undefined) {
         dataUser = await DS.DSGetDataUser(megaID, 'turn_inven');
@@ -41,7 +33,33 @@ const eventRoute = async (app, opt) => {
 
       if (dataUser['token'] !== token) throw `Invalid token!`;
 
-      let lsFilter   = eventFunc.filterLsEventWithSpItem(dataUser['events'], dataUser['xX_bonus_turn'].length);
+      if (!util.chkTimeEvent(config.EVENTS.start, config.EVENTS.end)) {
+        let filter = [
+          {
+            id      : config.EVENTS['data'][0]['id'],
+            description : config.EVENTS['data'][0]['description'],
+            target        : 0,
+            did           : 0,
+            status        : util.isEligibleEventById0(config.EVENTS['data'][0]['from_date'], config.EVENTS['data'][0]['to_date']),
+            bonus_str_1   : '',
+            bonus_str_2   : '',
+            from_date     : eventFunc.convertStrDateEvent(config.EVENTS['data'][0]['from_date']),
+            to_date       : eventFunc.convertStrDateEvent(config.EVENTS['data'][0]['to_date'])
+          }
+        ]
+        rep.send({
+          status_code : 2000,
+          ls_event    : filter,
+          time_start  : '',
+          time_end    : '',
+          turn        : dataUser['turn'],
+          turned      : dataUser['total_turned'],
+          name        : dataUser['name']
+        });
+        return;
+      } //trả về event đặc biệt x2 lượt khi nhập code
+
+      let lsFilter = eventFunc.filterLsEventWithSpItem(dataUser['events']);
       rep.send({
         status_code : 2000,
         ls_event    : lsFilter,
@@ -78,7 +96,7 @@ const eventRoute = async (app, opt) => {
         throw `Pls check info user! ${megaID} ${idEvent}`;
       }
 
-      if (!util.chkTimeEvent(config.EVENTS.start, config.EVENTS.end)) {
+      if (!util.chkTimeEvent(config.EVENTS.start, config.EVENTS.end) || idEvent === 0) {
         throw 'Event is comming soon!';
       }
 
@@ -183,7 +201,7 @@ const eventRoute = async (app, opt) => {
         }
       });
 
-      let lsFilter   = eventFunc.filterLsEventWithSpItem(resultJoinEvent['dataUserUpdate']['events'], resultJoinEvent['dataUserUpdate']['xX_bonus_turn'].length);
+      let lsFilter   = eventFunc.filterLsEventWithSpItem(resultJoinEvent['dataUserUpdate']['events']);
       rep.send({
         status_code   : 2000,
         bonus_str     : resultJoinEvent['bonusStr'],

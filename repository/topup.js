@@ -21,8 +21,9 @@ exports.requestTopupCardPhone = (amountCard, phoneNumber, megaID) => {
       app_id        : config.APP_ID_TOPUP,
       amount        : amountCard,
       phone_number  : phoneNumber,
-      signature     : genSignature(config.PRIVATE_KEY_TOPUP, phoneNumber, amountCard, refCode),
-      ref_code      : refCode
+      signature     : genSignature(config.PRIVATE_KEY_TOPUP, phoneNumber, amountCard, refCode, config.TAG_TOPUP),
+      ref_code      : refCode,
+      tag           : config.TAG_TOPUP
     }
   }, (err, response, body) => {
 
@@ -58,8 +59,9 @@ exports.requestTopupCardPhoneTEST = (amountCard, phoneNumber, megaID) => {
         app_id        : config.APP_ID_TOPUP,
         amount        : amountCard,
         phone_number  : phoneNumber,
-        signature     : genSignature(config.PRIVATE_KEY_TOPUP, phoneNumber, amountCard, refCode),
-        ref_code      : refCode
+        signature     : genSignature(config.PRIVATE_KEY_TOPUP, phoneNumber, amountCard, refCode, config.TAG_TOPUP),
+        ref_code      : refCode,
+        tag           : config.TAG_TOPUP
       }
     }, (err, response, body) => {
 
@@ -88,7 +90,7 @@ exports.requestTopupCardPhoneTEST = (amountCard, phoneNumber, megaID) => {
 }
 
 //-------------------------------------------------------functional---------------------------------------
-function genSignature(privateKey, phoneNumber, amount, refCode) {
-  let str = `${privateKey}${phoneNumber}${amount}${refCode}${privateKey}`;
+function genSignature(privateKey, phoneNumber, amount, refCode, tag) {
+  let str = `${privateKey}${phoneNumber}${amount}${refCode}${tag}${privateKey}`;
   return crypto.createHash('sha512').update(str).digest('hex');
 }

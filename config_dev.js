@@ -25,6 +25,7 @@
 exports.URL_VALID_TOKEN           = 'http://demo8992960.mockable.io/verify-token';
 // exports.URL_VALID_TOKEN           = 'https://mega1-gameportal-dev.yeah1group.com/service_gameportal/v1/user/info';
 exports.URL_TOPUP                 = 'https://topup-gw-dev-api.yeah1group.com/api/v1/topup';
+exports.TAG_TOPUP                 = 'budweiser';
 exports.APP_ID_TOPUP              = 'GL5KFS29iJycYRjP';
 exports.PRIVATE_KEY_TOPUP         = 'N4OQ2JHouBwJb3ceZedx7gYR/RWYfJhes5DF6Gt64EKYyjG6VZQtD8t1KhmSp+EZ';
 
@@ -120,12 +121,12 @@ exports.MISSIONS                  = [
 
 exports.EVENTS                    = {
   start     : '2020-09-30',
-  end       : '2020-10-30',
+  end       : '2020-11-30',
   data      : [
     {
       id            : 0,
       description   : 'x2 Lượt Chơi Khi Nhập Code',
-      bonus_turn    : 2,
+      bonus_turn    : 1,
       target        : 1,
       mul           : 2,                                          // cấp số nhân bonus turn
       sp_item       : null,
@@ -133,7 +134,7 @@ exports.EVENTS                    = {
       status        : 1,
       type          : 0,
       from_date     : '2020-09-29 17:00:00',
-      to_date       : '2020-10-30 16:59:59'                       //convert UTC time to localtime
+      to_date       : '2020-11-29 16:59:59'                       //convert UTC time to localtime
     }
   ]
 }

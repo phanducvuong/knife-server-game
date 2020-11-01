@@ -181,6 +181,7 @@ const verifyUserRoute = async (app, opt) => {
         amount_sp_item  : amountSpItem,
         config          : config.PARTITIONS,
         noti_banner     : arrNotifica,
+        count_down      : new Date(config.COUNT_DOWN).getTime(),
         count_down_str  : `${countDownSplit[1]} ${countDownSplit[0]}`
       });
 

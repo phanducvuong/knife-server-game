@@ -197,3 +197,21 @@ input::-webkit-inner-spin-button {
   border-radius: 5px;
   outline-style: none;
 }
+
+.pagination-custom {
+  display: inline-block;
+}
+.pagination-custom > a {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+}
+.pagination-custom > a.active-page {
+  background-color: #4CAF50;
+  color: white;
+}
+.pagination-custom > a:hover:not(.active-page):not(.three-dot) {background-color: #ddd;}
+.three-dot {
+  cursor: default;
+}

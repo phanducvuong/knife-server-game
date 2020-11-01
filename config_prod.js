@@ -22,7 +22,8 @@
 
 exports.URL_VALID_TOKEN           = 'https://mega1vip.mega1.vn/service_gameportal/v1/user/info';
 // exports.URL_TOPUP                 = 'https://topup-gw-dev-api.yeah1group.com/api/v1/topup';
-exports.URL_TOPUP                 = 'https://topup-gw-master-api.yeah1group.com';
+exports.URL_TOPUP                 = 'https://topup-gw-master-api.yeah1group.com/api/v1/topup';
+exports.TAG_TOPUP                 = 'budweiser';
 exports.APP_ID_TOPUP              = '9sPw+H16kZSsrOrn';
 exports.PRIVATE_KEY_TOPUP         = 'Nts7UOjNTDW8u4Vu9zK5gZGWBpYlW9KOko7h4C8bd+n5A/MCLuaDXmEhYGLkT1Gu';
 
@@ -117,12 +118,12 @@ exports.MISSIONS                  = [
 
 exports.EVENTS                    = {
   start     : '2020-09-30',
-  end       : '2020-10-30',
+  end       : '2020-11-30',
   data      : [
     {
       id            : 0,
       description   : 'x2 Lượt Chơi Khi Nhập Code',
-      bonus_turn    : 2,
+      bonus_turn    : 1,
       target        : 1,
       mul           : 2,                                          // cấp số nhân bonus turn
       sp_item       : null,
@@ -130,7 +131,7 @@ exports.EVENTS                    = {
       status        : 1,
       type          : 0,
       from_date     : '2020-09-29 17:00:00',
-      to_date       : '2020-10-30 16:59:59'                       //convert UTC time to localtime
+      to_date       : '2020-11-29 16:59:59'                       //convert UTC time to localtime
     }
   ]
 }

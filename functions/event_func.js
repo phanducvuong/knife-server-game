@@ -1,5 +1,6 @@
 const profileFunc             = require('./profile_user_func');
 const util                    = require('../utils/util');
+const { fileLoader } = require('ejs');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -13,23 +14,18 @@ else {
  * event với id = 0 là event đặc biệt. x2/setnumber số lượt cho user khi nhập code trong thời gian event này diễ ra
  * @key did -> lấy số lần nhập code/phóng phi tiêu của user trong lúc event đang diẽn ra
  */
-exports.filterLsEventWithSpItem = (lsEvent, didX2BonusTurn) => {
+exports.filterLsEventWithSpItem = (lsEvent) => {
   let filter = [];
   for (let m of config.EVENTS.data) {
     if (m['status'] === 1) {
-      let did     = 0;
-      if (m['id'] === 0) {
-        did = didX2BonusTurn;
-      }
-      else {
-        if (m['type'] === 0)      did = lsEvent[0];
-        else if (m['type'] === 1) did = lsEvent[1];
-        else if (m['type'] === 2) did = lsEvent[2];
-      }
+      let did = 0;
+      if (m['type'] === 0)      did = lsEvent[0];
+      else if (m['type'] === 1) did = lsEvent[1];
+      else if (m['type'] === 2) did = lsEvent[2];
 
       let status    = true;
-      let fromDate  = (m['from_date'] !== undefined && m['from_date'] !== null) ? convertStrDateEvent(m['from_date'], true) : '';
-      let toDate    = (m['to_date'] !== undefined && m['to_date'] !== null) ? convertStrDateEvent(m['to_date'], false) : '';
+      let fromDate  = (m['from_date'] !== undefined && m['from_date'] !== null) ? this.convertStrDateEvent(m['from_date'], true) : '';
+      let toDate    = (m['to_date'] !== undefined && m['to_date'] !== null) ? this.convertStrDateEvent(m['to_date'], false) : '';
       if (m['id'] === 0 && !util.isEligibleEventById0(m['from_date'], m['to_date'])) {
         status = false;
       }
@@ -86,12 +82,6 @@ exports.joinEvent = (dataUser, idEvent) => {
   switch (tmpEvent['type']) {
     case 0: {
 
-      if (idEvent === 0) {
-        resultBonus = profileFunc.getBonusFromEventX2(tmpEvent, dataUser);
-        dataUser['xX_bonus_turn'].splice(0, 1);
-        break;
-      }
-
       if (dataUser['events'][0] < tmpEvent['target'])
         return { status: false, msg: 'Not eligible yet!' };
 
@@ -125,7 +115,7 @@ exports.joinEvent = (dataUser, idEvent) => {
 }
 
 //----------------------------------functional-----------------------------------------
-function convertStrDateEvent(strDate, isFrom) {
+exports.convertStrDateEvent = (strDate, isFrom) => {
   if (isFrom) {
     return strDate.split(' ')[0] + ' 00:00';
   }
