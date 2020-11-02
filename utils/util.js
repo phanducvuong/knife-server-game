@@ -68,7 +68,7 @@ exports.convertTimeToString = (milli) => {
   let hour    = time.getHours() < 10 ? `0${time.getHours()}` : time.getHours();
   let minute  = time.getMinutes() < 10 ? `0${time.getMinutes()}` : time.getMinutes();
   // let second  = time.getSeconds();
-  return `${date}/${month}/${year}  ${hour}:${minute}`;
+  return `${month}-${date}-${year}  ${hour}:${minute}`;
 }
 
 exports.isEligibleEventById0 = (fromDate, toDate) => {

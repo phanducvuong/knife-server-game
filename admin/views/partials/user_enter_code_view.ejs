@@ -41,6 +41,10 @@
             <label>To</label>
             <input type="date" placeholder="" id="to-date-enter-code" value="">
           </div>
+
+          <!-- <div class="filter-info-user">
+            <button class="btn btn-primary" id="btn-reset-filter">Reset</button>
+          </div> -->
         </div>
 
         <table id="user-info-table" class="footable table table-stripped">
@@ -91,32 +95,60 @@
       getPagination();
       nextPage();
       previousPage();
-      search();
 
       $('#btn-export-enter-code').click(() => {
         $('#user-info-table').table2csv({delivery: 'value'});
       });
 
+      $('#search-user').on('keyup', () => {
+        searchByText();
+      });
+
+      $('#from-date-enter-code').change(() => {
+        searchByDate();
+      });
+
+      $('#to-date-enter-code').change(() => {
+        searchByDate();
+      });
+
     });
 
-    function search() {
-      $('#search-user').on('keyup', () => {
-        let textSearch = $('#search-user').val().toLowerCase();
-        $('#user-info-table tbody').empty();
+    function searchByText() {
+      let textSearch  = $('#search-user').val().toLowerCase();
+      let fromDate    = new Date($('#from-date-enter-code').val() + ' 00:00:00');
+      let toDate      = new Date($('#to-date-enter-code').val() + ' 23:59:59');
 
-        for (let tr of window.arrTr) {
-          for (let td of tr.getElementsByTagName('td')) {
-            if (td.textContent.toLowerCase().includes(textSearch)) {
-              tr.style.opacity = 1.0;
-              $('#user-info-table tbody').append(tr);
-              break;
-            }
-          }
-        }
-        
-        $('#pagination').empty();
-        getPagination();
-      });
+      $('#user-info-table tbody').empty();
+      $('#pagination').empty();
+
+      if (isNaN(fromDate) || isNaN(toDate)) {
+        filterByText(textSearch);
+      }
+      else {
+        filterByTextAndDate(fromDate, toDate, textSearch);
+      }
+      getPagination();
+    }
+
+    function searchByDate() {
+      let textSearch  = $('#search-user').val().toLowerCase();
+      let fromDate    = new Date($('#from-date-enter-code').val() + ' 00:00:00');
+      let toDate      = new Date($('#to-date-enter-code').val() + ' 23:59:59');
+      $('#user-info-table tbody').empty();
+      $('#pagination').empty();
+
+      if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime()) || fromDate.getTime() > toDate.getTime()) {
+        return;
+      }
+
+      if (textSearch === '') {
+        filterByDate(fromDate, toDate);
+      }
+      else {
+        filterByTextAndDate(fromDate, toDate, textSearch);
+      }
+      getPagination();
     }
 
     function getPagination() {
@@ -266,6 +298,49 @@
           .slice(startItem, endItem)
           .css('display', '')
           .animate({ opacity: 1 }, 300);
+    }
+
+    function convertStringToMillisecond(s) {
+      let date = new Date(s);
+      if (!isNaN(date.getTime())) {
+        return date.getTime();
+      }
+      return 0;
+    }
+
+    function filterByTextAndDate(fromDate, toDate, textSearch) {
+      for (let tr of window.arrTr) {
+        for (let td of tr.getElementsByTagName('td')) {
+          let date = convertStringToMillisecond(tr.getElementsByTagName('td')[3].textContent);
+          if (td.textContent.toLowerCase().includes(textSearch) && fromDate.getTime() <= date && date <= toDate.getTime()) {
+            tr.style.opacity = 1.0;
+            $('#user-info-table tbody').append(tr);
+            break;
+          }
+        }
+      }
+    }
+
+    function filterByText(textSearch) {
+      for (let tr of window.arrTr) {
+        for (let td of tr.getElementsByTagName('td')) {
+          if (td.textContent.toLowerCase().includes(textSearch)) {
+            tr.style.opacity = 1.0;
+            $('#user-info-table tbody').append(tr);
+            break;
+          }
+        }
+      }
+    }
+
+    function filterByDate(fromDate, toDate) {
+      for (let tr of window.arrTr) {
+        let date = convertStringToMillisecond(tr.getElementsByTagName('td')[3].textContent);
+        if (fromDate.getTime() <= date && date <= toDate.getTime()) {
+          tr.style.opacity = 1.0;
+          $('#user-info-table tbody').append(tr);
+        }
+      }
     }
 
   </script>
