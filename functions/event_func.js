@@ -116,8 +116,10 @@ exports.joinEvent = (dataUser, idEvent) => {
 
 //----------------------------------functional-----------------------------------------
 exports.convertStrDateEvent = (strDate, isFrom) => {
+  let tmp   = strDate.split(' ');
+  let tmp1  = tmp[0].split('-');
   if (isFrom) {
-    return strDate.split(' ')[0] + ' 00:00';
+    return `00:00 ${tmp1[2]}/${tmp1[1]}/${tmp1[0]}`;
   }
-  return strDate.split(' ')[0] + ' 23:59';
+  return `23:59 ${tmp1[2]}/${tmp1[1]}/${tmp1[0]}`;
 }

@@ -227,8 +227,8 @@ const profileUserRoute = async (app, opt) => {
       }// cập nhật mảng event khi user nhập code (normal event)
 
       if (util.isEligibleEventById0(config.EVENTS['data'][0]['from_date'], config.EVENTS['data'][0]['to_date'])) {
-        bonusTurn *= config.EVENTS['data'][0]['mul'];
-        dataUser['turn'] += bonusTurn;
+        bonusTurn         *= config.EVENTS['data'][0]['mul'];
+        dataUser['turn']  += bonusTurn;
       } //cập nhật x2_bonus_turn nếu events đang diễn ra
       else {
         dataUser['turn'] += bonusTurn;

@@ -126,7 +126,7 @@ exports.EVENTS                    = {
     {
       id            : 0,
       description   : 'x2 Lượt Chơi Khi Nhập Code',
-      bonus_turn    : 1,
+      bonus_turn    : 2,
       target        : 1,
       mul           : 2,                                          // cấp số nhân bonus turn
       sp_item       : null,

@@ -121,6 +121,16 @@ exports.getEnterCodeInfo = (lsAllDataUser) => {
   return lsEnterCodeInfo;
 }
 
+exports.getAllNameOfLsItems = () => {
+  let tmp = [];
+  for (let e of config.ARR_ITEM) {
+    tmp.push({
+      name : e['name']
+    });
+  }
+  return tmp;
+}
+
 //--------------------------------------------functional-----------------------------------
 function getDetailBonusTurn(fromMission, fromEnterCode) {
   //from mission

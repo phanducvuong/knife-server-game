@@ -73,8 +73,11 @@ const userInfoRoute = async (app, opt) => {
       let lsAllDataUser     = await userInfoFunc.getAllDataUser();
       let lsHistoryAllUser  = await userInfoFunc.getHistoryAllUser(lsAllDataUser);
       let result            = userInfoFunc.getTurnningInfo(lsHistoryAllUser);
+      let items             = userInfoFunc.getAllNameOfLsItems();
+
       rep.view('/partials/user_info_turnning_view.ejs', {
-        data  : result
+        data  : result,
+        items : items
       });
 
     }

@@ -8,33 +8,38 @@
     <section class="content">
       <div style="background-color: white;">
         <div class="div-all-item row">
+
+          <div class="filter-info-user">
+            <button class="btn btn-primary" id="btn-export-enter-code">CSV</button>
+          </div>
+
           <!-- search -->
           <div class="filter-info-user">
             <label>Search</label>
-            <input type="text" placeholder="megaID/username" id="search-user" value="">
+            <input type="text" placeholder="megaID/phone" id="text-search" value="">
           </div>
 
           <!-- select column filter -->
           <div class="filter-info-user">
-            <label>Select Column</label>
-            <select id="filter-sel-column">
-              <option selected value="-1">none</option>
-              <option value="0">code đã nhập</option>
-              <option value="1">lượt chơi còn</option>
-              <option value="2">lượt chơi đã sử dụng</option>
+            <label>Type</label>
+            <select id="sel-type">
+              <option selected value="none">none</option>
+              <% for(let i of items) { %>
+                <option value="<%= i['name'] %>"><%= i['name'] %></option>
+              <% } %>
             </select>
           </div>
 
-          <!-- min -->
+          <!-- from date -->
           <div class="filter-info-user">
-            <label>Min</label>
-            <input type="text" placeholder="min" step="0" min="0" id="search-user" value="">
+            <label>From</label>
+            <input type="date" placeholder="" id="from-date-turnning" value="">
           </div>
 
-          <!-- max -->
+          <!-- to date -->
           <div class="filter-info-user">
-            <label>Max</label>
-            <input type="text" placeholder="max" step="0" min="0" id="search-user" value="">
+            <label>To</label>
+            <input type="date" placeholder="" id="to-date-turnning" value="">
           </div>
         </div>
 
@@ -43,7 +48,7 @@
             <tr>
               <th style="font-weight: bold;">MEGA ID</th>
               <th style="font-weight: bold;">SĐT</th>
-              <th style="font-weight: bold;">QUÀ</th>
+              <th style="font-weight: bold;">VẬT PHẨM</th>
               <th style="font-weight: bold;">THỜI GIAN</th>
             </tr>
           </thead>
@@ -60,6 +65,17 @@
           <tfoot>
           </tfoot>
         </table>
+        <div style="text-align: end;">
+          <div class="pagination-custom">
+            <a href="#" id="previous-page">&laquo;</a>
+          </div>
+          <div class="pagination-custom" id="pagination">
+            <!-- <a href="#" class="three-dot">...</a> -->
+          </div>
+          <div class="pagination-custom">
+            <a href="#" id="next-page" data-id="0">&raquo;</a>
+          </div>
+        </div>
       </div>
 
     </section>
@@ -67,7 +83,382 @@
 
   <script>
 
+    $(document).ready(() => {
 
+      window.arrTr = [];
+      for (let tr of $('#user-info-table tbody tr')) {
+        window.arrTr.push(tr);
+      }
+
+      getPagination();
+      nextPage();
+      previousPage();
+
+      $('#text-search').on('keyup', () => {
+        $('#user-info-table tbody').empty();
+        $('#pagination').empty();
+        searchByText();
+      });
+
+      $('#sel-type').on('change', () => {
+        $('#user-info-table tbody').empty();
+        $('#pagination').empty();
+        search();
+      });
+
+      $('#from-date-turnning').on('change', () => {
+        $('#user-info-table tbody').empty();
+        $('#pagination').empty();
+        search();
+      });
+
+      $('#to-date-turnning').on('change', () => {
+        $('#user-info-table tbody').empty();
+        $('#pagination').empty();
+        search();
+      });
+
+    });
+
+    //-----------------------------------------------------serach------------------------------------------------------------
+
+    function search() {
+      let textSearch  = $('#text-search').val().toLowerCase();
+      let type        = $('#sel-type').val();
+      let fromDate    = new Date($('#from-date-turnning').val() + ' 00:00:00');
+      let toDate      = new Date($('#to-date-turnning').val() + ' 23:59:59');
+
+      if (textSearch !== '' && type !== 'none' && !isNaN(fromDate) && !isNaN(toDate)) {
+        filterAll(textSearch, type, fromDate, toDate);
+        getPagination();
+        return;
+      }
+
+      if (textSearch !== '' && type === 'none' && !isNaN(fromDate) && !isNaN(toDate)) {
+        filterByTextAndDate(fromDate, toDate, textSearch);
+        getPagination();
+        return;
+      }
+
+      if (textSearch !== '' && type !== 'none' && (isNaN(fromDate) || isNaN(toDate))) {
+        filterByTextAndType(textSearch, type);
+        getPagination();
+        return;
+      }
+
+      if (textSearch === '' && type !== 'none' && !isNaN(fromDate) && !isNaN(toDate)) {
+        filterByTypeAndDate(fromDate, toDate, type);
+        getPagination();
+        return;
+      }
+
+      if (textSearch !== '' && type === 'none' && (isNaN(fromDate) || isNaN(toDate))) {
+        filterByText(textSearch);
+        getPagination();
+        return;
+      }
+
+      if (textSearch === '' && type !== 'none' && (isNaN(fromDate) || isNaN(toDate))) {
+        filterBySelType(type);
+        getPagination();
+        return;
+      }
+
+      if (textSearch === '' && type === 'none' && !isNaN(fromDate) && !isNaN(toDate)) {
+        filterByDate(fromDate, toDate);
+        getPagination();
+        return;
+      }
+
+      if (textSearch === '' && type === 'none' && (isNaN(fromDate) || isNaN(toDate))) {
+        resetDataTable();
+        getPagination();
+        return;
+      }
+    }
+
+    //-----------------------------------------------------pagination--------------------------------------------------------
+
+    function getPagination() {
+      let rowsTotal = $('#user-info-table tbody tr').length;
+      let numPages  = parseInt(rowsTotal / env.rows_show, 10);
+
+      if ((rowsTotal % env.rows_show) !== 0) {
+        numPages += 1;
+      }
+
+      let markup = '';
+      if (numPages <= env.max_page) {
+        for (let i=0; i<numPages; i++) {
+          if (i === 0) {
+            markup += `<a href="#" class="page active-page" data-id="${i}">${i+1}</a>`;
+            continue;
+          }
+          markup += `<a href="#" class="page" data-id="${i}">${i+1}</a>`
+        }
+      }
+      else {
+        for (let i=0; i<env.max_page; i++) {
+          if (i === 0) {
+            markup += `<a href="#" class="page active-page" data-id="${i}">${i+1}</a>`;
+            continue;
+          }
+          markup += `<a href="#" class="page" data-id="${i}">${i+1}</a>`;
+        }
+        markup += '<a href="#" class="three-dot">...</a>';
+        markup += `<a href="#" class="page" data-id="${numPages-1}">${numPages}</a>`
+      }
+
+      $('#pagination').append(markup);
+      $('#user-info-table tbody tr').hide();
+      $('#user-info-table tbody tr').slice(0, env.rows_show).show();
+
+      $('body').delegate('.page', 'click', (event) => {
+        let currPage  = parseInt(event.currentTarget.attributes.getNamedItem('data-id').value, 10);
+        updatePagination(numPages, currPage);
+      });
+    }
+
+    function nextPage() {
+      $('#next-page').click(() => {
+        let rowsTotal = $('#user-info-table tbody tr').length;
+        let numPages  = parseInt(rowsTotal / env.rows_show, 10);
+        if ((rowsTotal % env.rows_show) !== 0) {
+          numPages += 1;
+        }
+
+        let currPage  = parseInt($('#next-page').attr('data-id'), 10) + 1;
+        if (currPage >= numPages) {
+          return;
+        }
+
+        updatePagination(numPages, currPage);
+      });
+    }
+
+    function previousPage() {
+      $('#previous-page').click(() => {
+        let rowsTotal = $('#user-info-table tbody tr').length;
+        let numPages  = parseInt(rowsTotal / env.rows_show, 10);
+        if ((rowsTotal % env.rows_show) !== 0) {
+          numPages += 1;
+        }
+
+        let currPage  = parseInt($('#next-page').attr('data-id'), 10) - 1;
+        if (currPage < 0) {
+          return;
+        }
+        
+        updatePagination(numPages, currPage);
+      });
+    }
+
+    function updatePagination(numPages, currPage) {
+      removePageActive();
+      let markup    = '';
+      if (currPage >= 4) {
+        $('#pagination').empty();
+        markup += `
+          <a href="#" class="three-dot">...</a>
+          <a href="#" class="page" data-id="${currPage-2}">${currPage-1}</a>
+          <a href="#" class="page" data-id="${currPage-1}">${currPage}</a>
+          <a href="#" class="page active-page" data-id="${currPage}">${currPage+1}</a>
+        `;
+
+        if (numPages - (currPage+1) > 2) {
+          markup += `
+            <a href="#" class="page" data-id="${currPage+1}">${currPage+2}</a>
+            <a href="#" class="page" data-id="${currPage+2}">${currPage+3}</a>
+            <a href="#" class="three-dot">...</a>
+            <a href="#" class="page" data-id="${numPages-1}">${numPages}</a>
+          `;
+        }
+        else {
+          for (let i=currPage+1; i<numPages; i++) {
+            markup += `<a href="#" class="page" data-id="${i}">${i+1}</a>`;
+          }
+        }
+      }
+      else if (numPages <= env.max_page) {
+        $('#pagination').empty();
+        for (let i=0; i<numPages; i++) {
+          if (i === currPage) {
+            markup += `<a href="#" class="page active-page" data-id="${i}">${i+1}</a>`
+            continue;
+          }
+          markup += `<a href="#" class="page" data-id="${i}">${i+1}</a>`
+        }
+      }
+      else {
+        $('#pagination').empty();
+        for (let i=0; i<env.max_page; i++) {
+          if (i === currPage) {
+            markup += `<a href="#" class="page active-page" data-id="${i}">${i+1}</a>`
+            continue;
+          }
+          markup += `<a href="#" class="page" data-id="${i}">${i+1}</a>`;
+        }
+        markup += '<a href="#" class="three-dot">...</a>';
+        markup += `<a href="#" class="page" data-id="${numPages-1}">${numPages}</a>`
+      }
+
+      $('#pagination').append(markup);
+      $('#next-page').attr('data-id', currPage);
+      showDataTableBy(currPage);
+    }
+
+    function removePageActive() {
+      for (let e of $('#pagination a')) {
+        let c = e.getAttribute('class');
+        if (c.includes('active-page')) {
+          e.setAttribute('class', 'page');
+          return;
+        }
+      }
+    }
+
+    function showDataTableBy(currPage) {
+      let startItem = currPage * env.rows_show;
+      let endItem   = startItem + env.rows_show;
+      $('#user-info-table tbody tr')
+          .css('opacity', '0.0')
+          .hide()
+          .slice(startItem, endItem)
+          .css('display', '')
+          .animate({ opacity: 1 }, 300);
+    }
+
+    //-----------------------------------------------------filter------------------------------------------------------------
+
+    function filterAll(textSearch, selType, fromDate, toDate) {
+      for (let tr of window.arrTr) {
+        let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
+        let phone   = tr.getElementsByTagName('td')[1].textContent;
+        let type    = tr.getElementsByTagName('td')[2].textContent;
+        let date    = convertStringToMillisecond(tr.getElementsByTagName('td')[3].textContent);
+
+        if (megaID.includes(textSearch) || phone.includes(textSearch)) {
+          if (type.includes(selType) && date >= fromDate.getTime() && date <= toDate.getTime()) {
+            tr.style.opacity = 1.0;
+            $('#user-info-table tbody').append(tr);
+          }
+        }
+      }
+    }
+
+    function filterByTypeAndDate(fromDate, toDate, selType) {
+      for (let tr of window.arrTr) {
+        let type  = tr.getElementsByTagName('td')[2].textContent;
+        let date  = convertStringToMillisecond(tr.getElementsByTagName('td')[3].textContent);
+
+        if (type.includes(selType) && date >= fromDate.getTime() && date <= toDate.getTime()) {
+          tr.style.opacity = 1.0;
+          $('#user-info-table tbody').append(tr);
+        }
+      }
+    }
+
+    function filterByTextAndDate(fromDate, toDate, textSearch) {
+      for (let tr of window.arrTr) {
+        let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
+        let phone   = tr.getElementsByTagName('td')[1].textContent;
+        let date    = convertStringToMillisecond(tr.getElementsByTagName('td')[3].textContent);
+
+        if (megaID.includes(textSearch) || phone.includes(textSearch)) {
+          if (date >= fromDate.getTime() && date <= toDate.getTime()) {
+            tr.style.opacity = 1.0;
+            $('#user-info-table tbody').append(tr);
+          }
+        }
+      }
+    }
+
+    function filterByTextAndSelType(textSearch, selType) {
+      for (let tr of window.arrTr) {
+        let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
+        let phone   = tr.getElementsByTagName('td')[1].textContent;
+        let type    = tr.getElementsByTagName('td')[2].textContent;
+
+        if (megaID.includes(textSearch) || phone.includes(textSearch)) {
+          if (type.includes(selType)) {
+            tr.style.opacity = 1.0;
+            $('#user-info-table tbody').append(tr);
+          }
+        }
+      }
+    }
+
+    function filterByType(selType) {
+      for (let tr of window.arrTr) {
+        let type = tr.getElementsByTagName('td')[2].textContent;
+        if (type.includes(selType)) {
+          tr.style.opacity = 1.0;
+          $('#user-info-table tbody').append(tr);
+        }
+      }
+    }
+
+    function filterByText(textSearch) {
+      for (let tr of window.arrTr) {
+        let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
+        let phone   = tr.getElementsByTagName('td')[1].textContent;
+
+        if (megaID.includes(textSearch) || phone.includes(textSearch)) {
+          tr.style.opacity = 1.0;
+          $('#user-info-table tbody').append(tr);
+        }
+      }
+    }
+
+    function filterByTextAndType(textSearch, selType) {
+      for (let tr of window.arrTr) {
+        let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
+        let phone   = tr.getElementsByTagName('td')[1].textContent;
+        let type    = tr.getElementsByTagName('td')[2].textContent;
+
+        if (megaID.includes(textSearch) || phone.includes(textSearch)) {
+          if (type.includes(selType)) {
+            tr.style.opacity = 1.0;
+            $('#user-info-table tbody').append(tr);
+          }
+        }
+      }
+    }
+
+    function filterBySelType(selType) {
+      for (let tr of window.arrTr) {
+        let td = tr.getElementsByTagName('td')[2];
+        if (td.textContent.includes(selType)) {
+          tr.style.opacity = 1.0;
+          $('#user-info-table tbody').append(tr);
+        }
+      }
+    }
+
+    function filterByDate(fromDate, toDate) {
+      for (let tr of window.arrTr) {
+        let date = convertStringToMillisecond(tr.getElementsByTagName('td')[3].textContent);
+        if (fromDate.getTime() <= date && date <= toDate.getTime()) {
+          tr.style.opacity = 1.0;
+          $('#user-info-table tbody').append(tr);
+        }
+      }
+    }
+
+    function resetDataTable() {
+      for (let tr of window.arrTr) {
+        tr.style.opacity = 1.0;
+        $('#user-info-table tbody').append(tr);
+      }
+    }
+
+    function convertStringToMillisecond(s) {
+      let date = new Date(s);
+      if (!isNaN(date.getTime())) {
+        return date.getTime();
+      }
+      return 0;
+    }
 
   </script>
 

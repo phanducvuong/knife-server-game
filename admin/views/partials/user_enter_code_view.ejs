@@ -308,15 +308,73 @@
       return 0;
     }
 
+    //-----------------------------------------------------filter------------------------------------------------------------
+
+    function filterAll(textSearch, selType, fromDate, toDate) {
+      for (let tr of window.arrTr) {
+        let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
+        let phone   = tr.getElementsByTagName('td')[1].textContent;
+        let type    = tr.getElementsByTagName('td')[2].textContent;
+        let date    = convertStringToMillisecond(tr.getElementsByTagName('td')[3].textContent);
+
+        if (megaID.includes(textSearch) || phone.includes(textSearch)) {
+          if (type.includes(selType) && date >= fromDate.getTime() && date <= toDate.getTime()) {
+            tr.style.opacity = 1.0;
+            $('#user-info-table tbody').append(tr);
+          }
+        }
+      }
+    }
+
+    function filterByTypeAndDate(fromDate, toDate, selType) {
+      for (let tr of window.arrTr) {
+        let type  = tr.getElementsByTagName('td')[2].textContent;
+        let date  = convertStringToMillisecond(tr.getElementsByTagName('td')[3].textContent);
+
+        if (type.includes(selType) && date >= fromDate.getTime() && date <= toDate.getTime()) {
+          tr.style.opacity = 1.0;
+          $('#user-info-table tbody').append(tr);
+        }
+      }
+    }
+
     function filterByTextAndDate(fromDate, toDate, textSearch) {
       for (let tr of window.arrTr) {
-        for (let td of tr.getElementsByTagName('td')) {
-          let date = convertStringToMillisecond(tr.getElementsByTagName('td')[3].textContent);
-          if (td.textContent.toLowerCase().includes(textSearch) && fromDate.getTime() <= date && date <= toDate.getTime()) {
+        let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
+        let phone   = tr.getElementsByTagName('td')[1].textContent;
+        let date    = convertStringToMillisecond(tr.getElementsByTagName('td')[3].textContent);
+
+        if (megaID.includes(textSearch) || phone.includes(textSearch)) {
+          if (date >= fromDate.getTime() && date <= toDate.getTime()) {
             tr.style.opacity = 1.0;
             $('#user-info-table tbody').append(tr);
             break;
           }
+        }
+      }
+    }
+
+    function filterByTextAndSelType(textSearch, selType) {
+      for (let tr of window.arrTr) {
+        let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
+        let phone   = tr.getElementsByTagName('td')[1].textContent;
+        let type    = tr.getElementsByTagName('td')[2].textContent;
+
+        if (megaID.includes(textSearch) || phone.includes(textSearch)) {
+          if (type.includes(selType)) {
+            tr.style.opacity = 1.0;
+            $('#user-info-table tbody').append(tr);
+          }
+        }
+      }
+    }
+
+    function filterByType(typeSel) {
+      for (let tr of window.arrTr) {
+        let type = tr.getElementsByTagName('td')[2].textContent;
+        if (type.includes(typeSel)) {
+          tr.style.opacity = 1.0;
+          $('#user-info-table tbody').append(tr);
         }
       }
     }
