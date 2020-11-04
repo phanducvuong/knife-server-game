@@ -61,9 +61,18 @@
                   <% } %>
 
                   <td><%= e['description'] %></td>
-                  <td><%= e['target'] %></td>
+                  
+                  <% if (e['id'] === 0) { %>
+                    <td>-</td>
+                  <% }else { %>
+                    <td><%= e['target'] %></td>
+                  <% } %>
 
-                  <% if (e['sp_item'] !== null) { %>
+                  <% if (e['id'] === 0) { %>
+                    <td>
+                      <p>x<%= e['mul'] %> Lượt</p>
+                    </td>
+                  <% }else if (e['sp_item'] !== null) { %>
                     <td>
                       <p><%= e['bonus_turn'] %> Lượt</p>
                       <p><%= e['bonus_sp_item'] %> <%= e['sp_item']['description'] %></p>
@@ -143,7 +152,7 @@
                 </div>
 
                 <!-- TARGET-->
-                <div class="form-group">
+                <div class="form-group" id="modal-div-target">
                     <label class="col-md-12 control-label" for="product_name_fr">TARGET</label>
                     <div class="col-md-12">
                       <input  id="modal-input-target-event" placeholder="TARGET"
@@ -188,7 +197,7 @@
                   <label class="col-md-4 control-label">FROM DATE</label>
                   <div class="col-md-12">
                     <input  id="modal-input-from-time" placeholder=""
-                            class="form-control input-md" type="datetime-local">
+                            class="form-control input-md" type="date">
                   </div>
                 </div>
 
@@ -197,7 +206,7 @@
                   <label class="col-md-4 control-label">TO DATE</label>
                   <div class="col-md-12">
                     <input  id="modal-input-to-time" placeholder=""
-                            class="form-control input-md" type="datetime-local">
+                            class="form-control input-md" type="date">
                   </div>
                 </div>
 
@@ -262,6 +271,11 @@
         if (dataID === '0') {
           $('#modal-div-from-date').css('display', 'block');
           $('#modal-div-to-date').css('display', 'block');
+          $('#modal-div-supporting-item').css('display', 'none');
+          $('#modal-div-target').css('display', 'none');
+        }
+        else {
+          $('#modal-div-supporting-item').css('display', 'block');
         }
 
         $('#title-event').text('EDIT EVENT');
@@ -429,6 +443,12 @@
         $('#modal-input-bonus-sp-item-event').val(data['bonus_sp_item']);
       }
 
+      //set from_date and to_date if idEvent is 0
+      if (data['id'] === 0) {
+        $('#modal-input-from-time').val(data['from_date'].split(' ')[0]);
+        $('#modal-input-to-time').val(data['to_date'].split(' ')[0]);
+      }
+
       $('#modal-input-id-event').val(data['id']);
       $('#modal-input-description-event').val(data['description']);
       $('#modal-input-target-event').val(data['target']);
@@ -456,10 +476,19 @@
             <td>${e['id']}</td>
             <td>${type}</td>
             <td>${e['description']}</td>
-            <td>${e['target']}</td>
           `;
+        
+        if (e['id'] === 0) {
+          markup += '<td>-</td>';
+        }
+        else {
+          markup += `<td>${e['target']}</td>`;
+        }
 
-        if (e['sp_item'] !== null) {
+        if (e['id'] === 0) {
+          markup += `<td><p>x${e['mul']} Lượt</p></td>`;
+        }
+        else if (e['sp_item'] !== null) {
           markup += `
             <td>
               <p>${e['bonus_turn']} Lượt</p>
@@ -515,6 +544,7 @@
         
         $('#modal-div-from-date').css('display', 'none');
         $('#modal-div-to-date').css('display', 'none');
+        $('#modal-div-target').css('display', 'none');
       });
     }
 

@@ -20,12 +20,14 @@ exports.verifyTokenUser = (token) => {
 
       if (err) return rej(err);
 
+      console.log(body);
+
       let jsonData = JSON.parse(body);
       if (jsonData.code !== 2000) {
         return rej('Can not verify user');
       }
-      // return resv(jsonData.data);
-      return resv(jsonData);
+      return resv(jsonData.data);
+      // return resv(jsonData);
 
     });
 

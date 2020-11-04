@@ -22,8 +22,8 @@
  */
 
 
-exports.URL_VALID_TOKEN           = 'http://demo8992960.mockable.io/verify-token';
-// exports.URL_VALID_TOKEN           = 'https://mega1vip.mega1.vn/service_gameportal/v1/user/info';
+// exports.URL_VALID_TOKEN           = 'http://demo8992960.mockable.io/verify-token';
+exports.URL_VALID_TOKEN           = 'https://mega1vip.mega1.vn/service_gameportal/v1/user/info';
 // exports.URL_VALID_TOKEN           = 'https://mega1-gameportal-dev.yeah1group.com/service_gameportal/v1/user/info';
 exports.URL_TOPUP                 = 'https://topup-gw-dev-api.yeah1group.com/api/v1/topup';
 exports.TAG_TOPUP                 = 'budweiser';

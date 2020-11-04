@@ -1145,7 +1145,7 @@ const setupRoute = async (app, opt) => {
 
       let spItemFind = supportingItems.find(e => { return e['id'] === spItem });
       if (spItemFind === null || spItemFind === undefined) {
-        if (bonusTurn <= 0) throw `Check bonus turn when bonus sp item is < 0 ${bonusTurn}   ${bonusSpItem}`;
+        if (bonusTurn <= 0) throw `Check bonus turn when bonus sp item is < 0 ${bonusTurn} ${bonusSpItem}`;
         eventFind['sp_item']        = null;
         eventFind['description']    = description;
         eventFind['target']         = target;
@@ -1164,15 +1164,18 @@ const setupRoute = async (app, opt) => {
 
       //update time if idEvent is 0
       if (id === 0) {
-        let tmpFromDate = new Date(fromDate);
-        let tmpToDate   = new Date(toDate);
+        let tmpFromDate = new Date(`${fromDate} 00:00:00`);
+        let tmpToDate   = new Date(`${toDate} 00:00:00`);
 
-        if (isNaN(tmpFromDate.getTime()) || isNaN(tmpToDate.getTime()) || tmpFromDate.getTime() >= tmpToDate.getTime()) {
+        if (isNaN(tmpFromDate.getTime()) || isNaN(tmpToDate.getTime()) || tmpFromDate.getTime() >= tmpToDate.getTime() || bonusTurn <= 0) {
           throw `Update event failed! Date`;
         }
 
-        eventFind['from_date']  = fromDate;
-        eventFind['to_date']    = toDate;
+        
+        eventFind['from_date']  = util.convertDateEventToString(tmpFromDate.getTime() - 7 * 3600 * 1000) + ' 17:00:00';
+        eventFind['to_date']    = util.convertDateEventToString(tmpToDate.getTime()) + ' 16:59:59';
+        eventFind['mul']        = bonusTurn;
+        eventFind['target']     = 1;
       }
 
       DS.DSUpdateDataGlobal('admin', 'events', events);

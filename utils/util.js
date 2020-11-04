@@ -71,6 +71,15 @@ exports.convertTimeToString = (milli) => {
   return `${month}-${date}-${year}  ${hour}:${minute}`;
 }
 
+exports.convertDateEventToString = (milli) => {
+  let time    = new Date(milli + 7 * 3600 * 1000);
+  let month   = (time.getMonth() + 1) < 10 ? `0${time.getMonth() + 1}` : time.getMonth() + 1;
+  let date    = time.getDate() < 10 ? `0${time.getDate()}` : time.getDate();
+  let year    = time.getFullYear();
+  // let second  = time.getSeconds();
+  return `${year}-${month}-${date}`;
+}
+
 exports.isEligibleEventById0 = (fromDate, toDate) => {
   let tmpFromDate = new Date(fromDate);
   let tmpToDate   = new Date(toDate);
