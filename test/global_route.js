@@ -6,7 +6,6 @@ const util          = require('../utils/util');
 const logger        = require('fluent-logger');
 const sendMail      = require('../utils/send_mail');
 const topup         = require('../repository/topup');
-const ReverseMd5    = require('reverse-md5');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -489,10 +488,10 @@ const globalRoute = async (app, opt) => {
     let arrCode = [];
     
     for (c of codes) {
-      let resultHash = util.genEnterCode(c);
+      let resultHash = util.genEnterCode(c.toUpperCase());
       arrCode.push({
         code_hash   : resultHash,
-        code        : c,
+        code        : c.toUpperCase(),
         used        : 0
       });
     }
@@ -540,20 +539,6 @@ const globalRoute = async (app, opt) => {
     
     let result = await topup.requestTopupCardPhoneTEST(teleCard, phone, megaID);
     rep.send(result);
-  });
-
-  app.post('/reverse-md5', (req, rep) => {
-    let s = req.body.md5;
-    var reverseMd5 = ReverseMd5({
-      lettersUpper: true,
-      lettersLower: true,
-      numbers: true,
-      special: true,
-      whitespace: true,
-      maxLen: 30
-    });
-    let a = reverseMd5(s);
-    rep.send(a);
   });
 
 }

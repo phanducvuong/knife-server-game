@@ -176,6 +176,11 @@ input::-webkit-inner-spin-button {
   border-radius: 2px;
 }
 
+#btn-update-text-show {
+  position: relative;
+  top: 25%;
+}
+
 .btn-update-global:hover {
   background-color: #398bf7;
   color: white;

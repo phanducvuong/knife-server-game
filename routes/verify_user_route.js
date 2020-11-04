@@ -173,7 +173,8 @@ const verifyUserRoute = async (app, opt) => {
         }
       });
 
-      let countDownSplit = config.COUNT_DOWN.split(' ');
+      let countDownSplit      = config.COUNT_DOWN.split(' ');
+      let countDownSplitDate  = countDownSplit[0].split('-');
       rep.send({
         status_code     : 2000,
         result          : result,
@@ -182,7 +183,9 @@ const verifyUserRoute = async (app, opt) => {
         config          : config.PARTITIONS,
         noti_banner     : arrNotifica,
         count_down      : new Date(config.COUNT_DOWN).getTime(),
-        count_down_str  : `${countDownSplit[1]} ${countDownSplit[0]}`
+        count_down_str  : `${countDownSplit[1]} ${countDownSplitDate[2]}/${countDownSplitDate[1]}/${countDownSplitDate[0]}`,
+        text_show       : config.TEXT_SHOW['text'],
+        count_text_show : config.TEXT_SHOW['count']
       });
 
     }

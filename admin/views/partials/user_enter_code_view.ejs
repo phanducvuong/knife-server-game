@@ -101,20 +101,20 @@
       });
 
       $('#search-user').on('keyup', () => {
-        searchByText();
+        search();
       });
 
       $('#from-date-enter-code').change(() => {
-        searchByDate();
+        search();
       });
 
       $('#to-date-enter-code').change(() => {
-        searchByDate();
+        search();
       });
 
     });
 
-    function searchByText() {
+    function search() {
       let textSearch  = $('#search-user').val().toLowerCase();
       let fromDate    = new Date($('#from-date-enter-code').val() + ' 00:00:00');
       let toDate      = new Date($('#to-date-enter-code').val() + ' 23:59:59');
@@ -122,33 +122,30 @@
       $('#user-info-table tbody').empty();
       $('#pagination').empty();
 
-      if (isNaN(fromDate) || isNaN(toDate)) {
-        filterByText(textSearch);
-      }
-      else {
+      if (textSearch !== '' && !isNaN(fromDate.getTime()) && !isNaN(toDate.getTime())) {
         filterByTextAndDate(fromDate, toDate, textSearch);
-      }
-      getPagination();
-    }
-
-    function searchByDate() {
-      let textSearch  = $('#search-user').val().toLowerCase();
-      let fromDate    = new Date($('#from-date-enter-code').val() + ' 00:00:00');
-      let toDate      = new Date($('#to-date-enter-code').val() + ' 23:59:59');
-      $('#user-info-table tbody').empty();
-      $('#pagination').empty();
-
-      if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime()) || fromDate.getTime() > toDate.getTime()) {
+        getPagination();
         return;
       }
 
-      if (textSearch === '') {
+      if (textSearch !== '' && (isNaN(fromDate.getTime()) || isNaN(toDate.getTime))) {
+        filterByText(textSearch);
+        getPagination();
+        return;
+      }
+
+      if (textSearch === '' && !isNaN(fromDate.getTime()) && !isNaN(toDate().getTime())) {
         filterByDate(fromDate, toDate);
+        getPagination();
+        return;
       }
-      else {
-        filterByTextAndDate(fromDate, toDate, textSearch);
+
+      if (textSearch === '' && (isNaN(fromDate.getTime()) || isNaN(toDate().getTime()))) {
+        filterAll();
+        getPagination();
+        return;
       }
-      getPagination();
+
     }
 
     function getPagination() {
@@ -312,29 +309,8 @@
 
     function filterAll(textSearch, selType, fromDate, toDate) {
       for (let tr of window.arrTr) {
-        let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
-        let phone   = tr.getElementsByTagName('td')[1].textContent;
-        let type    = tr.getElementsByTagName('td')[2].textContent;
-        let date    = convertStringToMillisecond(tr.getElementsByTagName('td')[3].textContent);
-
-        if (megaID.includes(textSearch) || phone.includes(textSearch)) {
-          if (type.includes(selType) && date >= fromDate.getTime() && date <= toDate.getTime()) {
-            tr.style.opacity = 1.0;
-            $('#user-info-table tbody').append(tr);
-          }
-        }
-      }
-    }
-
-    function filterByTypeAndDate(fromDate, toDate, selType) {
-      for (let tr of window.arrTr) {
-        let type  = tr.getElementsByTagName('td')[2].textContent;
-        let date  = convertStringToMillisecond(tr.getElementsByTagName('td')[3].textContent);
-
-        if (type.includes(selType) && date >= fromDate.getTime() && date <= toDate.getTime()) {
-          tr.style.opacity = 1.0;
-          $('#user-info-table tbody').append(tr);
-        }
+        tr.style.opacity = 1.0;
+        $('#user-info-table tbody').append(tr);
       }
     }
 
@@ -348,45 +324,19 @@
           if (date >= fromDate.getTime() && date <= toDate.getTime()) {
             tr.style.opacity = 1.0;
             $('#user-info-table tbody').append(tr);
-            break;
           }
-        }
-      }
-    }
-
-    function filterByTextAndSelType(textSearch, selType) {
-      for (let tr of window.arrTr) {
-        let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
-        let phone   = tr.getElementsByTagName('td')[1].textContent;
-        let type    = tr.getElementsByTagName('td')[2].textContent;
-
-        if (megaID.includes(textSearch) || phone.includes(textSearch)) {
-          if (type.includes(selType)) {
-            tr.style.opacity = 1.0;
-            $('#user-info-table tbody').append(tr);
-          }
-        }
-      }
-    }
-
-    function filterByType(typeSel) {
-      for (let tr of window.arrTr) {
-        let type = tr.getElementsByTagName('td')[2].textContent;
-        if (type.includes(typeSel)) {
-          tr.style.opacity = 1.0;
-          $('#user-info-table tbody').append(tr);
         }
       }
     }
 
     function filterByText(textSearch) {
       for (let tr of window.arrTr) {
-        for (let td of tr.getElementsByTagName('td')) {
-          if (td.textContent.toLowerCase().includes(textSearch)) {
-            tr.style.opacity = 1.0;
-            $('#user-info-table tbody').append(tr);
-            break;
-          }
+        let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
+        let phone   = tr.getElementsByTagName('td')[1].textContent;
+
+        if (megaID.includes(textSearch) || phone.includes(phone)) {
+          tr.style.opacity = 1.0;
+          $('#user-info-table tbody').append(tr);
         }
       }
     }

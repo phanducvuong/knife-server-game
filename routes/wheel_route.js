@@ -97,8 +97,9 @@ const wheelRoute = async (app, opt) => {
 
       if (item === null || item === undefined) throw `item is not exist! ${megaID}`;
 
+      let strGenerate = '';
       if (item['type'] === 2) {
-        let strGenerate = generateStr.getStringGenerate();
+        strGenerate     = generateStr.getStringGenerate();
         let str         = `${strGenerate}_${time.getTime()}`;
         dataUser['lucky_code'].push(str);
       } //generate string when user get item "Mã Cơ Hội"
@@ -122,7 +123,8 @@ const wheelRoute = async (app, opt) => {
         time      : time.getTime(),
         id_item   : item['id'],
         amount    : invenUpdate['newAmount'],
-        user_name : dataUser['name']
+        user_name : dataUser['name'],
+        code      : strGenerate
       });
       redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
       redisClient.updateHistoryUser(megaID, strHis);

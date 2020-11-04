@@ -8,6 +8,11 @@
     <section class="content">
       <div style="background-color: white;">
         <div class="div-all-item row">
+
+          <div class="filter-info-user">
+            <button class="btn btn-primary" id="btn-export">CSV</button>
+          </div>
+
           <!-- search -->
           <div class="filter-info-user">
             <label>Search</label>
@@ -90,12 +95,37 @@
         window.arrTr.push(tr);
       }
 
-      // $('#user-info-table tbody').empty();
-      // $('#pagination').empty();
-
       getPagination();
       nextPage();
       previousPage();
+
+      $('#text-search').on('keyup', () => {
+        $('#user-info-table tbody').empty();
+        $('#pagination').empty();
+        search();
+      });
+
+      $('#sel-col').on('change', () => {
+        $('#user-info-table tbody').empty();
+        $('#pagination').empty();
+        search();
+      });
+
+      $('#min').on('change', () => {
+        $('#user-info-table tbody').empty();
+        $('#pagination').empty();
+        search();
+      });
+
+      $('#max').on('change', () => {
+        $('#user-info-table tbody').empty();
+        $('#pagination').empty();
+        search();
+      });
+
+      $('#btn-export').click(() => {
+        $('#user-info-table').table2csv({delivery: 'value'});
+      });
 
     });
 
@@ -107,6 +137,48 @@
 
       if (textSearch !== '' && isNaN(min) && isNaN(max) && selCol <= 1) {
         filterByTextSearch(textSearch);
+        getPagination();
+        return;
+      }
+
+      if (textSearch !== '' && !isNaN(min) && isNaN(max) && selCol > 1) {
+        filterByTextSearchAndSelColAndMinOrMax(textSearch, selCol, min, true)
+        getPagination();
+        return;
+      }
+
+      if (textSearch !== '' && isNaN(min) && !isNaN(max) && selCol > 1) {
+        filterByTextSearchAndSelColAndMinOrMax(textSearch, selCol, max, false)
+        getPagination();
+        return;
+      }
+
+      if (textSearch !== '' && !isNaN(min) && !isNaN(max) && selCol > 1) {
+        filterByTextSearchAndSelColAndMinMax(textSearch, selCol, min, max);
+        getPagination();
+        return;
+      }
+
+      if (textSearch === '' && selCol > 1 && !isNaN(min) && isNaN(max)) {
+        filterBySelColAndMinOrMax(selCol, min, true);
+        getPagination();
+        return;
+      }
+
+      if (textSearch === '' && selCol > 1 && isNaN(min) && !isNaN(max)) {
+        filterBySelColAndMinOrMax(selCol, max, false);
+        getPagination();
+        return;
+      }
+
+      if (textSearch === '' && selCol > 1 && !isNaN(min) && !isNaN(max)) {
+        filterBySelColAndMinMax(selCol, min, max);
+        getPagination();
+        return;
+      }
+
+      if (textSearch === '' && selCol <= 1 && isNaN(min) && isNaN(max)) {
+        resetDataTable();
         getPagination();
         return;
       }
@@ -328,6 +400,13 @@
           tr.style.opacity = 1.0;
           $('#user-info-table tbody').append(tr);
         }
+      }
+    }
+
+    function resetDataTable() {
+      for (let tr of window.arrTr) {
+        tr.style.opacity = 1.0;
+        $('#user-info-table tbody').append(tr);
       }
     }
 

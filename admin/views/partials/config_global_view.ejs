@@ -31,7 +31,30 @@
               <button class="btn-update-global" id="btn-update-countdown">Cập Nhật</button>
             </div>
           </div>
-          
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-12 col-12">
+      <div class="box" style="box-shadow: 1px 0 10px rgba(0,0,0,0.1);">
+        <div class="panel-body">
+
+          <!-- set text -->
+          <div class="form-group row">
+            <label class="col-sm-3 col-form-label">Text Show</label>
+            <div class="col-sm-5">
+              <span>Text</span>
+              <input type="text" id="text-show" class="form-control" value="<%= text_show['text'] %>">
+            </div>
+            <div class="col-sm-2">
+              <span>Count</span>
+              <input type="number" id="count-text-show" class="form-control" value="<%= text_show['count'] %>">
+            </div>
+            <div class="col-sm-2">
+              <button class="btn-update-global" id="btn-update-text-show">Cập Nhật</button>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -86,6 +109,7 @@
 
     updateCountDown();
     updateBonusEnterCode();
+    updateTextShow();
 
   });
 
@@ -159,6 +183,42 @@
           }
           $('#loading').css('display', 'none');
 
+        })
+        .fail(() => {});
+    });
+  }
+
+  function updateTextShow() {
+    $('#btn-update-text-show').click(() => {
+      console.log('aaa');
+      $('#loading').css('display', 'block');
+      let text = $('#text-show').val();
+      let count = parseInt($('#count-text-show').val(), 10);
+  
+      if (text === '' || isNaN(count)) {
+        $('#loading').css('display', 'none');
+        alert('Check info text show!');
+        return;
+      }
+  
+      $.ajax({
+        url             : env.http + window.location.host + '/api/v1/admin/setup/update-text-show',
+        method          : 'POST',
+        contentType     : 'application/json; charset=utf-8',
+        data            : JSON.stringify({
+          text          : text,
+          count         : count
+        })
+      })
+        .done((data) => {
+  
+          if (data['status_code'] !== 2000) {
+            $('#loading').css('display', 'none');
+            alert(data['error']);
+            return;
+          }
+          $('#loading').css('display', 'none');
+  
         })
         .fail(() => {});
     });

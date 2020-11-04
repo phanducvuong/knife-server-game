@@ -10,7 +10,7 @@
         <div class="div-all-item row">
 
           <div class="filter-info-user">
-            <button class="btn btn-primary" id="btn-export-enter-code">CSV</button>
+            <button class="btn btn-primary" id="btn-export">CSV</button>
           </div>
 
           <!-- search -->
@@ -25,7 +25,11 @@
             <select id="sel-type">
               <option selected value="none">none</option>
               <% for(let i of items) { %>
-                <option value="<%= i['name'] %>"><%= i['name'] %></option>
+                <% if (i['type'] === 2) { %>
+                  <option value="MCH"><%= i['name'] %></option>
+                <% } else { %>
+                  <option value="<%= i['name'] %>"><%= i['name'] %></option>
+                <% } %>
               <% } %>
             </select>
           </div>
@@ -97,7 +101,7 @@
       $('#text-search').on('keyup', () => {
         $('#user-info-table tbody').empty();
         $('#pagination').empty();
-        searchByText();
+        search();
       });
 
       $('#sel-type').on('change', () => {
@@ -116,6 +120,10 @@
         $('#user-info-table tbody').empty();
         $('#pagination').empty();
         search();
+      });
+
+      $('#btn-export').click(() => {
+        $('#user-info-table').table2csv({delivery: 'value'});
       });
 
     });

@@ -31,9 +31,10 @@ exports.getHistoryAllUser = async (lsDataUser) => {
     let result = await DS.DSGetDataUser(m['mega_code'], 'histories');
     if (result !== null && result !== undefined && result['history'] !== null && result['history'] !== undefined && result['history'].length > 0) {
       lsHistoryAllUser.push({
-        mega_code : m['mega_code'],
-        phone     : m['data']['phone'],
-        data      : result['history']
+        mega_code   : m['mega_code'],
+        phone       : m['data']['phone'],
+        data        : result['history'],
+        lucky_code  : m['data']['lucky_code']
       });
     }
   }
@@ -92,10 +93,15 @@ exports.getTurnningInfo = (lsHistoryAllUser) => {
       let itemFind  = config.ARR_ITEM.find(e => { return e['id'] === obj['id_item'] });
       if (itemFind !== null && itemFind !== undefined) {
         let timeConvert = util.convertTimeToString(obj['time']);
+        let reward      = itemFind['name'];
+        if (itemFind['type'] === 2) {
+          reward = `MCH: ${obj['code']}`;
+        }
+
         lsTurnningInfo.push({
           mega_code   : h['mega_code'],
           phone       : h['phone'],
-          reward      : itemFind['name'],
+          reward      : reward,
           time        : timeConvert
         });
       }
@@ -125,7 +131,8 @@ exports.getAllNameOfLsItems = () => {
   let tmp = [];
   for (let e of config.ARR_ITEM) {
     tmp.push({
-      name : e['name']
+      name  : e['name'],
+      type  : e['type']
     });
   }
   return tmp;

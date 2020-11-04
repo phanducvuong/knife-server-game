@@ -1433,9 +1433,10 @@ const setupRoute = async (app, opt) => {
   app.get('/get-config-global', async (req, rep) => {
     try {
 
-      let [countDownDS, bonusEnterCodeDS] = await Promise.all([
+      let [countDownDS, bonusEnterCodeDS, textShowDS] = await Promise.all([
         DS.DSGetDataGlobal('admin', 'count_down'),
-        DS.DSGetDataGlobal('admin', 'bonus_enter_code')
+        DS.DSGetDataGlobal('admin', 'bonus_enter_code'),
+        DS.DSGetDataGlobal('admin', 'text_show')
       ]);
 
       let countDown = config.COUNT_DOWN;
@@ -1448,12 +1449,18 @@ const setupRoute = async (app, opt) => {
         bonusEnterCode = bonusEnterCodeDS;
       }
 
+      let textShow = config.TEXT_SHOW;
+      if (textShowDS !== null && textShowDS !== undefined) {
+        textShow = textShowDS;
+      }
+
       rep.view('/partials/config_global_view.ejs', {
         count_down          : `${countDown.split(' ')[0]}T${countDown.split(' ')[1]}`,
         bonus_turn_1        : bonusEnterCode['bonus_1']['bonus_turn'],
         bonus_lucky_code_1  : bonusEnterCode['bonus_1']['bonus_lucky_code'],
         bonus_turn_2        : bonusEnterCode['bonus_2']['bonus_turn'],
-        bonus_lucky_code_2  : bonusEnterCode['bonus_2']['bonus_lucky_code']
+        bonus_lucky_code_2  : bonusEnterCode['bonus_2']['bonus_lucky_code'],
+        text_show           : textShow
       });
 
     }
@@ -1526,6 +1533,39 @@ const setupRoute = async (app, opt) => {
       rep.send({
         status_code : 2000,
         msg         : 'Success'
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  //update text show
+  app.post('/update-text-show', async (req, rep) => {
+    try {
+
+      let text  = req.body.text.toString().trim();
+      let count = parseInt(req.body.count, 10);
+
+      if (text === null || text === undefined || text === '' || isNaN(count)) {
+        throw 'Invalid info text show!';
+      }
+
+      DS.DSUpdateDataGlobal('admin', 'text_show', {
+        text  : text,
+        count : count
+      });
+
+      rep.send({
+        status_code : 2000,
+        msg         : 'success'
       });
 
     }

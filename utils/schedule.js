@@ -14,7 +14,7 @@ else {
 exports.scheDataGlobal = () => {
   setInterval(async () => {
     await this.updatePartition();
-  }, 360000000);
+  }, 10000);
 }
 
 exports.scheResetDataUser = async () => {
@@ -88,10 +88,16 @@ exports.updatePartition = async () => {
     config.COUNT_DOWN = countDown['count_down'];
   }
 
-  //TODO: update bonus enter code
+  // update bonus enter code
   let bonusEnterCode = await DS.DSGetDataGlobal('admin', 'bonus_enter_code');
   if (bonusEnterCode !== null && bonusEnterCode !== undefined) {
     config.BONUS_ENTER_CODE = bonusEnterCode;
+  }
+
+  // update text show
+  let textShow = await DS.DSGetDataGlobal('admin', 'text_show');
+  if (textShow !== null && textShow !== undefined) {
+    config.TEXT_SHOW = textShow;
   }
 }
 

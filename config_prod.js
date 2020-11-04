@@ -64,6 +64,10 @@ exports.HOST_LOG                  = '10.10.11.11';
 exports.PORT_LOG                  = 24224;
 
 exports.COUNT_DOWN                = '2020-10-30 23:00';
+exports.TEXT_SHOW                 = {
+  text  : 'Phóng Phi Tiêu Rinh Quà Khủng!',
+  count : 1
+}
 
 exports.TOTAL_PERCENT             = 0;
 exports.ARR_ITEM                  = [];
