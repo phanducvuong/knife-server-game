@@ -14,7 +14,7 @@ else {
 exports.scheDataGlobal = () => {
   setInterval(async () => {
     await this.updatePartition();
-  }, 10000);
+  }, 360000000);
 }
 
 exports.scheResetDataUser = async () => {
@@ -22,6 +22,7 @@ exports.scheResetDataUser = async () => {
 
     try {
       redisClient.clearLsNotificaBanner();
+      await resetAmountItem();
       await resetDataUser();
     }
     catch(err) {
@@ -134,5 +135,18 @@ async function resetDataUser() {
       DS.DSUpdateDataUser(u, 'turn_inven', dataUser);
       redisClient.updateTurnAndInvenUser(u, JSON.stringify(dataUser));
     }
+  }
+}
+
+async function resetAmountItem() {
+  let arrItem = await DS.DSGetAllItem();
+  if (arrItem !== null && arrItem !== undefined) {
+    for (let e of arrItem) {
+      e['amount'] = 0;
+      DS.DSUpdateDataGlobal('items', e['id'], e);
+    }
+    config.ARR_ITEM = [];
+    config.ARR_ITEM.push(...arrItem);
+    filterItemHaveInListPartition(config.PARTITIONS['data'], config.ARR_ITEM);
   }
 }

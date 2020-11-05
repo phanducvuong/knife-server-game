@@ -41,8 +41,10 @@ exports.getRndItem = async () => {
   }
 
   if (amountItem >= tmpItem['maximum']) {
-    tmpItem = config.ARR_ITEM.find(e => { return e['maximum'] <= -1 });
+    tmpItem = config.ITEM_FILTER.find(e => { return e['maximum'] <= -1 });
   }
+
+  console.log(tmpItem);
 
   amountItem        += 1;
   tmpItem['amount']  = amountItem;
@@ -93,7 +95,7 @@ exports.getItemWithRmBox = async (idItemRm) => {
   }
 
   if (amountItem >= tmpItem['maximum']) {
-    tmpItem = config.ARR_ITEM.find(e => { return e['maximum'] <= -1 });
+    tmpItem = config.ITEM_FILTER.find(e => { return e['maximum'] <= -1 });
   }
 
   amountItem        += 1;
@@ -125,7 +127,6 @@ exports.countIdItemRmInLsParition = (idItemRm) => {
       count++;
     }
   }
-
   return count;
 }
 

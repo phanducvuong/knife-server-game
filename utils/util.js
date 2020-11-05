@@ -158,6 +158,7 @@ exports.getAmountTeleCardByRegion = (region) => {
 exports.chkCountdown = () => {
   let dateNow       = new Date();
   let dateCountDown = new Date(config.COUNT_DOWN);
+
   if ((dateNow.getTime() + 7 * 3600 * 1000) < dateCountDown.getTime()) {
     return false;
   }

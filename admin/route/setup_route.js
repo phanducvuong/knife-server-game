@@ -1490,7 +1490,7 @@ const setupRoute = async (app, opt) => {
       let hour    = time.getHours() < 10 ? `0${time.getHours()}` : time.getHours();
       let minute  = time.getMinutes() < 10 ? `0${time.getMinutes()}` : time.getMinutes();
 
-      countDown = `${year}-${month}-${date} ${hour}:${minute}`;
+      countDown = `${year}-${month}-${date} ${hour}:${minute}:00`;
       DS.DSUpdateDataGlobal('admin', 'count_down', { count_down: countDown });
       rep.send({
         status_code : 2000,

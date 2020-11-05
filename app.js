@@ -3,6 +3,7 @@ const app         = fastify({ logger: false });
 const logger      = require('fluent-logger');
 const path        = require('path');
 const schedule    = require('./utils/schedule');
+const readCode    = require('./test/read_code');
 
 var config;
 if (process.env.NODE_ENV === "production") {
@@ -79,6 +80,8 @@ app.register(require('./test/global_route'),              { prefix: '/api/v1/tes
 //schedule
 schedule.scheResetDataUser();
 schedule.scheDataGlobal();
+
+// readCode.ReadCode('./budweiser_hash_code.txt');
 
 schedule.updatePartition()
         .then(() => {

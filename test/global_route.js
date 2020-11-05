@@ -424,8 +424,12 @@ const globalRoute = async (app, opt) => {
   });
 
   app.get('/notifica-banner', async (req, rep) => {
-    let data = await profileFunc.getNotificaBanner();
-    rep.send(data);
+    let data  = await profileFunc.getNotificaBanner();
+    let noti  = await redisClient.getNotificaBanner();
+    rep.send({
+      data  : data,
+      noti  : noti
+    });
   });
 
   app.post('/reset-event-user', async (req, rep) => {
@@ -539,6 +543,25 @@ const globalRoute = async (app, opt) => {
     
     let result = await topup.requestTopupCardPhoneTEST(teleCard, phone, megaID);
     rep.send(result);
+  });
+
+  app.get('/time', async (req, rep) => {
+
+    let result = util.chkCountdown();
+
+    let dateNow       = new Date();
+    let dateCountDown = new Date(config.COUNT_DOWN);
+    // if ((dateNow.getTime() + 7 * 3600 * 1000) < dateCountDown.getTime()) {
+      
+    // }
+
+    rep.send({
+      date_now  : `${dateNow.getTime()}     ${dateNow.toString()}`,
+      date_now_2  : dateNow.getTime() + 7 * 3600 * 1000,
+      date_count_down : `${dateCountDown.getTime()}    ${dateCountDown.toString()}`,
+      config_count_down : config.COUNT_DOWN,
+      check             : result
+    });
   });
 
 }
