@@ -14,7 +14,7 @@ else {
 exports.scheDataGlobal = () => {
   setInterval(async () => {
     await this.updatePartition();
-  }, 360000000);
+  }, 10000);
 }
 
 exports.scheResetDataUser = async () => {

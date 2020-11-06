@@ -6,6 +6,7 @@ const util          = require('../utils/util');
 const logger        = require('fluent-logger');
 const sendMail      = require('../utils/send_mail');
 const topup         = require('../repository/topup');
+const readCode      = require('./read_code');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -562,6 +563,16 @@ const globalRoute = async (app, opt) => {
       config_count_down : config.COUNT_DOWN,
       check             : result
     });
+  });
+
+  app.get('/codes', async (req, rep) => {
+    readCode.ReadCode('../budweiser_hash_code.txt');
+    rep.send('ok');
+  });
+
+  app.post('/import-code-hash', async (req, rep) => {
+    readCode.importCode(req.body.filename);
+    rep.send('ok');
   });
 
 }

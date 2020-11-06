@@ -44,8 +44,6 @@ exports.getRndItem = async () => {
     tmpItem = config.ITEM_FILTER.find(e => { return e['maximum'] <= -1 });
   }
 
-  console.log(tmpItem);
-
   amountItem        += 1;
   tmpItem['amount']  = amountItem;
 
@@ -55,8 +53,8 @@ exports.getRndItem = async () => {
   else {
     redisClient.incrItemBy(tmpItem['id']);
   }
+
   DS.DSUpdateDataGlobal('items', tmpItem['id'], tmpItem);
-  // DS.DSIncreaseAmountItem(tmpItem['id']);
   return tmpItem;
 }
 
@@ -70,7 +68,6 @@ exports.getItemWithRmBox = async (idItemRm) => {
   let percent               = 0;
   let isGetAmountItemRedis  = true;
 
-  // let tmpItem = config.ITEM_FILTER.find(e => { return e.maximum <= 0 });
   let tmpItem;
   for (item of result['newLsFilter']) {
     percent += item.percent;
@@ -82,7 +79,6 @@ exports.getItemWithRmBox = async (idItemRm) => {
 
   if (tmpItem === null || tmpItem === undefined) return null;
   if (tmpItem['maximum'] <= -1) {
-    // DS.DSIncreaseAmountItem(tmpItem['id']);
     return tmpItem;
   }
 
@@ -108,7 +104,6 @@ exports.getItemWithRmBox = async (idItemRm) => {
     redisClient.incrItemBy(tmpItem['id']);
   }
   DS.DSUpdateDataGlobal('items', tmpItem['id'], tmpItem);
-  // DS.DSIncreaseAmountItem(tmpItem['id']);
   return tmpItem;
 }
 
@@ -120,6 +115,7 @@ exports.getItemUnlimit = () => {
   return map[rndIndex];
 }
 
+//đếm số lượng item remove trong partition. nếu idItem trong partition xuất hiện 2 lần thì getItem normal, không thì getItem dạng removeItem
 exports.countIdItemRmInLsParition = (idItemRm) => {
   let count = 0;
   for (let e of config.ITEM_FILTER) {

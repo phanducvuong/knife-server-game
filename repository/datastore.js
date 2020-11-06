@@ -17,6 +17,22 @@ exports.DSUpdateDataGlobal = (kind, key, data) => {
   }
 }
 
+exports.DSImportCode = async (kind, key, data) => {
+  try {
+    let keyEntity = dbClient.key([`${kind}`, `${key}`]);
+    let result = await dbClient.save({
+            key     : keyEntity,
+            data    : data
+          });
+
+    return result;
+  }
+  catch(err) {
+    console.log(err);
+    return null;
+  }
+}
+
 exports.DSGetDataGlobal = async (kind, key) => {
   try {
     let keyEntity = dbClient.key([`${kind}`, `${key}`]);

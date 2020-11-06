@@ -152,7 +152,7 @@ exports.filterHistory = (lsHistory) => {
 
   for (let e of lsHistory) {
     let tmpH    = JSON.parse(e);
-    let timeStr = util.convertTimeToString(tmpH['time']);
+    let timeStr = convertMilliToStr(tmpH['time']);
 
     let tmpItem = config.ARR_ITEM.find(ee => { return ee['id'] === tmpH['id_item'] });
     let tmpP    = config.PARTITIONS.data.find(ee => { return ee['id'] === tmpH['id_item'] });
@@ -190,7 +190,7 @@ exports.convertLsLuckyCode = (lsLuckyCode) => {
   let filter = [];
   for (let c of lsLuckyCode) {
     let tmp     = c.split('_');
-    let timeStr = util.convertTimeToString(parseInt(tmp[1], 10));
+    let timeStr = convertMilliToStr(parseInt(tmp[1], 10));
     filter.push({ code: tmp[0], time: timeStr });
   }
   return filter;
@@ -252,10 +252,10 @@ function hideCodeXXX(code) {
 
 function convertMilliToStr(milli) {
   let time    = new Date(milli + 7 * 3600 * 1000);
-  let month   = (time.getMonth() + 1) < 10 ? `0${time.getMonth() + 1}` : time.getMonth();
+  let month   = (time.getMonth() + 1) < 10 ? `0${time.getMonth() + 1}` : time.getMonth()+1;
   let date    = time.getDate() < 10 ? `0${time.getDate()}` : time.getDate();
   let year    = time.getFullYear();
   let hour    = time.getHours() < 10 ? `0${time.getHours()}` : time.getHours();
   let minute  = time.getMinutes() < 10 ? `0${time.getMinutes()}` : time.getMinutes();
-  return `${hour}:${minute} ${date}/${month}/${year}`;
+  return `${hour}:${minute}   ${date}/${month}/${year}`;
 }

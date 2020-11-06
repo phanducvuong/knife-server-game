@@ -118,7 +118,7 @@ exports.getEnterCodeInfo = (lsAllDataUser) => {
       let t = util.convertTimeToString(parseInt(s[3], 10));
       lsEnterCodeInfo.push({
         mega_code : m['mega_code'],
-        phone     : m['phone'],
+        phone     : m['data']['phone'],
         code      : s[0],
         time      : t
       });
