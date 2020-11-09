@@ -2,7 +2,7 @@ const fs            = require('fs');
 const readLine      = require('readline');
 const path          = require('path');
 const DS            = require('../repository/datastore');
-const { clearLsNotificaBanner } = require('../redis/redis_client');
+const util          = require('../utils/util');
 
 exports.ReadCode = (filename) => {
   const fileStream  = fs.createReadStream(path.join(__dirname, filename));
@@ -33,8 +33,7 @@ exports.importCode = (filename) => {
     crlfDelay: Infinity
   });
 
-  let arr   = [];
-
+  let arr = [];
   fs.readFile(path.join(__dirname, filename), 'utf8', async(err,data) => {
     let split = data.split('\n');
     for (let s of split) {
@@ -57,8 +56,33 @@ exports.importCode = (filename) => {
         console.log('ERROR');
         process.exit(0);
       }
+      console.log(d['id']);
     }
     console.log('done!');
+  });
+}
 
+exports.importCodeTest = (filename) => {
+  fs.readFile(path.join(__dirname, filename), 'utf8', async(err,data) => {
+    let split = data.split('\n');
+    let i     = 0;
+    for (let s of split) {
+      if (s !== undefined && s !== undefined && s !== '') {
+        let codeHash  = util.genEnterCode(s.trim());
+        let result    = await DS.DSImportCode('codes_test', i, {
+          code  : codeHash,
+          used  : 0
+        });
+
+        if (result === null) {
+          console.log('ERROR');
+          process.exit(0);
+        }
+        console.log(codeHash);
+        console.log(s);
+        i++;
+      }
+    }
+    console.log('done!');
   });
 }

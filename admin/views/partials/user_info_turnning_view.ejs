@@ -10,6 +10,7 @@
         <div class="div-all-item row">
 
           <div class="filter-info-user">
+            <a hidden id="csv" href=""></a>
             <button class="btn btn-primary" id="btn-export">CSV</button>
           </div>
 
@@ -47,7 +48,7 @@
           </div>
         </div>
 
-        <table id="user-info-table" class="footable table table-stripped">
+        <table id="user-info-table" data-table="<%= JSON.stringify(data) %>" class="footable table table-stripped">
           <thead>
             <tr>
               <th style="font-weight: bold;">MEGA ID</th>
@@ -123,7 +124,26 @@
       });
 
       $('#btn-export').click(() => {
-        $('#user-info-table').table2csv({delivery: 'value'});
+        let data    = JSON.parse($('#user-info-table').attr('data-table'));
+        let columns = [
+          {
+            dataField: "mega_code",
+            displayName: "MEGA ID"
+          },
+          {
+            dataField: "phone",
+            displayName: "SĐT"
+          },
+          {
+            dataField: "reward",
+            displayName: "VẬT PHẨM"
+          },
+          {
+            dataField: "time",
+            displayName: "THỜI GIAN"
+          }
+        ];
+        export_data.export(data, columns, 'Lượt Chơi');
       });
 
     });

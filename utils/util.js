@@ -136,9 +136,9 @@ exports.isValidEntetCode = (code, lsEnterCode) => {
   return { status: false };
 }
 
+//hash code from user entering
 exports.genEnterCode = (code) => {
-  let str1    = code + secretKeyHashCode;
-  let hash1   = crypto.createHash('md5').update(str1).digest('hex');
+  let hash1   = crypto.createHash('md5').update(code).digest('hex');
   let result  = crypto.createHash('md5').update(hash1).digest('hex');
   return result;
 }

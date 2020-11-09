@@ -216,8 +216,9 @@ const profileUserRoute = async (app, opt) => {
       let code        = req.body.code.toString().trim();
 
       if (token   === null || token   === undefined || token  === '' ||
-          megaID  === null || megaID  === undefined || megaID === '') {
-        throw `Check info user! ${megaID}`;
+          megaID  === null || megaID  === undefined || megaID === '' ||
+          code    === null || code    === undefined || code   === '') {
+        throw `Check info user! ${megaID}, or code!`;
       }
 
       let dataUser = JSON.parse(await redisClient.getTurnAndInvenUser(megaID));
@@ -226,13 +227,16 @@ const profileUserRoute = async (app, opt) => {
         if (dataUser === null || dataUser === undefined) throw `User not exist ${megaID}`;
       }
 
-      let codes = await DS.DSGetDataGlobal('admin', 'enter_code');
-      if (codes === null || codes === undefined || codes['codes'] === null || codes['codes'] === undefined) {
-        throw `Array code not exist! ${code}`;
+      let codeDS = await DS.DSGetCode('codes_test', util.genEnterCode(code));
+      if (codeDS === null || codeDS === undefined || codeDS['data']['used'] !== 0) {
+        throw `Invalid code! ${code}`;
       }
 
-      let result = util.isValidEntetCode(code, codes['codes']);
-      if (!result['status']) throw `Invalid code! ${code}`;
+      let resultUpdateCode = await DS.DSImportCode('codes_test', codeDS['id'], {
+        code  : codeDS['data']['code'],
+        used  : 1
+      });
+      if (resultUpdateCode === null) throw `Enter code failed! ${code}`;
 
       //bonus by condition
       let date          = new Date();
@@ -240,7 +244,7 @@ const profileUserRoute = async (app, opt) => {
       let bonusTurn     = 0;
       if (dataUser['log_get_turn']['from_enter_code'].length % 2 === 0) {
         // dataUser['turn'] += config.BONUS_ENTER_CODE['bonus_1']['bonus_turn'];
-        bonusTurn         = config.BONUS_ENTER_CODE['bonus_1']['bonus_turn'];
+        bonusTurn = config.BONUS_ENTER_CODE['bonus_1']['bonus_turn'];
         if (config.BONUS_ENTER_CODE['bonus_1']['bonus_lucky_code'] > 0) {
           strGenerate   = generateStr.getStringGenerate();
           dataUser['lucky_code'].push(`${strGenerate}_${date.getTime()}`);
@@ -248,14 +252,14 @@ const profileUserRoute = async (app, opt) => {
       }
       else {
         // dataUser['turn'] += config.BONUS_ENTER_CODE['bonus_2']['bonus_turn'];
-        bonusTurn         = config.BONUS_ENTER_CODE['bonus_2']['bonus_turn'];
+        bonusTurn = config.BONUS_ENTER_CODE['bonus_2']['bonus_turn'];
         if (config.BONUS_ENTER_CODE['bonus_2']['bonus_lucky_code'] > 0) {
           strGenerate   = generateStr.getStringGenerate();
           dataUser['lucky_code'].push(`${strGenerate}_${date.getTime()}`);
         }
       }
       dataUser['actions'][0] += 1;
-      dataUser['log_get_turn']['from_enter_code'].push(`${result['code']}_${dataUser['turn']}_1_${date.getTime()}`);
+      dataUser['log_get_turn']['from_enter_code'].push(`${code}_${dataUser['turn']}_${bonusTurn}_${date.getTime()}_${strGenerate}`);
 
       if (util.chkTimeEvent(config.EVENTS['start'], config.EVENTS['end'])) {
         dataUser['events'][0] += 1;
@@ -271,7 +275,6 @@ const profileUserRoute = async (app, opt) => {
 
       redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
       DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
-      DS.DSUpdateDataGlobal('admin', 'enter_code', { codes: result['lsEnterCode'] });
 
       //logger
       logger.emit('log', {

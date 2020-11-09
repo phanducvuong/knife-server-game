@@ -10,6 +10,7 @@
         <div class="div-all-item row">
 
           <div class="filter-info-user">
+            <a hidden id="csv" href=""></a>
             <button class="btn btn-primary" id="btn-export-enter-code">CSV</button>
           </div>
 
@@ -47,7 +48,7 @@
           </div> -->
         </div>
 
-        <table id="user-info-table" class="footable table table-stripped">
+        <table id="user-info-table" data-table="<%= JSON.stringify(data) %>" class="footable table table-stripped">
           <thead>
             <tr>
               <th style="font-weight: bold;">MEGA ID</th>
@@ -97,7 +98,26 @@
       previousPage();
 
       $('#btn-export-enter-code').click(() => {
-        $('#user-info-table').table2csv({delivery: 'value'});
+        let data    = JSON.parse($('#user-info-table').attr('data-table'));
+        let columns = [
+          {
+            dataField: "mega_code",
+            displayName: "MEGA ID"
+          },
+          {
+            dataField: "phone",
+            displayName: "SĐT"
+          },
+          {
+            dataField: "code",
+            displayName: "CODE"
+          },
+          {
+            dataField: "time",
+            displayName: "THỜI GIAN"
+          }
+        ];
+        export_data.export(data, columns, 'Danh Sách Code Đã Nhập');
       });
 
       $('#search-user').on('keyup', () => {
@@ -123,24 +143,28 @@
       $('#pagination').empty();
 
       if (textSearch !== '' && !isNaN(fromDate.getTime()) && !isNaN(toDate.getTime())) {
+        console.log('1');
         filterByTextAndDate(fromDate, toDate, textSearch);
         getPagination();
         return;
       }
 
       if (textSearch !== '' && (isNaN(fromDate.getTime()) || isNaN(toDate.getTime))) {
+        console.log('2');
         filterByText(textSearch);
         getPagination();
         return;
       }
 
-      if (textSearch === '' && !isNaN(fromDate.getTime()) && !isNaN(toDate().getTime())) {
+      if (textSearch === '' && !isNaN(fromDate.getTime()) && !isNaN(toDate.getTime())) {
+        console.log('3');
         filterByDate(fromDate, toDate);
         getPagination();
         return;
       }
 
-      if (textSearch === '' && (isNaN(fromDate.getTime()) || isNaN(toDate().getTime()))) {
+      if (textSearch === '' && (isNaN(fromDate.getTime()) || isNaN(toDate.getTime()))) {
+        console.log('4');
         filterAll();
         getPagination();
         return;
@@ -334,7 +358,7 @@
         let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
         let phone   = tr.getElementsByTagName('td')[1].textContent;
 
-        if (megaID.includes(textSearch) || phone.includes(phone)) {
+        if (megaID.includes(textSearch) || phone.includes(textSearch)) {
           tr.style.opacity = 1.0;
           $('#user-info-table tbody').append(tr);
         }
@@ -344,7 +368,7 @@
     function filterByDate(fromDate, toDate) {
       for (let tr of window.arrTr) {
         let date = convertStringToMillisecond(tr.getElementsByTagName('td')[3].textContent);
-        if (fromDate.getTime() <= date && date <= toDate.getTime()) {
+        if (date >= fromDate.getTime() && date <= toDate.getTime()) {
           tr.style.opacity = 1.0;
           $('#user-info-table tbody').append(tr);
         }

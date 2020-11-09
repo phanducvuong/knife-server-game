@@ -47,9 +47,39 @@ exports.DSGetDataGlobal = async (kind, key) => {
   }
 }
 
+exports.DSGetCode = async (kind, code) => {
+  try {
+    let query     = dbClient.createQuery(kind).filter('code', '=', code);
+    let [result]  = await dbClient.runQuery(query);
+    
+    if (result[0] === null || result[0] === undefined) return null;
+
+    return {
+      id    : result[0][dbClient.KEY].name,
+      data  : result[0]
+    };
+  }
+  catch(err) {
+    console.log(err);
+    return null;
+  }
+}
+
 exports.DSGetAllItem = async () => {
   try {
     let query     = dbClient.createQuery('items');
+    let [result]  = await dbClient.runQuery(query);
+    return result;
+  }
+  catch(err) {
+    console.log(err);
+    return [];
+  }
+}
+
+exports.DSGetAllCodes = async () => {
+  try {
+    let query     = dbClient.createQuery('codes');
     let [result]  = await dbClient.runQuery(query);
     return result;
   }

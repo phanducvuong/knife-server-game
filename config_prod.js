@@ -94,7 +94,7 @@ exports.BLACK_LIST                = [
 
 // exports.NOTIFICATION_BANNER       = [];     //danh sách user trúng được quà với thẻ cào. Dùng để chạy banner thông báo
 
-exports.REGIONS                   = ['Tv', 'Matluot', 'Macohoi', '5Tr', 'Ip11', '15Tr', '10k', '20k', '50k', '100k', '200k', '500k'];
+exports.REGIONS                   = ['Tv', 'Matluot', 'Vtvcab', 'Macohoi', '5Tr', 'Ip11', '15Tr', '10k', '20k', '50k', '100k', '200k', '500k'];
 
 exports.SUPPORTING_ITEM           = [
   {

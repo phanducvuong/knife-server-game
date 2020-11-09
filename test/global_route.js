@@ -1,6 +1,5 @@
 const DS            = require('../repository/datastore');
 const redisClient   = require('../redis/redis_client');
-const strGenerate   = require('../utils/generate_string');
 const profileFunc   = require('../functions/profile_user_func');
 const util          = require('../utils/util');
 const logger        = require('fluent-logger');
@@ -565,14 +564,21 @@ const globalRoute = async (app, opt) => {
     });
   });
 
-  app.get('/codes', async (req, rep) => {
-    readCode.ReadCode('../budweiser_hash_code.txt');
+  app.get('/import-code-test', async (req, rep) => {
+    readCode.importCodeTest('../code_test.txt');
     rep.send('ok');
   });
 
   app.post('/import-code-hash', async (req, rep) => {
     readCode.importCode(req.body.filename);
+    // let result = await DS.DSGetAllCodes();
     rep.send('ok');
+  });
+
+  app.post('/check-enter-code', async (req, rep) => {
+    let codeHash  = util.genEnterCode(req.body.code);
+    let result    = await DS.DSGetCode('codes_test', codeHash);
+    rep.send(result);
   });
 
 }

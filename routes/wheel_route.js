@@ -41,8 +41,13 @@ const wheelRoute = async (app, opt) => {
         if (dataUser === null || dataUser === undefined) throw `user is not exist! ${megaID}`;
       } //get dataUser from redis. if user redis is not exist => get it from fs.
 
-      if (dataUser['token'] !== token || dataUser['turn'] <= 0) {
-        response.response(rep, 2700, `unvalid token or turn is zero! ${megaID}`);
+      if (dataUser['token'] !== token) {
+        response.response(rep, 2800, `invalid token! ${megaID}`);
+        return;
+      }
+
+      if (dataUser['turn'] <= 0) {
+        response.response(rep, 2700, `turn is zero! ${megaID}`);
         return;
       };
 
@@ -57,10 +62,7 @@ const wheelRoute = async (app, opt) => {
 
           let resultUpdateLsSpItem = profileUserFunc.descSpItemInLsSpItemById(dataUser['sp_item'], 0);
           if (resultUpdateLsSpItem['status'] === false) {
-            rep.send({
-              status_code : 2500,
-              msg         : resultUpdateLsSpItem['msg']
-            });
+            response.response(rep, 2500, resultUpdateLsSpItem['msg']);
             return;
           }
           dataUser['sp_item'] = resultUpdateLsSpItem['lsSpItemUpdate'];

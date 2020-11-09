@@ -10,6 +10,7 @@
         <div class="div-all-item row">
 
           <div class="filter-info-user">
+            <a hidden id="csv" href=""></a>
             <button class="btn btn-primary" id="btn-export">CSV</button>
           </div>
 
@@ -44,7 +45,7 @@
           </div>
         </div>
 
-        <table id="user-info-table" class="footable table table-stripped">
+        <table id="user-info-table" data-table="<%= JSON.stringify(data) %>" class="footable table table-stripped">
           <thead>
             <tr>
               <th style="font-weight: bold;">MEGA ID</th>
@@ -90,7 +91,7 @@
 
     $(document).ready(() => {
 
-      window.arrTr = [];
+      window.arrTr      = [];
       for (let tr of $('#user-info-table tbody tr')) {
         window.arrTr.push(tr);
       }
@@ -124,7 +125,34 @@
       });
 
       $('#btn-export').click(() => {
-        $('#user-info-table').table2csv({delivery: 'value'});
+        let data    = JSON.parse($('#user-info-table').attr('data-table'));
+        let columns = [
+              {
+                dataField   : "mega_code",
+                displayName : "MEGA ID"
+              },
+              {
+                dataField   : "phone",
+                displayName : "SĐT"
+              },
+              {
+                dataField   : "amount_enter_code",
+                displayName : "SỐ CODE ĐÃ NHẬP"
+              },
+              {
+                dataField   : "total_turn",
+                displayName : "LƯỢT CHƠI TỔNG"
+              },
+              {
+                dataField   : "turn_remain",
+                displayName : "LƯỢT CHƠI CÒN"
+              },
+              {
+                dataField   : "total_turned",
+                displayName : "LƯỢT CHƠI ĐÃ SỬ DỤNG"
+              }
+            ];
+        export_data.export(data, columns, 'Thông Tin Chung');
       });
 
     });

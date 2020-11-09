@@ -205,7 +205,7 @@ exports.getNotificaBanner = async () => {
     let tmp     = e.split('_');
     let tmpTime = parseInt(tmp['2']);
     if (time.getTime() - tmpTime < 1500000) {
-      arrNoti.push(`Chúc Mừng ${tmp[0]} đã trúng được ${tmp[1]}`);
+      arrNoti.push(`Chúc mừng ${tmp[0]} đã trúng được ${tmp[1]}`);
     }
   }
   return arrNoti;

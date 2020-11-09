@@ -85,6 +85,21 @@ exports.getGeneralInfo = (lsDataUser) => {
   return lsGeneral;
 }
 
+exports.convertLsGeneralInfoToExport = (lsGeneral) => {
+  let ls = [];
+  for (let d of lsGeneral) {
+    ls.push({
+      'MEGA ID'               : d['mega_code'],
+      'SĐT'                   : d['phone'],
+      'SỐ CODE ĐÃ NHẬP'       : d['amount_enter_code'],
+      'LƯỢT CHƠI TỔNG'        : d['total_turned'] + d['turn_remain'],
+      'LƯỢT CHƠI CÒN'         : d['turn_remain'],
+      'LƯỢT CHƠI ĐÃ SỬ DỤNG'  : d['total_turned']
+    });
+  }
+  return ls;
+}
+
 exports.getTurnningInfo = (lsHistoryAllUser) => {
   let lsTurnningInfo = [];
   for (let h of lsHistoryAllUser) {

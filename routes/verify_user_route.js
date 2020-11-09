@@ -39,7 +39,7 @@ const dataInitUser = {
   date_login    : [],                         //lưu lại ngày đăng nhập (mỗi ngày lưu lại một lần nếu user có vào game ngày hôm đó), (login_date[0] là thời gian user mới đăng nhập lần đầu (newbie))
   log_get_turn  : {                           //lưu lại thời gian và lượt chơi mới sau mỗi lần user làm nhiệm vụ get code hoặc nhập mã code được bonus lượt
     from_mission    : [],                     //format: {id}_{new-turn-user}_{bonus-turn}_{timestamp}
-    from_enter_code : []                      //format: {id}_{new-turn-user}_{bonus-turn}_{timestamp}
+    from_enter_code : []                      //format: {code}_{new-turn-user}_{bonus-turn}_{timestamp}_{lucky-code}
   },
   phone         : '',
   userID        : '',

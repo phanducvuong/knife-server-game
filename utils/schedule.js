@@ -14,7 +14,7 @@ else {
 exports.scheDataGlobal = () => {
   setInterval(async () => {
     await this.updatePartition();
-  }, 10000);
+  }, 36000000);
 }
 
 exports.scheResetDataUser = async () => {
@@ -143,6 +143,7 @@ async function resetAmountItem() {
   if (arrItem !== null && arrItem !== undefined) {
     for (let e of arrItem) {
       e['amount'] = 0;
+      redisClient.delKeyItem(e['id']);
       DS.DSUpdateDataGlobal('items', e['id'], e);
     }
     config.ARR_ITEM = [];

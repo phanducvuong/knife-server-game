@@ -3,7 +3,6 @@ const app         = fastify({ logger: false });
 const logger      = require('fluent-logger');
 const path        = require('path');
 const schedule    = require('./utils/schedule');
-const readCode    = require('./test/read_code');
 
 var config;
 if (process.env.NODE_ENV === "production") {

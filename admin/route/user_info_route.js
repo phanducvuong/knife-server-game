@@ -108,7 +108,6 @@ const userInfoRoute = async (app, opt) => {
 
     }
   });
-
 }
 
 module.exports = userInfoRoute;
