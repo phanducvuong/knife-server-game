@@ -33,6 +33,8 @@ exports.getHistoryAllUser = async (lsDataUser) => {
       lsHistoryAllUser.push({
         mega_code   : m['mega_code'],
         phone       : m['data']['phone'],
+        province    : m['data']['province'],
+        name        : m['data']['name'],
         data        : result['history'],
         lucky_code  : m['data']['lucky_code']
       });
@@ -77,6 +79,7 @@ exports.getGeneralInfo = (lsDataUser) => {
       total_turn        : total_turn,
       mega_code         : d['mega_code'],
       phone             : d['data']['phone'],
+      name              : d['data']['name'],
       total_turned      : d['data']['total_turned'],
       turn_remain       : d['data']['turn'],
       amount_enter_code : d['data']['log_get_turn']['from_enter_code'].length
@@ -115,7 +118,9 @@ exports.getTurnningInfo = (lsHistoryAllUser) => {
 
         lsTurnningInfo.push({
           mega_code   : h['mega_code'],
+          name        : h['name'],
           phone       : h['phone'],
+          province    : h['province'],
           reward      : reward,
           time        : timeConvert
         });
@@ -133,6 +138,7 @@ exports.getEnterCodeInfo = (lsAllDataUser) => {
       let t = util.convertTimeToString(parseInt(s[3], 10));
       lsEnterCodeInfo.push({
         mega_code : m['mega_code'],
+        name      : m['data']['name'],
         phone     : m['data']['phone'],
         code      : s[0],
         time      : t

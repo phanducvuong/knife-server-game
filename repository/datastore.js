@@ -51,6 +51,8 @@ exports.DSGetCode = async (kind, code) => {
   try {
     let query     = dbClient.createQuery(kind).filter('code', '=', code);
     let [result]  = await dbClient.runQuery(query);
+
+    console.log(result);
     
     if (result[0] === null || result[0] === undefined) return null;
 

@@ -48,10 +48,11 @@
           </div> -->
         </div>
 
-        <table id="user-info-table" data-table="<%= JSON.stringify(data) %>" class="footable table table-stripped">
+        <table id="user-info-table" class="footable table table-stripped">
           <thead>
             <tr>
               <th style="font-weight: bold;">MEGA ID</th>
+              <th style="font-weight: bold;">TÊN</th>
               <th style="font-weight: bold;">SĐT</th>
               <th style="font-weight: bold;">CODE</th>
               <th style="font-weight: bold;">THỜI GIAN</th>
@@ -61,6 +62,7 @@
             <% for (let d of data) { %>
               <tr>
                 <td><%= d['mega_code'] %></td>
+                <td><%= d['name'] %></td>
                 <td><%= d['phone'] %></td>
                 <td><%= d['code'] %></td>
                 <td><%= d['time'] %></td>
@@ -98,11 +100,15 @@
       previousPage();
 
       $('#btn-export-enter-code').click(() => {
-        let data    = JSON.parse($('#user-info-table').attr('data-table'));
+        let data    = getDataTableToExport($('#user-info-table tbody tr'));
         let columns = [
           {
             dataField: "mega_code",
             displayName: "MEGA ID"
+          },
+          {
+            dataField: "name",
+            displayName: "TÊN"
           },
           {
             dataField: "phone",
@@ -331,7 +337,7 @@
 
     //-----------------------------------------------------filter------------------------------------------------------------
 
-    function filterAll(textSearch, selType, fromDate, toDate) {
+    function filterAll() {
       for (let tr of window.arrTr) {
         tr.style.opacity = 1.0;
         $('#user-info-table tbody').append(tr);
@@ -341,10 +347,11 @@
     function filterByTextAndDate(fromDate, toDate, textSearch) {
       for (let tr of window.arrTr) {
         let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
-        let phone   = tr.getElementsByTagName('td')[1].textContent;
-        let date    = convertStringToMillisecond(tr.getElementsByTagName('td')[3].textContent);
+        let name    = tr.getElementsByTagName('td')[1].textContent.toLowerCase();
+        let phone   = tr.getElementsByTagName('td')[2].textContent;
+        let date    = convertStringToMillisecond(tr.getElementsByTagName('td')[4].textContent);
 
-        if (megaID.includes(textSearch) || phone.includes(textSearch)) {
+        if (megaID.includes(textSearch) || phone.includes(textSearch) || name.includes(textSearch)) {
           if (date >= fromDate.getTime() && date <= toDate.getTime()) {
             tr.style.opacity = 1.0;
             $('#user-info-table tbody').append(tr);
@@ -356,9 +363,10 @@
     function filterByText(textSearch) {
       for (let tr of window.arrTr) {
         let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
-        let phone   = tr.getElementsByTagName('td')[1].textContent;
+        let name    = tr.getElementsByTagName('td')[1].textContent.toLowerCase();
+        let phone   = tr.getElementsByTagName('td')[2].textContent;
 
-        if (megaID.includes(textSearch) || phone.includes(textSearch)) {
+        if (megaID.includes(textSearch) || phone.includes(textSearch) || name.includes(textSearch)) {
           tr.style.opacity = 1.0;
           $('#user-info-table tbody').append(tr);
         }
@@ -367,12 +375,26 @@
 
     function filterByDate(fromDate, toDate) {
       for (let tr of window.arrTr) {
-        let date = convertStringToMillisecond(tr.getElementsByTagName('td')[3].textContent);
+        let date = convertStringToMillisecond(tr.getElementsByTagName('td')[4].textContent);
         if (date >= fromDate.getTime() && date <= toDate.getTime()) {
           tr.style.opacity = 1.0;
           $('#user-info-table tbody').append(tr);
         }
       }
+    }
+
+    function getDataTableToExport(arrTable) {
+      let data = [];
+      for (let tr of arrTable) {
+        data.push({
+          mega_code         : tr.getElementsByTagName('td')[0].textContent,
+          name              : tr.getElementsByTagName('td')[1].textContent,
+          phone             : tr.getElementsByTagName('td')[2].textContent,
+          code              : tr.getElementsByTagName('td')[3].textContent,
+          time              : tr.getElementsByTagName('td')[4].textContent,
+        });
+      }
+      return data;
     }
 
   </script>

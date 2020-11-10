@@ -18,10 +18,14 @@ exports.getAllDataUser = async (lsMegaID) => {
 exports.getHistoryAllUser = async (lsMegaID) => {
   let lsHistory = [];
   for (let m of lsMegaID) {
-    let his = await DS.DSGetDataUser(m, 'histories');
+    let [his, dataUser] = await Promise.all([
+      DS.DSGetDataUser(m, 'histories'),
+      DS.DSGetDataUser(m, 'turn_inven')
+    ]);
     if (his !== null && his !== undefined && his['history'] !== null && his['history'] !== undefined) {
       lsHistory.push({
         mega_code : m,
+        province  : dataUser['province'],
         histories : his['history']
       });
     }

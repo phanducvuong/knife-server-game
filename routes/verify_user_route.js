@@ -43,7 +43,8 @@ const dataInitUser = {
   },
   phone         : '',
   userID        : '',
-  name          : ''
+  name          : '',
+  province      : ''
 }
 
 const verifyUserRoute = async (app, opt) => {
@@ -70,11 +71,12 @@ const verifyUserRoute = async (app, opt) => {
       if (dataUser === null || dataUser === undefined) {
         dataUser = await DS.DSGetDataUser(`${result.mega1_code}`, 'turn_inven');
         if (dataUser === null || dataUser === undefined) {
-          dataInitUser.token  = token;
-          dataInitUser.phone  = result.phone;
-          dataInitUser.userID = result.user_id;
-          dataInitUser.name   = result.name;
-          dataUser            = dataInitUser;
+          dataInitUser.token    = token;
+          dataInitUser.phone    = result.phone;
+          dataInitUser.userID   = result.user_id;
+          dataInitUser.name     = result.name;
+          dataInitUser.province = result.province;
+          dataUser              = dataInitUser;
         }
         else {
           dataUser.token  = token;

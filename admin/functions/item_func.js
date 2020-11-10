@@ -55,6 +55,7 @@ exports.getTotalAmountItemBy = async (idItem, millisecond) => {
     if (tmpArr.length > 0) {
       details.push({
         mega_code : u['mega_code'],
+        province  : u['province'],
         data      : tmpArr
       });
     }

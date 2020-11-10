@@ -16,7 +16,6 @@ exports.getRndItem = async () => {
   let percent               = 0;
   let isGetAmountItemRedis  = true;
 
-  // let tmpItem = config.ITEM_FILTER.find(e => { return e.maximum <= 0 });
   let tmpItem;
   for (item of config.ITEM_FILTER) {
     percent += item.percent;
@@ -27,10 +26,7 @@ exports.getRndItem = async () => {
   }
 
   if (tmpItem === null || tmpItem === undefined) return null;
-  if (tmpItem['maximum'] <= -1) {
-    // DS.DSIncreaseAmountItem(tmpItem['id']);
-    return tmpItem;
-  }
+  if (tmpItem['maximum'] <= -1) return tmpItem;
 
   let amountItem = await redisClient.getAmountItem(tmpItem['id']);
   if (amountItem === null || amountItem === undefined || isNaN(amountItem)) {
@@ -41,7 +37,8 @@ exports.getRndItem = async () => {
   }
 
   if (amountItem >= tmpItem['maximum']) {
-    tmpItem = config.ITEM_FILTER.find(e => { return e['maximum'] <= -1 });
+    tmpItem = this.getItemUnlimit();
+    if (tmpItem === null || tmpItem === undefined) return null;
   }
 
   amountItem        += 1;
@@ -91,7 +88,8 @@ exports.getItemWithRmBox = async (idItemRm) => {
   }
 
   if (amountItem >= tmpItem['maximum']) {
-    tmpItem = config.ITEM_FILTER.find(e => { return e['maximum'] <= -1 });
+    tmpItem = this.getItemUnlimit();
+    if (tmpItem === null || tmpItem === undefined) return null;
   }
 
   amountItem        += 1;
@@ -108,8 +106,8 @@ exports.getItemWithRmBox = async (idItemRm) => {
 }
 
 exports.getItemUnlimit = () => {
-  let map = config.ARR_ITEM.filter(e => e['maximum'] === -1);
-  if (map.length <= 0) return null;
+  let map = config.ITEM_FILTER.filter(e => e['maximum'] === -1);
+  if (map.length <= 0 || map === null || map === undefined) return null;
 
   let rndIndex = Math.round(Math.random() * (map.length-1));
   return map[rndIndex];

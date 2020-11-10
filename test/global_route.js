@@ -551,9 +551,6 @@ const globalRoute = async (app, opt) => {
 
     let dateNow       = new Date();
     let dateCountDown = new Date(config.COUNT_DOWN);
-    // if ((dateNow.getTime() + 7 * 3600 * 1000) < dateCountDown.getTime()) {
-      
-    // }
 
     rep.send({
       date_now  : `${dateNow.getTime()}     ${dateNow.toString()}`,
@@ -577,8 +574,11 @@ const globalRoute = async (app, opt) => {
 
   app.post('/check-enter-code', async (req, rep) => {
     let codeHash  = util.genEnterCode(req.body.code);
-    let result    = await DS.DSGetCode('codes_test', codeHash);
-    rep.send(result);
+    let result    = await DS.DSGetCode('codes', codeHash);
+    rep.send({
+      result    : result,
+      code_hash : codeHash
+    });
   });
 
 }
