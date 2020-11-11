@@ -17,6 +17,19 @@ exports.DSUpdateDataGlobal = (kind, key, data) => {
   }
 }
 
+exports.DSInsertCodeUserInputFailed = (kind, data) => {
+  try {
+    let keyEntity = dbClient.key(`${kind}`);
+    dbClient.save({
+      key : keyEntity,
+      data: data
+    });
+  }
+  catch(err) {
+    console.log(err);
+  }
+}
+
 exports.DSImportCode = async (kind, key, data) => {
   try {
     let keyEntity = dbClient.key([`${kind}`, `${key}`]);
@@ -52,8 +65,6 @@ exports.DSGetCode = async (kind, code) => {
     let query     = dbClient.createQuery(kind).filter('code', '=', code);
     let [result]  = await dbClient.runQuery(query);
 
-    console.log(result);
-    
     if (result[0] === null || result[0] === undefined) return null;
 
     return {
@@ -70,6 +81,18 @@ exports.DSGetCode = async (kind, code) => {
 exports.DSGetAllItem = async () => {
   try {
     let query     = dbClient.createQuery('items');
+    let [result]  = await dbClient.runQuery(query);
+    return result;
+  }
+  catch(err) {
+    console.log(err);
+    return [];
+  }
+}
+
+exports.DSGetAllCodeFail = async () => {
+  try {
+    let query     = dbClient.createQuery('log_code_fail');
     let [result]  = await dbClient.runQuery(query);
     return result;
   }

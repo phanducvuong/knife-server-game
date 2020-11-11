@@ -108,6 +108,25 @@ const userInfoRoute = async (app, opt) => {
 
     }
   });
+
+  app.get('/get-log-code-fail', async (req, rep) => {
+    try {
+
+      let result = await userInfoFunc.getAllCodeFail();
+      console.log(result);
+      rep.view('/partials/user_enter_code_fail_view.ejs', {
+        data  : result
+      });
+
+    }
+    catch(err) {
+
+      rep.view('/partials/error_view.ejs', {
+        title_error : err
+      });
+
+    }
+  });
 }
 
 module.exports = userInfoRoute;

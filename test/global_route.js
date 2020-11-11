@@ -553,9 +553,9 @@ const globalRoute = async (app, opt) => {
     let dateCountDown = new Date(config.COUNT_DOWN);
 
     rep.send({
-      date_now  : `${dateNow.getTime()}     ${dateNow.toString()}`,
-      date_now_2  : dateNow.getTime() + 7 * 3600 * 1000,
-      date_count_down : `${dateCountDown.getTime()}    ${dateCountDown.toString()}`,
+      date_now          : `${dateNow.getTime()}     ${dateNow.toString()}`,
+      date_now_2        : dateNow.getTime() + 7 * 3600 * 1000,
+      date_count_down   : `${dateCountDown.getTime()}    ${dateCountDown.toString()}`,
       config_count_down : config.COUNT_DOWN,
       check             : result
     });
@@ -579,6 +579,11 @@ const globalRoute = async (app, opt) => {
       result    : result,
       code_hash : codeHash
     });
+  });
+
+  app.post('/insert-code-fail', async (req, rep) => {
+    DS.DSInsertCodeUserInputFailed('log_code_fail', { code: 'jdhakjdsa', time: new Date().getTime() });
+    rep.send('ok');
   });
 
 }

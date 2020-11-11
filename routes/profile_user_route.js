@@ -221,7 +221,8 @@ const profileUserRoute = async (app, opt) => {
         throw `Check info user! ${megaID}, or code!`;
       }
 
-      let dataUser = JSON.parse(await redisClient.getTurnAndInvenUser(megaID));
+      let date      = new Date();
+      let dataUser  = JSON.parse(await redisClient.getTurnAndInvenUser(megaID));
       if (dataUser === null || dataUser === undefined) {
         dataUser = await DS.DSGetDataUser(megaID, 'turn_inven');
         if (dataUser === null || dataUser === undefined) throw `User not exist ${megaID}`;
@@ -229,6 +230,12 @@ const profileUserRoute = async (app, opt) => {
 
       let codeDS = await DS.DSGetCode('codes_test', util.genEnterCode(code));
       if (codeDS === null || codeDS === undefined || codeDS['data']['used'] !== 0) {
+        DS.DSInsertCodeUserInputFailed('log_code_fail', {
+          mega_id : megaID,
+          name    : dataUser['name'],
+          code    : code,
+          time    : date.getTime()
+        });
         throw `Invalid code! ${code}`;
       }
 
@@ -239,7 +246,6 @@ const profileUserRoute = async (app, opt) => {
       if (resultUpdateCode === null) throw `Enter code failed! ${code}`;
 
       //bonus by condition
-      let date          = new Date();
       let strGenerate   = '';
       let bonusTurn     = 0;
       if (dataUser['log_get_turn']['from_enter_code'].length % 2 === 0) {
