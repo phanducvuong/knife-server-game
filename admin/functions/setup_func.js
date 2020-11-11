@@ -208,3 +208,16 @@ exports.deleteEventByID = (events, idEvent) => {
     msg     : '2. Delete events failed!'
   }
 }
+
+exports.addNewUserIntoBlackList = (lsBlackList, lsMegaID) => {
+  for (let megaID of lsMegaID) {
+    let tmp = lsBlackList.find(e => { return e['mega_code'] === megaID.trim() });
+    if (tmp === null || tmp === undefined) {
+      lsBlackList.push({
+        mega_code : megaID.trim(),
+        status    : 1
+      });
+    }
+  }
+  return lsBlackList;
+}

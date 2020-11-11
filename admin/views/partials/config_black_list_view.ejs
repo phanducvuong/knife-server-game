@@ -60,7 +60,7 @@
               <div class="modal-body">
 
                 <!-- MEGA ID -->
-                <div class="form-group">
+                <div class="form-group" id="modal-mega-id">
                   <label class="col-md-4 control-label">ID</label>
                   <div class="col-md-12">
                     <input id="input-mega-id" type="text" placeholder="MEGA ID"
@@ -69,7 +69,7 @@
                 </div>
 
                 <!-- STATUS -->
-                <div class="form-group">
+                <div class="form-group" id="modal-status">
                   <label class="col-md-12 control-label" for="product_name_fr">STATUS</label>
                   <div class="col-md-12">
                     <input  id="input-status" placeholder="STATUS"
@@ -101,8 +101,10 @@
   $(document).ready(() => {
 
     $('#btn-add-user').click(() => {
+      $('#title-modal').text('ADD');
       $('#btn-submit').val('0');
-      console.log($('#btn-submit').val());
+      $('#modal-status').css('display', 'none');
+      $('#input-mega-id').attr('placeholder', 'Danh Sách MegaID. Cách nhau bởi dấu ","');
     });
 
     resetFormUser();
@@ -141,6 +143,10 @@
 
   function editUserByMegaCode() {
     $('body').delegate('.edt-user-bl', 'click', (event) => {
+      $('#title-modal').text('EDIT');
+      $('#modal-status').css('display', '');
+      $('#input-mega-id').attr('placeholder', 'MEGAID');
+
       let megaCode = event.currentTarget.attributes.getNamedItem('data-id').value;
       if (megaCode === null || megaCode === undefined || megaCode === '') {
         alert('0. User not exist!');
@@ -155,7 +161,6 @@
       })
         .done((data) => {
 
-          console.log(data);
           if (data['status_code'] !== 2000) {
             alert(data['error']);
             return;
@@ -170,19 +175,33 @@
 
   function addOrEditUser() {
     $('#btn-submit').click(() => {
-      $('#title-modal').text('ADD USER');
-      let megaCode  = $('#input-mega-id').val();
-      let status    = $('#input-status').val();
+      let megaCode      = '';
+      let status        = '';
+      let url           = '';
+      let data;
 
-      if (megaCode === '' || status === '') {
-        alert('Check info form!');
-        return;
-      }
-
-      let url           = env.http + window.location.host + '/api/v1/admin/setup/add-user-black-list';
       let valBtnSubmit  = $('#btn-submit').val();
       if (valBtnSubmit === '1') {
-        url = env.http + window.location.host + '/api/v1/admin/setup/edit-user-black-list'
+        url       = env.http + window.location.host + '/api/v1/admin/setup/edit-user-black-list';
+        megaCode  = $('#input-mega-id').val();
+        status    = $('#input-status').val();
+
+        if (megaCode === '' || status === '') {
+          alert('Check data input!');
+          return;
+        }
+        data = megaCode;
+      }
+      else {
+        url         = env.http + window.location.host + '/api/v1/admin/setup/add-user-black-list';
+        strMegaCode = $('#input-mega-id').val();
+
+        if (strMegaCode === '') {
+          alert('Check info form!');
+          return;
+        }
+
+        data = strMegaCode.split(',');
       }
 
       $.ajax({
@@ -190,7 +209,7 @@
         method        : 'POST',
         contentType   : 'application/json; charset=utf-8',
         data          : JSON.stringify({
-          mega_code   : megaCode,
+          mega_codes  : data,
           status      : status
         })
       })

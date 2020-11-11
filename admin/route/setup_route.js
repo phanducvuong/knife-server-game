@@ -1298,20 +1298,16 @@ const setupRoute = async (app, opt) => {
   app.post('/add-user-black-list', async (req, rep) => {
     try {
 
-      let megaID  = req.body.mega_code;
-      let status  = parseInt(req.body.status, 10);
+      let lsMegaCode  = req.body.mega_codes; 
 
-      if (megaID === null || megaID === undefined || isNaN(status)) throw 'Check info in form!';
+      if (lsMegaCode === null || lsMegaCode === undefined || lsMegaCode.length <= 0) throw 'Check info in form!';
 
       let lsBlackList;
       let lsBlackDS = await DS.DSGetDataGlobal('admin', 'black_list');
       if (lsBlackDS === null || lsBlackDS === undefined) lsBlackList = config.BLACK_LIST;
       else lsBlackList = lsBlackDS['black_list'];
 
-      let tmp = lsBlackList.find(e => { return e['mega_code'] === megaID });
-      if (tmp !== null && tmp !== undefined) throw `${megaID} is exist!`;
-
-      lsBlackList.push({ mega_code: megaID, status: status });
+      lsBlackList = setupFunc.addNewUserIntoBlackList(lsBlackList, lsMegaCode);
       DS.DSUpdateDataGlobal('admin', 'black_list', { black_list: lsBlackList });
 
       rep.send({
@@ -1334,8 +1330,10 @@ const setupRoute = async (app, opt) => {
   app.post('/edit-user-black-list', async (req, rep) => {
     try {
 
-      let megaID  = req.body.mega_code.toString().trim();
+      let megaID  = req.body.mega_codes.toString().trim();
       let status  = parseInt(req.body.status, 10);
+
+      console.log(megaID);
 
       if (megaID === null || megaID === undefined || isNaN(status)) throw 'Check info form!';
 
