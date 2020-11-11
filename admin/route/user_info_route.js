@@ -113,7 +113,6 @@ const userInfoRoute = async (app, opt) => {
     try {
 
       let result = await userInfoFunc.getAllCodeFail();
-      console.log(result);
       rep.view('/partials/user_enter_code_fail_view.ejs', {
         data  : result
       });

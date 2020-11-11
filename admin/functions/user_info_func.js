@@ -122,11 +122,13 @@ exports.getTurnningInfo = (lsHistoryAllUser) => {
           phone       : h['phone'],
           province    : h['province'],
           reward      : reward,
-          time        : timeConvert
+          time        : timeConvert,
+          milli       : obj['time']
         });
       }
     }
   }
+  lsTurnningInfo.sort((a, b) => { return b['milli'] - a['milli'] });
   return lsTurnningInfo;
 }
 
@@ -141,10 +143,12 @@ exports.getEnterCodeInfo = (lsAllDataUser) => {
         name      : m['data']['name'],
         phone     : m['data']['phone'],
         code      : s[0],
-        time      : t
+        time      : t,
+        milli     : parseInt(s[3], 10)
       });
     }
   }
+  lsEnterCodeInfo.sort((a, b) => { return b['milli'] - a['milli'] });
   return lsEnterCodeInfo;
 }
 
@@ -159,9 +163,10 @@ exports.getAllNameOfLsItems = () => {
   return tmp;
 }
 
-exports.getAllCodeFail = async   () => {
+exports.getAllCodeFail = async () => {
   let tmp           = [];
   let lsCodeFailed  = await DS.DSGetAllCodeFail();
+  lsCodeFailed.sort((a, b) => { b['time'] - a['time'] });
   for (let d of lsCodeFailed) {
     tmp.push({
       mega_code : d['mega_id'],

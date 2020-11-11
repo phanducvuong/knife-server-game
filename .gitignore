@@ -93,6 +93,4 @@ typings/
 .vscode-test
 
 knife-service-account.json
-knife-service-accounts.json
-datastore-account.json
 code_test.txt
