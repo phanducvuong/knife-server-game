@@ -509,9 +509,9 @@
       let data = [];
       for (let tr of arrTable) {
 
-        let reward = tr.getElementsByTagName('td')[3].textContent;
-        if (tr.getElementsByTagName('td')[3].textContent.includes('MCH')) {
-          reward = tr.getElementsByTagName('td')[3].textContent.split('MCH: ')[4];
+        let reward = tr.getElementsByTagName('td')[4].textContent;
+        if (tr.getElementsByTagName('td')[4].textContent.includes('MCH')) {
+          reward = tr.getElementsByTagName('td')[4].textContent.split('MCH: ')[1];
         }
 
         data.push({

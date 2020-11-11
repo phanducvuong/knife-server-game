@@ -228,6 +228,8 @@ const profileUserRoute = async (app, opt) => {
         if (dataUser === null || dataUser === undefined) throw `User not exist ${megaID}`;
       }
 
+      //TODO: kiểm tra user có đang bị khóa nhập code
+
       let codeDS = await DS.DSGetCode('codes_test', util.genEnterCode(code));
       if (codeDS === null || codeDS === undefined || codeDS['data']['used'] !== 0) {
         DS.DSInsertCodeUserInputFailed('log_code_fail', {
@@ -236,8 +238,11 @@ const profileUserRoute = async (app, opt) => {
           code    : code,
           time    : date.getTime()
         });
+        
+        //TODO: count số lần nhập sai theo rule khóa acc
+
         throw `Invalid code! ${code}`;
-      }
+      } //kiểm tra code user nhập vào có hợp lệ không
 
       let resultUpdateCode = await DS.DSImportCode('codes_test', codeDS['id'], {
         code  : codeDS['data']['code'],
@@ -249,7 +254,6 @@ const profileUserRoute = async (app, opt) => {
       let strGenerate   = '';
       let bonusTurn     = 0;
       if (dataUser['log_get_turn']['from_enter_code'].length % 2 === 0) {
-        // dataUser['turn'] += config.BONUS_ENTER_CODE['bonus_1']['bonus_turn'];
         bonusTurn = config.BONUS_ENTER_CODE['bonus_1']['bonus_turn'];
         if (config.BONUS_ENTER_CODE['bonus_1']['bonus_lucky_code'] > 0) {
           strGenerate   = generateStr.getStringGenerate();
@@ -257,7 +261,6 @@ const profileUserRoute = async (app, opt) => {
         }
       }
       else {
-        // dataUser['turn'] += config.BONUS_ENTER_CODE['bonus_2']['bonus_turn'];
         bonusTurn = config.BONUS_ENTER_CODE['bonus_2']['bonus_turn'];
         if (config.BONUS_ENTER_CODE['bonus_2']['bonus_lucky_code'] > 0) {
           strGenerate   = generateStr.getStringGenerate();
@@ -269,13 +272,13 @@ const profileUserRoute = async (app, opt) => {
 
       if (util.chkTimeEvent(config.EVENTS['start'], config.EVENTS['end'])) {
         dataUser['events'][0] += 1;
-      }// cập nhật mảng event khi user nhập code (normal event)
+      } //cập nhật mảng event khi user nhập code (normal event)
 
       if (util.isEligibleEventById0(config.EVENTS['data'][0]['from_date'], config.EVENTS['data'][0]['to_date']) &&
           config.EVENTS['data'][0]['status'] === 1) {
         bonusTurn         *= config.EVENTS['data'][0]['mul'];
         dataUser['turn']  += bonusTurn;
-      } //cập nhật x2_bonus_turn nếu events đang diễn ra
+      } //x2_bonus_turn nếu events đang diễn ra
       else {
         dataUser['turn'] += bonusTurn;
       }

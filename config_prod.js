@@ -17,6 +17,14 @@
  * @key code, status
  * code -> mega_code
  * status -> 1: ok, 0: no
+ * 
+ * @key RULE_BLOCK_ACC (luật khóa acc user nếu user có tình trạng dò code)
+ * RULE_BLOCK_ACC[0]: rule 1
+ * RULE_BLOCK_ACC[2]: rule 2
+ * 
+ * max_failed   -> số lần nhập sai tối đa
+ * sequent_time -> nhập sai liên tiếp trong khoảng thời gian này => khóa acc theo rule
+ * block_time   -> thời gian acc bị khóa
  */
 
 
@@ -91,6 +99,19 @@ exports.BLACK_LIST                = [
     mega_code : 'MEGA1179262', status : 0
   }
 ];
+
+exports.RULE_BLOCK_ACC            = [
+  {
+    max_failed    : 5,
+    sequent_time  : 600000,
+    time_block    : 30000,
+  },
+  {
+    max_failed    : 10,
+    sequent_time  : 86400000,
+    time_block    : 259200000,
+  }
+]
 
 // exports.NOTIFICATION_BANNER       = [];     //danh sách user trúng được quà với thẻ cào. Dùng để chạy banner thông báo
 

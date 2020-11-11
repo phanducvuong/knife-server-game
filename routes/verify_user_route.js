@@ -22,7 +22,9 @@ else {
  * index at 1 -> phóng phi tiêu
  * index at 2 -> mời bạn
  * 
- * @key xX_bonus_turn -> array[{bonus_geted}]: mảng chứa các bonus_turn khi user nhập code. dùng value đó nhân với số lần lượt được tặng nếu tồn tại event (event x2 lượt chơi)
+ * @key block_acc (lưu lại trạng thái user nhập code sai quá nhiều. Nếu thỏa rule => khóa acc)
+ * rule_1: { count: //số lần nhập sai, time: thời gian user bắt đầu nhập sai }
+ * rule_2: { count: //số lần nhập sai, time: thời gian user bắt đầu nhập sai }
  */
 
 const dataInitUser = {
@@ -32,7 +34,6 @@ const dataInitUser = {
   token         :'',
   actions       : [0, 0],
   events        : [0, 0, 0],                  //lưu lại số lần nhập code, phóng phi tiêu của user => nhận bonus
-  xX_bonus_turn : [],
   lucky_code    : [],
   sp_item       : [],
   mission       : [],
@@ -40,6 +41,10 @@ const dataInitUser = {
   log_get_turn  : {                           //lưu lại thời gian và lượt chơi mới sau mỗi lần user làm nhiệm vụ get code hoặc nhập mã code được bonus lượt
     from_mission    : [],                     //format: {id}_{new-turn-user}_{bonus-turn}_{timestamp}
     from_enter_code : []                      //format: {code}_{new-turn-user}_{bonus-turn}_{timestamp}_{lucky-code}
+  },
+  block_acc     : {
+    rule_1      : { count: 0, time: 0 },
+    rule_2      : { count: 0, time: 0 }
   },
   phone         : '',
   userID        : '',

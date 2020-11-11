@@ -100,6 +100,8 @@ exports.updatePartition = async () => {
   if (textShow !== null && textShow !== undefined) {
     config.TEXT_SHOW = textShow;
   }
+
+  //TODO: update rule_block_acc
 }
 
 function filterItemHaveInListPartition(lsPartition, lsItem) {
@@ -119,6 +121,7 @@ function filterItemHaveInListPartition(lsPartition, lsItem) {
 }
 
 async function resetDataUser() {
+  //TODO: reset count block acc user nếu user không bị bị khóa acc
   let lsMegaIDUser = await DS.DSGetAllUser();
   for (let u of lsMegaIDUser) {
     let dataUser = await DS.DSGetDataUser(u, 'turn_inven');
