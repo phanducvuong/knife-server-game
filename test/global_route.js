@@ -567,7 +567,8 @@ const globalRoute = async (app, opt) => {
   });
 
   app.post('/import-code-hash', async (req, rep) => {
-    readCode.importCode(req.body.filename);
+    readCode.importCodeTest(req.body.filename);
+    // readCode.importCode(req.body.filename);
     // let result = await DS.DSGetAllCodes();
     rep.send('ok');
   });

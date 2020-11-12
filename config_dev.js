@@ -108,7 +108,7 @@ exports.RULE_BLOCK_ACC            = [
   {
     max_failed    : 5,
     sequent_time  : 600000,
-    time_block    : 30000,
+    time_block    : 300000,
   },
   {
     max_failed    : 10,

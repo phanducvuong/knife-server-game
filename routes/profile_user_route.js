@@ -228,7 +228,16 @@ const profileUserRoute = async (app, opt) => {
         if (dataUser === null || dataUser === undefined) throw `User not exist ${megaID}`;
       }
 
-      //TODO: kiểm tra user có đang bị khóa nhập code
+      //kiểm tra user có đang bị khóa nhập code
+      let resultBlockAcc = profileFunc.isBlockAcc(dataUser['block_acc']);
+      if (resultBlockAcc['status']) {
+        rep.send({
+          status_code : 2500,
+          max_failed  : resultBlockAcc['max_failed'],
+          time_block  : resultBlockAcc['time_block']
+        });
+        return;
+      }
 
       let codeDS = await DS.DSGetCode('codes_test', util.genEnterCode(code));
       if (codeDS === null || codeDS === undefined || codeDS['data']['used'] !== 0) {
@@ -239,7 +248,10 @@ const profileUserRoute = async (app, opt) => {
           time    : date.getTime()
         });
         
-        //TODO: count số lần nhập sai theo rule khóa acc
+        //cập nhật số lần user nhập sai code
+        dataUser['block_acc'] = profileFunc.updateBlockAccUser(dataUser['block_acc']);
+        redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
+        DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
 
         throw `Invalid code! ${code}`;
       } //kiểm tra code user nhập vào có hợp lệ không
@@ -283,6 +295,7 @@ const profileUserRoute = async (app, opt) => {
         dataUser['turn'] += bonusTurn;
       }
 
+      dataUser['block_acc'] = profileFunc.resetBlockAccUser(dataUser['block_acc']);
       redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
       DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
 

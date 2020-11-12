@@ -245,6 +245,84 @@ exports.getHistoryEnterCode = (lsHistoryEnterCode) => {
   return his;
 }
 
+exports.isBlockAcc = (obj) => {
+  let date0   = new Date(obj['rule_1']['time']);
+  let date1   = new Date(obj['rule_2']['time']);
+  let dateNow = new Date();
+
+  if (dateNow.getTime() <= date1.getTime() &&
+      obj['rule_2']['count'] >= config.RULE_BLOCK_ACC[1]['max_failed']) {
+    return {
+      status      : true,
+      max_failed  : config.RULE_BLOCK_ACC[1]['max_failed'],
+      time_block  : obj['rule_2']['time']
+    };
+  }
+  else if (dateNow.getTime() <= date0.getTime() &&
+      obj['rule_1']['count'] >= config.RULE_BLOCK_ACC[0]['max_failed']) {
+    return {
+      status      : true,
+      max_failed  : config.RULE_BLOCK_ACC[0]['max_failed'],
+      time_block  : obj['rule_1']['time']
+    };
+  }
+  return { status: false };
+}
+
+exports.updateBlockAccUser = (blockAcc) => {
+  let timeNow   = new Date();
+  let timeRule1 = new Date(blockAcc['rule_1']['time']);
+  let timeRule2 = new Date(blockAcc['rule_2']['time']);
+
+  let deltaTimeRule1 = timeNow.getTime() - timeRule1.getTime();
+  let deltaTimeRule2 = timeNow.getTime() - timeRule2.getTime();
+
+  //check rule 1
+  if (blockAcc['rule_1']['count'] >= config.RULE_BLOCK_ACC[0]['max_failed']) {
+    blockAcc['rule_1']['count'] = 1;
+    blockAcc['rule_1']['time']  = timeNow.getTime();
+  }
+  else if (deltaTimeRule1 <= config.RULE_BLOCK_ACC[0]['sequent_time']) {
+    blockAcc['rule_1']['count'] += 1;
+  }
+  else {
+    blockAcc['rule_1']['count'] = 1;
+    blockAcc['rule_1']['time']  = timeNow.getTime();
+  }
+
+  //check rule 2
+  if (blockAcc['rule_2']['count'] >= config.RULE_BLOCK_ACC[1]['max_failed']) {
+    blockAcc['rule_2']['count'] = 1;
+    blockAcc['rule_2']['time']  = timeNow.getTime();
+  }
+  else if (deltaTimeRule2 <= config.RULE_BLOCK_ACC[1]['sequent_time']) {
+    blockAcc['rule_2']['count'] += 1;
+  }
+  else {
+    blockAcc['rule_2']['count'] = 1;
+    blockAcc['rule_2']['time']  = timeNow.getTime();
+  }
+
+  //check max input code failed
+  if (blockAcc['rule_1']['count'] >= config.RULE_BLOCK_ACC[0]['max_failed']) {
+    blockAcc['rule_1']['time'] = timeNow.getTime() + config.RULE_BLOCK_ACC[0]['time_block'];
+  }
+
+  if (blockAcc['rule_2']['count'] >= config.RULE_BLOCK_ACC[1]['max_failed']) {
+    blockAcc['rule_2']['time'] = timeNow.getTime() + config.RULE_BLOCK_ACC[1]['time_block'];
+  }
+
+  return blockAcc;
+}
+
+exports.resetBlockAccUser = (blockAcc) => {
+  blockAcc['rule_1']['count'] = 0;
+  blockAcc['rule_1']['time']  = 0;
+  blockAcc['rule_2']['count'] = 0;
+  blockAcc['rule_2']['time']  = 0;
+  return blockAcc;
+}
+
 //-------------------------------------functional-----------------------------------------
 function hideCodeXXX(code) {
   return code.substring(0, 5) + 'XXXXX';
