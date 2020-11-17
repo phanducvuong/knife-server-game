@@ -72,6 +72,7 @@ app.register(require('./admin/route/dashboard_route'),    { prefix: '/api/v1/adm
 app.register(require('./admin/route/setup_route'),        { prefix: '/api/v1/admin/setup' });
 app.register(require('./admin/route/item_route'),         { prefix: '/api/v1/admin/item' });
 app.register(require('./admin/route/user_info_route'),    { prefix: '/api/v1/admin/user-info' });
+app.register(require('./admin/route/check_code_route'),   { prefix: '/api/v1/admin/code' });
 
 //route test
 app.register(require('./test/global_route'),              { prefix: '/api/v1/test' });

@@ -149,28 +149,24 @@
       $('#pagination').empty();
 
       if (textSearch !== '' && !isNaN(fromDate.getTime()) && !isNaN(toDate.getTime())) {
-        console.log('1');
         filterByTextAndDate(fromDate, toDate, textSearch);
         getPagination();
         return;
       }
 
       if (textSearch !== '' && (isNaN(fromDate.getTime()) || isNaN(toDate.getTime))) {
-        console.log('2');
         filterByText(textSearch);
         getPagination();
         return;
       }
 
       if (textSearch === '' && !isNaN(fromDate.getTime()) && !isNaN(toDate.getTime())) {
-        console.log('3');
         filterByDate(fromDate, toDate);
         getPagination();
         return;
       }
 
       if (textSearch === '' && (isNaN(fromDate.getTime()) || isNaN(toDate.getTime()))) {
-        console.log('4');
         filterAll();
         getPagination();
         return;

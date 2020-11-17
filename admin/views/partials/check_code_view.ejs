@@ -1,0 +1,75 @@
+<%- include('../layouts/header') %>
+
+  <div class="content-wrapper">
+    <section class="content">
+      <div style="background-color: white;">
+        <div class="div-all-item">
+          <label class="time-right">Tìm Kiếm</label>
+          <input  style="outline-style: none;" type="text"
+                  id="search-code" class="col-3 time-right"
+                  value="" placeholder="Mã Dự Thưởng">
+
+          <button class="btn-update-global time-right" id="btn-search-code">TÌM</button>
+        </div>
+
+        <table id="table-info-code" class="footable table table-stripped">
+          <thead>
+            <tr>
+              <th style="font-weight: bold;">MÃ DỰ THƯỞNG</th>
+              <th style="font-weight: bold;">NGƯỜI SỬ DỤNG</th>
+              <th style="font-weight: bold;">SĐT</th>
+              <th style="font-weight: bold;">TỈNH/THÀNH PHỐ</th>
+              <th style="font-weight: bold;">TRẠNG THÁI</th>
+              <th style="font-weight: bold;">THỜI GIAN</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    
+    $(document).ready(() => {
+
+      $('#btn-search-code').click(() => {
+
+        let value = $('#search-code').val();
+        if (value === '') {
+          alert('Empty input!');
+          return;
+        }
+
+        $.ajax({
+          url             : env.http + window.location.host + '/api/v1/admin/code/check',
+          method          : 'POST',
+          contentType     : 'application/json; charset=uth-8',
+          data            : JSON.stringify({
+            code          : value
+          })
+        })
+          .done((data) => {
+
+            if (data['status_code'] !== 2000) {
+              alert(data['error']);
+              return;
+            }
+
+
+          })
+          .fail(() => {});
+
+      });
+
+    });
+
+    function updateDataTableInfoCode(data) {
+      $('#table-info-code tbody').remove();
+      
+    }
+
+  </script>
+
+<%- include('../layouts/footer') %>

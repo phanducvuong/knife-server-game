@@ -126,11 +126,17 @@ input::-webkit-inner-spin-button {
   left: 30%;
 }
 
-#time-sel-item {
+#time-sel-item, #search-code {
   left: 31%;
   border-style: solid;
   border-color: #8080802b;
   border-radius: 5px;
+}
+
+#btn-search-code {
+  margin-left: 30px;
+  height: 30px;
+  width: 70px;
 }
 
 .btn-log {

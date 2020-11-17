@@ -256,8 +256,12 @@ const profileUserRoute = async (app, opt) => {
       } //kiểm tra code user nhập vào có hợp lệ không
 
       let resultUpdateCode = await DS.DSImportCode('codes_test', codeDS['id'], {
-        code  : codeDS['data']['code'],
-        used  : 1
+        code      : codeDS['data']['code'],
+        used      : 1,
+        name      : dataUser['name'],
+        province  : dataUser['province'],
+        phone     : dataUser['phone'],
+        time      : date.getTime()
       });
       if (resultUpdateCode === null) throw `Enter code failed! ${code}`;
 
