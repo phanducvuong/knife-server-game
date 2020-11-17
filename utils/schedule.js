@@ -2,6 +2,7 @@ const DS              = require('../repository/datastore');
 const cron            = require('node-cron');
 const redisClient     = require('../redis/redis_client');
 const util            = require('./util');
+const profileFunc     = require('../functions/profile_user_func');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -101,7 +102,12 @@ exports.updatePartition = async () => {
     config.TEXT_SHOW = textShow;
   }
 
-  //TODO: update rule_block_acc
+  //update rule_block_acc
+  let ruleBlockAcc = await DS.DSGetDataGlobal('admin', 'rule_block_acc');
+  if (ruleBlockAcc !== null && ruleBlockAcc !== undefined) {
+    config.RULE_BLOCK_ACC = [];
+    config.RULE_BLOCK_ACC.push(...ruleBlockAcc['rule_block_acc']);
+  }
 }
 
 function filterItemHaveInListPartition(lsPartition, lsItem) {
@@ -121,7 +127,6 @@ function filterItemHaveInListPartition(lsPartition, lsItem) {
 }
 
 async function resetDataUser() {
-  //TODO: reset count block acc user nếu user không bị bị khóa acc
   let lsMegaIDUser = await DS.DSGetAllUser();
   for (let u of lsMegaIDUser) {
     let dataUser = await DS.DSGetDataUser(u, 'turn_inven');
@@ -134,6 +139,10 @@ async function resetDataUser() {
         dataUser['events'][1] = 0;
         dataUser['events'][2] = 0;
       }
+
+      if (!profileFunc.isBlockAcc(dataUser['block_acc'])) {
+        dataUser['block_acc'] = profileFunc.resetBlockAccUser(dataUser['block_acc']);
+      } //reset block acc user if user isn't blocked
 
       DS.DSUpdateDataUser(u, 'turn_inven', dataUser);
       redisClient.updateTurnAndInvenUser(u, JSON.stringify(dataUser));

@@ -115,7 +115,7 @@ exports.RULE_BLOCK_ACC            = [
     sequent_time  : 86400000,
     time_block    : 259200000,
   }
-]
+];
 
 // exports.NOTIFICATION_BANNER       = [];     //danh sách user trúng được quà với thẻ cào. Dùng để chạy banner thông báo
 

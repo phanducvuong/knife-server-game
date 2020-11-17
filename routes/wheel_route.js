@@ -102,6 +102,10 @@ const wheelRoute = async (app, opt) => {
       let strGenerate = '';
       if (item['type'] === 2) {
         strGenerate     = generateStr.getStringGenerate();
+        if (await DS.DSIsExistLuckyCode('lucky_code_s1', strGenerate) === true) {
+          response.response(rep, -1, 'Lucky code is exist in get item');
+          return;
+        }
         let str         = `${strGenerate}_${time.getTime()}`;
         dataUser['lucky_code'].push(str);
       } //generate string when user get item "Mã Cơ Hội"
@@ -133,6 +137,7 @@ const wheelRoute = async (app, opt) => {
 
       DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
       DS.DSUpdateHistoryUser(megaID, strHis);
+      DS.DSInsertLuckyCode('lucky_code_s1', { code: strGenerate, time: time.getTime() });
 
       let amountSpItem        = 0;
       let resultAmountSpItem  = profileUserFunc.getSpItemById(dataUser['sp_item'], 0);

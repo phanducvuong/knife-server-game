@@ -78,6 +78,33 @@ exports.DSGetCode = async (kind, code) => {
   }
 }
 
+exports.DSIsExistLuckyCode = async (kind, luckyCode) => {
+  try {
+    let query     = dbClient.createQuery(kind).filter('code', '=', luckyCode);
+    let [result]  = await dbClient.runQuery(query);
+
+    if (result[0] === null || result[0] === undefined) return false;
+    return true;
+  }
+  catch(err) {
+    console.log(err);
+    return null;
+  }
+}
+
+exports.DSInsertLuckyCode = (kind, data) => {
+  try {
+    let keyEntity = dbClient.key(`${kind}`);
+    dbClient.save({
+      key : keyEntity,
+      data: data
+    });
+  }
+  catch(err) {
+    console.log(err);
+  }
+}
+
 exports.DSGetAllItem = async () => {
   try {
     let query     = dbClient.createQuery('items');

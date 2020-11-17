@@ -1,3 +1,4 @@
+const profileUserRoute = require('../../routes/profile_user_route');
 const userInfoFunc            = require('../functions/user_info_func');
 
 const userInfoRoute = async (app, opt) => {

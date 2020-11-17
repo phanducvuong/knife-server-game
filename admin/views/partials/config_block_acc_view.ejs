@@ -1,0 +1,157 @@
+<%- include('../layouts/header') %>
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      Dashboard
+      <small>BLOCK ACC</small>
+    </h1>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+      <li class="breadcrumb-item active">Dashboard</li>
+    </ol>
+  </section>
+
+  <!-- Main content -->
+  <!-- Task Manager -->
+  <section class="content">
+  <div class="row">
+    <div class="col-xl-12 col-12">
+      <div class="box" style="box-shadow: 1px 0 10px rgba(0,0,0,0.1);">
+        <div class="panel-body">
+
+          <!-- rule 1 -->
+          <div class="form-group row">
+            <label class="col-sm-3 col-form-label">RULE 1</label>
+            <div class="col-sm-3">
+              <label>Số Lần Nhập Sai</label>
+              <input type="number" id="input-max-failed-1" min="0" step="1" class="form-control" value="<%= data[0]['max_failed'] %>">
+            </div>
+            <div class="col-sm-3">
+              <label>Thời Gian Nhập Sai Liên Tiếp</label>
+              <input type="text" placeholder="" id="input-sequent-time-1" min="0" step="1" class="form-control" value="<%= data[0]['sequent_time'] %>">
+            </div>
+            <div class="col-sm-3">
+              <label>Thời Gian Bị Khóa</label>
+              <input type="text" id="input-time-block-1" min="0" step="1" class="form-control" value="<%= data[0]['time_block'] %>">
+            </div>
+          </div>
+
+          <br>
+          <br>
+          <br>
+
+          <!-- rule 2 -->
+          <div class="form-group row">
+            <label class="col-sm-3 col-form-label">RULE 2</label>
+            <div class="col-sm-3">
+              <label>Số Lần Nhập Sai</label>
+              <input type="number" id="input-max-failed-2" min="0" step="1" class="form-control" value="<%= data[1]['max_failed'] %>">
+            </div>
+            <div class="col-sm-3">
+              <label>Thời Gian Nhập Sai Liên Tiếp</label>
+              <input type="text" placeholder="" id="input-sequent-time-2" min="0" step="1" class="form-control" value="<%= data[1]['sequent_time'] %>">
+            </div>
+            <div class="col-sm-3">
+              <label>Thời Gian Bị Khóa</label>
+              <input type="text" id="input-time-block-2" min="0" step="1" class="form-control" value="<%= data[1]['time_block'] %>">
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <div class="col-sm-12" style="text-align: center;">
+              <button class="btn-update-global" id="btn-update-block-acc">Cập Nhật</button>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+  <!-- /.content -->
+</div>
+
+<script>
+
+  $(document).ready(() => {
+
+    const pattern = /[0-9](m|h)/;
+
+    $('#btn-update-block-acc').click(() => {
+      let maxFaliedRule1    = parseInt($('#input-max-failed-1').val(), 10);
+      let sequentTimeRule1  = $('#input-sequent-time-1').val();
+      let timeBlockRule1    = $('#input-time-block-1').val();
+
+      let maxFaliedRule2    = parseInt($('#input-max-failed-2').val(), 10);
+      let sequentTimeRule2  = $('#input-sequent-time-2').val();
+      let timeBlockRule2    = $('#input-time-block-2').val();
+
+      if (isNaN(maxFaliedRule1) || isNaN(maxFaliedRule2) || !pattern.test(sequentTimeRule1) || !pattern.test(sequentTimeRule2) ||
+          !pattern.test(timeBlockRule1) || !pattern.test(timeBlockRule2)) {
+        alert('Invalid data!');
+        return;
+      }
+
+      sequentTimeRule1  = convertStrToMilliSecond(sequentTimeRule1);
+      timeBlockRule1    = convertStrToMilliSecond(timeBlockRule1);
+      sequentTimeRule2  = convertStrToMilliSecond(sequentTimeRule2);
+      timeBlockRule2    = convertStrToMilliSecond(timeBlockRule2);
+
+      if (sequentTimeRule1 === 0 || timeBlockRule1 === 0 || sequentTimeRule2 === 0 || timeBlockRule2 === 0) {
+        alert('Invalid data!!');
+        return;
+      }
+
+      $.ajax({
+        url             : env.http + window.location.host + '/api/v1/admin/setup/update-block-acc',
+        method          : 'POST',
+        contentType     : 'application/json; charset=utf-8',
+        data            : JSON.stringify({
+          rules : [
+            {
+              max_failed    : maxFaliedRule1,
+              sequent_time  : sequentTimeRule1,
+              time_block    : timeBlockRule1,
+            },
+            {
+              max_failed    : maxFaliedRule2,
+              sequent_time  : sequentTimeRule2,
+              time_block    : timeBlockRule2,
+            }
+          ]
+        })
+      })
+        .done((data) => {
+
+          if (data['status_code'] !== 2000) {
+            alert(data['error']);
+            return;
+          }
+          alert('success');
+
+        })
+        .fail(() => {});
+    });
+
+  });
+
+  function convertStrToMilliSecond(str) {
+    if (str.includes('h')) {
+      let n = parseInt(str.split('h')[0], 10);
+      if (isNaN(n)) return 0;
+      return n * 3600000;
+    }
+    else if (str.includes('m')) {
+      let n = parseInt(str.split('h')[0], 10);
+      if (isNaN(n)) return 0;
+      return n * 60000;
+    }
+    return 0;
+  }
+
+</script>
+
+<%- include('../layouts/footer') %>

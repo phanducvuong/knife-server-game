@@ -164,3 +164,13 @@ exports.chkCountdown = () => {
   }
   return true;
 }
+
+exports.formatTimeRuleBlockAccTo = (millisecond) => {
+  let h = millisecond / 3600000;
+  if (Number.isInteger(h)) return `${h}h`;
+
+  h = millisecond / 60000;
+  if (Number.isInteger(h)) return `${h}m`;
+  
+  return 'none';
+}

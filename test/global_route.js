@@ -6,6 +6,7 @@ const logger        = require('fluent-logger');
 const sendMail      = require('../utils/send_mail');
 const topup         = require('../repository/topup');
 const readCode      = require('./read_code');
+const genstr        = require('../utils/generate_string');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -479,13 +480,10 @@ const globalRoute = async (app, opt) => {
     rep.send('ok');
   });
 
-  // app.get('/gen-random-string', async (req, rep) => {
-  //   const hrtime1        = process.hrtime();
-  //   const hrtime2        = process.hrtime();
-  //   let str1 = strGenerate.getStringGenerate(hrtime1);
-  //   let str2 = strGenerate.getStringGenerate(hrtime2);
-  //   rep.send(`${str1}\n${str2}`);
-  // });
+  app.get('/gen-random-string', async (req, rep) => {
+    const genStr = genstr.getStringGenerate();
+    rep.send(genStr);
+  });
 
   app.post('/hash-code', async (req, rep) => {
     let codes   = req.body.codes;

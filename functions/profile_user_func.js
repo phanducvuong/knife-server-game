@@ -255,7 +255,7 @@ exports.isBlockAcc = (obj) => {
     return {
       status      : true,
       max_failed  : config.RULE_BLOCK_ACC[1]['max_failed'],
-      time_block  : obj['rule_2']['time']
+      time_block  : convertMilliToStr(obj['rule_2']['time'])
     };
   }
   else if (dateNow.getTime() <= date0.getTime() &&
@@ -263,7 +263,7 @@ exports.isBlockAcc = (obj) => {
     return {
       status      : true,
       max_failed  : config.RULE_BLOCK_ACC[0]['max_failed'],
-      time_block  : obj['rule_1']['time']
+      time_block  : convertMilliToStr(obj['rule_1']['time'])
     };
   }
   return { status: false };
@@ -321,6 +321,19 @@ exports.resetBlockAccUser = (blockAcc) => {
   blockAcc['rule_2']['count'] = 0;
   blockAcc['rule_2']['time']  = 0;
   return blockAcc;
+}
+
+exports.isResBlockAccUser = (rep, dataUser) => {
+  let resultBlockAcc = this.isBlockAcc(dataUser['block_acc']);
+  if (resultBlockAcc['status']) {
+    rep.send({
+      status_code : 2500,
+      max_failed  : resultBlockAcc['max_failed'],
+      time_block  : resultBlockAcc['time_block']
+    });
+    return true;
+  }
+  return false;
 }
 
 //-------------------------------------functional-----------------------------------------

@@ -4,6 +4,7 @@ const profileFunc   = require('../functions/profile_user_func');
 const util          = require('../utils/util');
 const logger        = require('fluent-logger');
 const generateStr   = require('../utils/generate_string');
+const response      = require('../utils/response');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -229,13 +230,7 @@ const profileUserRoute = async (app, opt) => {
       }
 
       //kiểm tra user có đang bị khóa nhập code
-      let resultBlockAcc = profileFunc.isBlockAcc(dataUser['block_acc']);
-      if (resultBlockAcc['status']) {
-        rep.send({
-          status_code : 2500,
-          max_failed  : resultBlockAcc['max_failed'],
-          time_block  : resultBlockAcc['time_block']
-        });
+      if (profileFunc.isResBlockAccUser(rep, dataUser)) {
         return;
       }
 
@@ -253,6 +248,10 @@ const profileUserRoute = async (app, opt) => {
         redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
         DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
 
+        if (profileFunc.isResBlockAccUser(rep, dataUser)) {
+          return;
+        }
+
         throw `Invalid code! ${code}`;
       } //kiểm tra code user nhập vào có hợp lệ không
 
@@ -269,6 +268,10 @@ const profileUserRoute = async (app, opt) => {
         bonusTurn = config.BONUS_ENTER_CODE['bonus_1']['bonus_turn'];
         if (config.BONUS_ENTER_CODE['bonus_1']['bonus_lucky_code'] > 0) {
           strGenerate   = generateStr.getStringGenerate();
+          if (await DS.DSIsExistLuckyCode('lucky_code_s1', strGenerate) === true) {
+            response.response(rep, -1, 'Lucky code is exist!');
+            return;
+          }
           dataUser['lucky_code'].push(`${strGenerate}_${date.getTime()}`);
         }
       }
@@ -276,6 +279,10 @@ const profileUserRoute = async (app, opt) => {
         bonusTurn = config.BONUS_ENTER_CODE['bonus_2']['bonus_turn'];
         if (config.BONUS_ENTER_CODE['bonus_2']['bonus_lucky_code'] > 0) {
           strGenerate   = generateStr.getStringGenerate();
+          if (await DS.DSIsExistLuckyCode('lucky_code_s1', strGenerate) === true) {
+            response.response(rep, -1, 'Lucky code is exist!');
+            return;
+          }
           dataUser['lucky_code'].push(`${strGenerate}_${date.getTime()}`);
         }
       }
@@ -298,6 +305,7 @@ const profileUserRoute = async (app, opt) => {
       dataUser['block_acc'] = profileFunc.resetBlockAccUser(dataUser['block_acc']);
       redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
       DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
+      DS.DSInsertLuckyCode('lucky_code_s1', { code: strGenerate, time: date.getTime() });
 
       //logger
       logger.emit('log', {

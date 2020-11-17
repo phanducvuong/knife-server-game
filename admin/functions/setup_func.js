@@ -1,3 +1,5 @@
+const util                  = require('../../utils/util');
+
 exports.idExistIn = (lsItem, idChk) => {
   for (e of lsItem) {
     if (idChk === e['id']) {
@@ -220,4 +222,36 @@ exports.addNewUserIntoBlackList = (lsBlackList, lsMegaID) => {
     }
   }
   return lsBlackList;
+}
+
+exports.formatTimeBlockAccToStr = (data) => {
+  let tmp = [];
+  for (let e of data) {
+    let tmpSequentTimeFormat  = util.formatTimeRuleBlockAccTo(e['sequent_time']);
+    let tmpTimeBlockFormat    = util.formatTimeRuleBlockAccTo(e['time_block']);
+
+    if (tmpSequentTimeFormat === 'none' || tmpTimeBlockFormat === 'none') {
+      return { status: false };
+    }
+    tmp.push(
+      {
+        max_failed    : e['max_failed'],
+        sequent_time  : tmpSequentTimeFormat,
+        time_block    : tmpTimeBlockFormat,
+      }
+    );
+  }
+  return {
+    status  : true,
+    data    : tmp
+  };
+}
+
+exports.isValidRules = (rules) => {
+  for (let e of rules) {
+    if (isNaN(e['max_failed']) || isNaN(e['sequent_time']) || isNaN(e['time_block'])) {
+      return false;
+    }
+  }
+  return true;
 }

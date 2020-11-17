@@ -1580,6 +1580,62 @@ const setupRoute = async (app, opt) => {
 
     }
   });
+
+  //setup config block acc
+  app.get('/get-config-block-acc', async (req, rep) => {
+    try {
+
+      let result = await DS.DSGetDataGlobal('admin', 'rule_block_acc');
+      if (result === null || result === undefined) {
+        result = config.RULE_BLOCK_ACC;
+      }
+      else {
+        result = result['rule_block_acc'];
+      }
+
+      let ruleFormatTime = setupFunc.formatTimeBlockAccToStr(result);
+      if (!ruleFormatTime['status']) throw `Invalid time format!`;
+
+      rep.view('/partials/config_block_acc_view.ejs', {
+        data: ruleFormatTime['data']
+      });
+
+    }
+    catch(err) {
+
+      rep.view('/partials/error_view.ejs', {
+        title_error : err
+      });
+
+    }
+  });
+
+  app.post('/update-block-acc', async (req, rep) => {
+    try {
+
+      let dataRules = req.body.rules;
+      if (!setupFunc.isValidRules(dataRules)) {
+        throw 'invalid data!';
+      }
+
+      DS.DSUpdateDataGlobal('admin', 'rule_block_acc', {
+        rule_block_acc  : dataRules
+      });
+      rep.send({
+        status_code : 2000
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
 }
 
 module.exports = setupRoute;
