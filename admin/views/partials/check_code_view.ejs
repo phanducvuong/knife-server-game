@@ -35,7 +35,7 @@
     $(document).ready(() => {
 
       $('#btn-search-code').click(() => {
-
+        $('#loading').css('display', '');
         let value = $('#search-code').val();
         if (value === '') {
           alert('Empty input!');
@@ -53,10 +53,13 @@
           .done((data) => {
 
             if (data['status_code'] !== 2000) {
+              $('#loading').css('display', 'none');
+              $('#table-info-code tbody').remove();
               alert(data['error']);
               return;
             }
-
+            $('#loading').css('display', 'none');
+            updateDataTableInfoCode(data);
 
           })
           .fail(() => {});
@@ -66,8 +69,24 @@
     });
 
     function updateDataTableInfoCode(data) {
+      let user      = data['user'] !== '' ? data['user'] : '-';
+      let phone     = data['phone'] !== '' ? data['phone'] : '-';
+      let province  = data['province'] !== '' ? data['province'] : '-';
+      let time      = data['time'] !== '' ? data['time'] : '-';
+
       $('#table-info-code tbody').remove();
-      
+      $('#table-info-code').append(`
+        <tbody>
+          <tr>
+            <td>${data['code']}</td>
+            <td>${user}</td>
+            <td>${phone}</td>
+            <td>${province}</td>
+            <td>${data['used']}</td>
+            <td>${time}</td>
+          </tr>
+        </tbody>
+      `);
     }
 
   </script>
