@@ -193,6 +193,7 @@ const wheelRoute = async (app, opt) => {
         "last_update_time": "",
         "operator": "",
         "os_version": "",
+        "os": platform,
         "platform": platform,
         "product": "",
         "sdk": "23",

@@ -54,7 +54,7 @@ exports.initLsRedis = () => {
 
   this.LENGTH_REDIS = lsRedis.length;
   return lsRedis;
-}
+};
 
 //--------------------------------data global---------------------------------------
 exports.PARTITIONS                = {
@@ -64,7 +64,7 @@ exports.PARTITIONS                = {
   partition         : 12,
   veloc             : 3000,
   data              : []
-}
+};
 
 //fluent logger
 exports.TAG_LOGGER                = 'phi-dao-prod';
@@ -75,7 +75,7 @@ exports.COUNT_DOWN                = '2020-10-30 23:00';
 exports.TEXT_SHOW                 = {
   text  : 'Phóng Phi Tiêu Rinh Quà Khủng!',
   count : 1
-}
+};
 
 exports.TOTAL_PERCENT             = 0;
 exports.ARR_ITEM                  = [];
@@ -92,7 +92,7 @@ exports.BONUS_ENTER_CODE          = {
     bonus_turn        : 5,
     bonus_lucky_code  : 1
   }
-}
+};
 
 exports.BLACK_LIST                = [
   {
@@ -111,7 +111,7 @@ exports.RULE_BLOCK_ACC            = [
     sequent_time  : 86400000,
     time_block    : 259200000,
   }
-]
+];
 
 // exports.NOTIFICATION_BANNER       = [];     //danh sách user trúng được quà với thẻ cào. Dùng để chạy banner thông báo
 
@@ -126,7 +126,15 @@ exports.SUPPORTING_ITEM           = [
     id          : 1,
     description : 'Vật Phẩm Thêm Ô'
   }
-]
+];
+
+exports.SPECIAL_ITEM              = [
+  {
+    id          : 0,
+    description : '2 Lượng Vàng PNJ',
+    region      : 'Vangpnj'
+  }
+];
 
 exports.MISSIONS                  = [
   {
@@ -139,7 +147,7 @@ exports.MISSIONS                  = [
     status        : 1,
     type          : -1
   }
-]
+];
 
 exports.EVENTS                    = {
   start     : '2020-09-30',
@@ -159,4 +167,4 @@ exports.EVENTS                    = {
       to_date       : '2020-11-29 16:59:59'                       //convert UTC time to localtime
     }
   ]
-}
+};

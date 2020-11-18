@@ -186,6 +186,21 @@ exports.filterHistory = (lsHistory) => {
   }
 }
 
+exports.filterGiftFrom = (lsGift, lsSpecialItem) => {
+  for (let i of lsSpecialItem) {
+    let strs = i.split('_');                            //{id}_{millisecond}
+    let item = config.SPECIAL_ITEM.find(e => { return e['id'] === parseInt(strs[0], 10) });
+    if (item !== null && item !== undefined) {
+      lsGift.push({
+        id          : item['id'],
+        description : item['description'],
+        time        : convertMilliToStr(parseInt(strs[1], 10)),
+        region      : item['region']
+      });
+    }
+  }
+}
+
 exports.convertLsLuckyCode = (lsLuckyCode) => {
   let filter = [];
   for (let c of lsLuckyCode) {

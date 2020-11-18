@@ -43,6 +43,8 @@ const profileUserRoute = async (app, opt) => {
 
       let resultFilterHis   = profileFunc.filterHistory(histories);
       let filterLsLuckyCode = profileFunc.convertLsLuckyCode(dataUser['lucky_code']);
+
+      profileFunc.filterGiftFrom(resultFilterHis['ls_gift'], dataUser['special_item']);
       rep.send({
         status_code : 2000,
         lsGift      : resultFilterHis['ls_gift'],
@@ -352,6 +354,7 @@ const profileUserRoute = async (app, opt) => {
         "last_update_time": "",
         "operator": "",
         "os_version": "",
+        "os": platform,
         "platform": platform,
         "product": "",
         "sdk": "23",

@@ -22,7 +22,7 @@ const checkCodeRoute = async (app, opt) => {
     try {
 
       let code    = req.body.code.toString().trim();
-      let result  = await DS.DSGetCode('codes_test', util.genEnterCode(code));
+      let result  = await DS.DSGetCode('codes_test', util.genEnterCode(code.toUpperCase()));
 
       if (result === null || result === undefined) throw `${code} is not exsit!`;
 

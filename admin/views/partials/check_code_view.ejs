@@ -38,6 +38,7 @@
         $('#loading').css('display', '');
         let value = $('#search-code').val();
         if (value === '') {
+          $('#loading').css('display', 'none');
           alert('Empty input!');
           return;
         }

@@ -25,6 +25,9 @@ else {
  * @key block_acc (lưu lại trạng thái user nhập code sai quá nhiều. Nếu thỏa rule => khóa acc)
  * rule_1: { count: //số lần nhập sai, time: thời gian user bắt đầu nhập sai }
  * rule_2: { count: //số lần nhập sai, time: thời gian user bắt đầu nhập sai }
+ * 
+ * @field special_item (chứa quà đặc biệt được set ở admin tool)
+ * format: {id}_{millisecond}  //id: id của quà được set, millisecond: thời gian user được set quà
  */
 
 const dataInitUser = {
@@ -46,6 +49,7 @@ const dataInitUser = {
     rule_1      : { count: 0, time: 0 },
     rule_2      : { count: 0, time: 0 }
   },
+  special_item  : [],
   phone         : '',
   userID        : '',
   name          : '',
@@ -145,6 +149,7 @@ const verifyUserRoute = async (app, opt) => {
         "last_update_time": "",
         "operator": "",
         "os_version": "",
+        "os": platform,
         "platform": platform,
         "product": "",
         "sdk": "23",
