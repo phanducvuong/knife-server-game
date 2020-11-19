@@ -1,11 +1,19 @@
 const DS                  = require('../../repository/datastore');
 const dashboardFunc       = require('../functions/dashboard_func');
 const util                = require('../../utils/util');
+const jwt                 = require('../../utils/jwt');
+const signinFunc          = require('../functions/signin_func');
 
 const dashboardRoute = async (app, opt) => {
 
-  app.get('/', async (req, rep) => {
+  app.get('/:token', async (req, rep) => {
     try {
+
+      let token = req.params.token;
+      if (!jwt.verify(token, signinFunc.SECRETE)) {
+        rep.redirect('/api/v1/admin/signin');
+        return;
+      }
 
       let date = new Date();
       date.setHours(0, 0, 0, 0);

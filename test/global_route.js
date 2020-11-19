@@ -7,6 +7,7 @@ const sendMail      = require('../utils/send_mail');
 const topup         = require('../repository/topup');
 const readCode      = require('./read_code');
 const genstr        = require('../utils/generate_string');
+const jwt           = require('../utils/jwt');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -583,6 +584,19 @@ const globalRoute = async (app, opt) => {
   app.post('/insert-code-fail', async (req, rep) => {
     DS.DSInsertCodeUserInputFailed('log_code_fail', { code: 'jdhakjdsa', time: new Date().getTime() });
     rep.send('ok');
+  });
+
+  app.post('/signin', async (req, rep) => {
+    let mailer = req.body.mailer;
+    let result = jwt.sign(mailer, 'abc');
+    rep.send(result);
+  });
+
+  app.get('/verify', async (req, rep) => {
+    let headers = req.headers['authorization'];
+    let token   = headers.split(' ')[1];
+    let decode  = jwt.verify(token, 'abc');
+    rep.send(decode);
   });
 
 }

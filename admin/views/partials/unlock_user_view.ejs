@@ -1,0 +1,134 @@
+<%- include('../layouts/header') %>
+
+  <div class="content-wrapper">
+    <section class="content">
+      <div style="background-color: white;">
+        <div class="div-all-item">
+          <label class="time-right">Tìm Kiếm</label>
+          <input  style="outline-style: none; margin-right: 15px;" type="text"
+                  id="search-user" class="col-3 time-right"
+                  value="" placeholder="Mega ID">
+
+          <button style="width: 80px; height: 32px;" class="btn-update-global time-right" id="btn-search-user">TÌM</button>
+        </div>
+
+        <table id="table-info-user" class="footable table table-stripped">
+          <thead>
+            <tr>
+              <th style="font-weight: bold;">MEGA ID</th>
+              <th style="font-weight: bold;">TÊN</th>
+              <th style="font-weight: bold;">TRẠNG THÁI</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    
+    $(document).ready(() => {
+
+      $('#btn-search-user').click(() => {
+        let megaID = $('#search-user').val();
+        if (megaID === '') {
+          alert('Check info data!');
+          return;
+        }
+
+        $.ajax({
+          url               : env.http + window.location.host + '/api/v1/admin/unlock/get-user-by-mega-id',
+          method            : 'POST',
+          contentType       : 'application/json; charset=utf-8',
+          data              : JSON.stringify({
+            mega_id         : megaID
+          })
+        })
+          .done((data) => {
+
+            if (data['status_code'] !== 2000) {
+              alert(data['error']);
+              return;
+            }
+            setDataToTable(data);
+
+          })
+          .fail(() => {});
+      });
+      
+      $('body').delegate('.unlock-user', 'click', (event) => {
+        let megaID = event.currentTarget.attributes.getNamedItem('data-id').value;
+        if (megaID === '') {
+          alert('User not exist!');
+          return;
+        }
+
+        $.ajax({
+          url             : env.http + window.location.host + '/api/v1/admin/unlock/unlock-user',
+          method          : 'POST',
+          contentType     : 'application/json; charset=utf-8',
+          data            : JSON.stringify({
+            mega_id       : megaID
+          })
+        })
+          .done((data) => {
+
+            if (data['status_code'] !== 2000) {
+              alert(data['error']);
+              return;
+            }
+            alert(data['msg']);
+            setDataToTable(data);
+
+          })
+          .fail(() => {});
+      });
+
+    });
+
+    function setDataToTable(data) {
+      $('#table-info-user tbody').remove();
+      let markup = `
+        <tbody>
+          <tr>
+            <td>${data['mega_id']}</td>
+            <td>${data['name']}</td>
+      `;
+
+      if (data['status']) {
+        markup += `
+            <td>Đang Khóa</td>
+            <td class="text-right">
+              <div class="btn-group">
+                <a href="#" class="unlock-user" data-id="${data['mega_id']}">Mở Khóa Acc</a>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+        `;
+      }
+      else {
+        markup += `
+              <td>-</td>
+            </tr>
+          </tbody>
+        `;
+      }
+
+      $('#table-info-user').append(markup);
+    }
+
+  </script>
+
+<%- include('../layouts/footer') %>
+
+<td class="text-right">
+  <div class="btn-group">
+    <a href="#" class="edtPartition" data-id="${e['pos']}" data-toggle="modal"
+        data-target="#modalAddPartition">Edit</a>
+    <a href="#" class="deletePartition" data-id="${e['pos']}"
+        style="margin-left: 20px">Delete</a>
+  </div>
+</td>

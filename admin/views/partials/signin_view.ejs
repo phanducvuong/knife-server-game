@@ -1,0 +1,96 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
+
+    <title>Signin Template for Bootstrap</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sign-in/">
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="/public/vendor_components/bootstrap/dist/css/bootstrap.css">
+
+    <!-- Custom styles for this template -->
+    <link href="/public/css/signin.css" rel="stylesheet">
+  </head>
+
+  <body class="text-center">
+    <form class="form-signin">
+      <img class="mb-4" src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
+      <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+      <label for="input-mail" class="sr-only">Email address</label>
+      <input type="email" id="input-mail" class="form-control" placeholder="Email address" required autofocus>
+      <label id="label-token" for="input-token" class="sr-only">Token</label>
+      <input type="password" id="input-token" class="form-control" placeholder="Token" required>
+      <!-- <div class="checkbox mb-3">
+        <label>
+          <input type="checkbox" value="remember-me"> Remember me
+        </label>
+      </div> -->
+
+      <br>
+      <br>
+
+      <button id="btn-sign-in" class="btn btn-lg btn-primary btn-block" type="submit">Check</button>
+      <p class="mt-5 mb-3 text-muted">&copy; 2020-2021</p>
+    </form>
+  </body>
+
+  <script src="/public/vendor_components/jquery/dist/jquery.js"></script>
+
+  <script>
+    $(document).ready(() => {
+
+      hideInputToken();
+
+      $('#btn-sign-in').click(() => {
+        let text = $('#btn-sign-in').text();
+        if (text === 'Check') {
+          callApiGetToken($('#input-mail').val());
+        }
+        else {
+          let mailer  = $('#input-mail').val();
+          let token   = $('#input-token').val();
+          callApiSignin(mailer, token);
+        }
+      });
+
+    });
+
+    function callApiGetToken(mailer) {
+      $.ajax({
+
+      })
+        .done((data) => {
+
+          if (data['status_code'] !== 2000) {
+            alert(data['error']);
+            return;
+          }
+          showInputToken();
+
+        })
+        .fail(() => {});
+    }
+
+    function callApiSignin(mailer, token) {
+
+    }
+
+    function hideInputToken() {
+      $('#label-token').css('display', 'none');
+      $('#input-token').css('display', 'none');
+    }
+
+    function showInputToken() {
+      $('#label-token').css('display', '');
+      $('#input-token').css('display', '');
+    }
+  </script>
+
+</html>

@@ -1,5 +1,8 @@
 const itemFunc              = require('../functions/item_func');
+const redisClient           = require('../../redis/redis_client');
 const DS                    = require('../../repository/datastore');
+const jwt                   = require('../../utils/jwt');
+const signinFunc            = require('../functions/signin_func');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -11,8 +14,14 @@ else {
 
 const itemRoute = async (app, opt) => {
 
-  app.get('/get-all-item', async (req, rep) => {
+  app.get('/get-all-item/:token', async (req, rep) => {
     try {
+
+      let token = req.params.token;
+      if (!jwt.verify(token, signinFunc.SECRETE)) {
+        rep.redirect('/api/v1/admin/signin');
+        return;
+      }
 
       let lsFilter = await itemFunc.filterOptionItem();
       rep.view('/partials/item_view.ejs', {
@@ -90,10 +99,11 @@ const itemRoute = async (app, opt) => {
       let itemSpecial = config.SPECIAL_ITEM.find(e => { return e['id'] === idItem });
       let dataUser    = await DS.DSGetDataUser(megaID, 'turn_inven');
       if (dataUser === null || dataUser === undefined || itemSpecial === null || itemSpecial === undefined) {
-        throw `${megaID} or ${idItem} is not exist!`
+        throw `${megaID} or ${idItem} is not exist!`;
       }
 
       dataUser['special_item'].push(`${idItem}_${date.getTime()}`);
+      redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
       DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
 
       rep.send({

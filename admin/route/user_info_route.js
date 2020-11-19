@@ -1,9 +1,17 @@
 const userInfoFunc            = require('../functions/user_info_func');
+const jwt                     = require('../../utils/jwt');
+const signinFunc              = require('../functions/signin_func');
 
 const userInfoRoute = async (app, opt) => {
 
-  app.get('/', async (req, rep) => {
+  app.get('/:token', async (req, rep) => {
     try {
+
+      let token = req.params.token;
+      if (!jwt.verify(token, signinFunc.SECRETE)) {
+        rep.redirect('/api/v1/admin/signin');
+        return;
+      }
 
       let lsAllUserInfo = await userInfoFunc.getAllUser();
       rep.view('/partials/user_info_view.ejs', {
@@ -48,8 +56,14 @@ const userInfoRoute = async (app, opt) => {
     }
   });
 
-  app.get('/general', async (req, rep) => {
+  app.get('/general/:token', async (req, rep) => {
     try {
+
+      let token = req.params.token;
+      if (!jwt.verify(token, signinFunc.SECRETE)) {
+        rep.redirect('/api/v1/admin/signin');
+        return;
+      }
 
       let lsAllDataUser = await userInfoFunc.getAllDataUser();
       let lsGeneral     = userInfoFunc.getGeneralInfo(lsAllDataUser);
@@ -67,8 +81,14 @@ const userInfoRoute = async (app, opt) => {
     }
   });
 
-  app.get('/turnning', async (req, rep) => {
+  app.get('/turnning/:token', async (req, rep) => {
     try {
+
+      let token = req.params.token;
+      if (!jwt.verify(token, signinFunc.SECRETE)) {
+        rep.redirect('/api/v1/admin/signin');
+        return;
+      }
 
       let lsAllDataUser     = await userInfoFunc.getAllDataUser();
       let lsHistoryAllUser  = await userInfoFunc.getHistoryAllUser(lsAllDataUser);
@@ -90,8 +110,14 @@ const userInfoRoute = async (app, opt) => {
     }
   });
 
-  app.get('/enter-code', async (req, rep) => {
+  app.get('/enter-code/:token', async (req, rep) => {
     try {
+
+      let token = req.params.token;
+      if (!jwt.verify(token, signinFunc.SECRETE)) {
+        rep.redirect('/api/v1/admin/signin');
+        return;
+      }
 
       let lsAllDataUser = await userInfoFunc.getAllDataUser();
       let result        = userInfoFunc.getEnterCodeInfo(lsAllDataUser);
@@ -109,8 +135,14 @@ const userInfoRoute = async (app, opt) => {
     }
   });
 
-  app.get('/get-log-code-fail', async (req, rep) => {
+  app.get('/get-log-code-fail/:token', async (req, rep) => {
     try {
+
+      let token = req.params.token;
+      if (!jwt.verify(token, signinFunc.SECRETE)) {
+        rep.redirect('/api/v1/admin/signin');
+        return;
+      }
 
       let result = await userInfoFunc.getAllCodeFail();
       rep.view('/partials/user_enter_code_fail_view.ejs', {

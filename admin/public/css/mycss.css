@@ -126,7 +126,7 @@ input::-webkit-inner-spin-button {
   left: 30%;
 }
 
-#time-sel-item, #search-code {
+#time-sel-item, #search-code, #search-user {
   left: 31%;
   border-style: solid;
   border-color: #8080802b;
@@ -225,4 +225,8 @@ input::-webkit-inner-spin-button {
 .pagination-custom > a:hover:not(.active-page):not(.three-dot) {background-color: #ddd;}
 .three-dot {
   cursor: default;
+}
+
+.unlock-user {
+  color: red;
 }

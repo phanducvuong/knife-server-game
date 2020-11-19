@@ -140,7 +140,7 @@ async function resetDataUser() {
         dataUser['events'][2] = 0;
       }
 
-      if (!profileFunc.isBlockAcc(dataUser['block_acc'])) {
+      if (profileFunc.isBlockAcc(dataUser['block_acc'])['status'] === false) {
         dataUser['block_acc'] = profileFunc.resetBlockAccUser(dataUser['block_acc']);
       } //reset block acc user if user isn't blocked
 
