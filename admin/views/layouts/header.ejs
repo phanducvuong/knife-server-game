@@ -103,7 +103,7 @@
 
         <!-- Trang chủ /api/v1/admin/dashboard/ -->
         <li>
-          <a href="#" onclick="callApi('/api/v1/admin/dashboard/')">
+          <a href="#" onclick="callApi('/api/v1/admin/dashboard')">
             <i class="fa fa-dashboard"></i> <span>TRANG CHỦ</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-right pull-right"></i>
@@ -113,7 +113,7 @@
 
         <!-- DANH SÁCH QUÀ -->
         <li>
-          <a href="#" onclick="callApi('/api/v1/admin/item/get-all-item/')">
+          <a href="#" onclick="callApi('/api/v1/admin/item/get-all-item')">
             <i class="fa fa-th"></i>
             <span>DANH SÁCH VẬT PHẨM</span>
             <span class="pull-right-container">
@@ -124,9 +124,31 @@
         
         <!-- CHECK CODE -->
         <li>
-          <a href="#" onclick="callApi('/api/v1/admin/code/')">
+          <a href="#" onclick="callApi('/api/v1/admin/code')">
             <i class="fa fa-check"></i>
             <span>KIỂM TRA MÃ DỰ THƯỞNG</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-right pull-right"></i>
+            </span>
+          </a>
+        </li>
+
+        <!-- ADD SPECIAL ITEM -->
+        <li>
+          <a href="#" onclick="callApi('/api/v1/admin/item/view-add-special-item')" id="ls-item">
+            <i class="fa fa-gift"></i>
+            <span>THÊM QUÀ ĐẶC BIỆT</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-right pull-right"></i>
+            </span>
+          </a>
+        </li>
+
+        <!-- UNLOCK USER -->
+        <li>
+          <a href="#" onclick="callApi('/api/v1/admin/unlock')" id="ls-item">
+            <i class="fa fa-unlock"></i>
+            <span>MỞ KHÓA ACC</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-right pull-right"></i>
             </span>
@@ -142,33 +164,11 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="#" onclick="callApi('/api/v1/admin/user-info/general/')">Thông Tin Chung</a></li>
-            <li><a href="#" onclick="callApi('/api/v1/admin/user-info/turnning/')">Lượt Chơi</a></li>
-            <li><a href="#" onclick="callApi('/api/v1/admin/user-info/enter-code/')">Nhập Code</a></li>
-            <li><a href="#" onclick="callApi('/api/v1/admin/user-info/get-log-code-fail/')">Code Failed</a></li>
+            <li><a href="#" onclick="callApi('/api/v1/admin/user-info/general')">Thông Tin Chung</a></li>
+            <li><a href="#" onclick="callApi('/api/v1/admin/user-info/turnning')">Lượt Chơi</a></li>
+            <li><a href="#" onclick="callApi('/api/v1/admin/user-info/enter-code')">Nhập Code</a></li>
+            <li><a href="#" onclick="callApi('/api/v1/admin/user-info/get-log-code-fail')">Code Failed</a></li>
           </ul>
-        </li>
-
-        <!-- ADD SPECIAL ITEM -->
-        <li>
-          <a href="#" onclick="callApi('/api/v1/admin/item/view-add-special-item/')" id="ls-item">
-            <i class="fa fa-check"></i>
-            <span>THÊM QUÀ ĐẶC BIỆT</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-right pull-right"></i>
-            </span>
-          </a>
-        </li>
-
-        <!-- UNLOCK USER -->
-        <li>
-          <a href="#" onclick="callApi('/api/v1/admin/unlock/')" id="ls-item">
-            <i class="fa fa-check"></i>
-            <span>MỞ KHÓA ACC</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-right pull-right"></i>
-            </span>
-          </a>
         </li>
 
         <!-- CONFIG -->
@@ -181,14 +181,14 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="#" onclick="callApi('/api/v1/admin/setup/get-config-partition/')">Partition</a></li>
-            <li><a href="#" onclick="callApi('/api/v1/admin/setup/get-config-item/')">Item</a></li>
-            <li><a href="#" onclick="callApi('/api/v1/admin/setup/get-config-event/')">Event</a></li>
-            <li><a href="#" onclick="callApi('/api/v1/admin/setup/get-config-mission/')">Mission</a></li>
-            <li><a href="#" onclick="callApi('/api/v1/admin/setup/get-config-black-list/')">Black List</a></li>
-            <li><a href="#" onclick="callApi('/api/v1/admin/setup/get-supporting-item/')">Supporting Item</a></li>
-            <li><a href="#" onclick="callApi('/api/v1/admin/setup/get-config-global/')">Global</a></li>
-            <li><a href="#" onclick="callApi('/api/v1/admin/setup/get-config-block-acc/')">Block Acc</a></li>
+            <li><a href="#" onclick="callApi('/api/v1/admin/setup/get-config-partition')">Partition</a></li>
+            <li><a href="#" onclick="callApi('/api/v1/admin/setup/get-config-item')">Item</a></li>
+            <li><a href="#" onclick="callApi('/api/v1/admin/setup/get-config-event')">Event</a></li>
+            <li><a href="#" onclick="callApi('/api/v1/admin/setup/get-config-mission')">Mission</a></li>
+            <li><a href="#" onclick="callApi('/api/v1/admin/setup/get-config-black-list')">Black List</a></li>
+            <li><a href="#" onclick="callApi('/api/v1/admin/setup/get-supporting-item')">Supporting Item</a></li>
+            <li><a href="#" onclick="callApi('/api/v1/admin/setup/get-config-global')">Global</a></li>
+            <li><a href="#" onclick="callApi('/api/v1/admin/setup/get-config-block-acc')">Block Acc</a></li>
           </ul>
         </li>
       </ul>
@@ -203,7 +203,7 @@
     
     function callApi(url) {
       console.log(url);
-      window.location.href = url + localStorage.getItem('token');
+      window.location.href = url + '?token=' + localStorage.getItem('token');
     }
 
   </script>

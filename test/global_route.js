@@ -599,6 +599,16 @@ const globalRoute = async (app, opt) => {
     rep.send(decode);
   });
 
+  app.post('/add-admin', async (req, rep) => {
+    let administrator = req.body.admin;
+    DS.DSUpdateDataGlobal('administrators', administrator, {
+      mail  : administrator,
+      token : '',
+      rule  : []
+    });
+    rep.send('ok');
+  });
+
 }
 
 module.exports = globalRoute;

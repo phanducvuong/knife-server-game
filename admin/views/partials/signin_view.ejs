@@ -17,6 +17,8 @@
 
     <!-- Custom styles for this template -->
     <link href="/public/css/signin.css" rel="stylesheet">
+
+    <script src="/public/js/env.js"></script>
   </head>
 
   <body class="text-center">
@@ -36,7 +38,8 @@
       <br>
       <br>
 
-      <button id="btn-sign-in" class="btn btn-lg btn-primary btn-block" type="submit">Check</button>
+      <button id="btn-get-token" class="btn btn-lg btn-primary btn-block" type="submit">Get Token</button>
+      <button  id="btn-sign-inn" class="btn btn-lg btn-primary btn-block" type="submit">Sign In</button>
       <p class="mt-5 mb-3 text-muted">&copy; 2020-2021</p>
     </form>
   </body>
@@ -48,46 +51,73 @@
 
       hideInputToken();
 
+      $('#btn-get-token').click(() => {
+        // let text = $('#btn-sign-in').text();
+        // callApiGetToken($('#input-mail').val());
+        showInputToken();
+      });
+
       $('#btn-sign-in').click(() => {
-        let text = $('#btn-sign-in').text();
-        if (text === 'Check') {
-          callApiGetToken($('#input-mail').val());
-        }
-        else {
-          let mailer  = $('#input-mail').val();
-          let token   = $('#input-token').val();
-          callApiSignin(mailer, token);
-        }
+        // let mailer  = $('#input-mail').val();
+        // let token   = $('#input-token').val();
+        // console.log(token);
+        // callApiSignin(mailer, token);
+        window.location.replace(env.http + window.location.host + '/api/v1/admin/dashboard?token=' + 'asdjsajd');
       });
 
     });
 
     function callApiGetToken(mailer) {
-      $.ajax({
+      // $.ajax({
+      //   url           : env.http + window.location.host + '/api/v1/admin/signin/get-token',
+      //   method        : 'POST',
+      //   contentType   : 'application/json; charset=utf-8',
+      //   data          : JSON.stringify({
+      //     mailer      : mailer
+      //   })
+      // })
+      //   .done((data) => {
 
-      })
-        .done((data) => {
+      //     if (data['status_code'] !== 2000) {
+      //       alert(data['error']);
+      //       return;
+      //     }
+      //     showInputToken();
 
-          if (data['status_code'] !== 2000) {
-            alert(data['error']);
-            return;
-          }
-          showInputToken();
-
-        })
-        .fail(() => {});
+      //   })
+      //   .fail(() => {});
     }
 
     function callApiSignin(mailer, token) {
+      // $.ajax({
+      //   url               : env.http + window.location.host + '/api/v1/admin/signin/sign-in',
+      //   method            : 'POST',
+      //   contentType       : 'application/json; charset=utf-8',
+      //   data              : JSON.stringify({
+      //     token           : token
+      //   })
+      // })
+      //   .done((data) => {
 
+      //     if (data['status_code'] !== 2000) {
+      //       alert(data['error']);
+      //       return;
+      //     }
+      //     window.location.replace(env.http + window.location.host + '/api/v1/admin/dashboard?token=' + data['token']);
+      //   })
+      //   .fail(() => {});
     }
 
     function hideInputToken() {
+      $('#btn-get-token').css('display', '');
+      $('#btn-sign-in').css('display', 'none');
       $('#label-token').css('display', 'none');
       $('#input-token').css('display', 'none');
     }
 
     function showInputToken() {
+      $('#btn-get-token').css('display', 'none');
+      $('#btn-sign-in').css('display', '');
       $('#label-token').css('display', '');
       $('#input-token').css('display', '');
     }

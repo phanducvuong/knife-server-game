@@ -6,11 +6,11 @@ const signinFunc          = require('../functions/signin_func');
 
 const dashboardRoute = async (app, opt) => {
 
-  app.get('/:token', async (req, rep) => {
+  app.get('/', async (req, rep) => {
     try {
 
-      let token = req.params.token;
-      if (!jwt.verify(token, signinFunc.SECRETE)) {
+      let token   = req.query.token;
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
@@ -53,6 +53,16 @@ const dashboardRoute = async (app, opt) => {
   app.post('/get-unique-user', async (req, rep) => {
     try {
 
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
+
       let fromDate    = req.body.from_date.toString().trim();
       let toDate      = req.body.to_date.toString().trim();
 
@@ -89,6 +99,16 @@ const dashboardRoute = async (app, opt) => {
   app.post('/get-newbie-user', async (req, rep) => {
     try {
 
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
+
       let date = new Date(req.body.date_str.toString().trim());
       if (isNaN(date.getTime())) throw 'Invalid date!';
 
@@ -115,6 +135,16 @@ const dashboardRoute = async (app, opt) => {
 
   app.post('/get-total-turn-create', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let date = new Date(req.body.date_str.toString().trim());
       if (isNaN(date.getTime())) throw 'Invalid date!';
@@ -143,6 +173,16 @@ const dashboardRoute = async (app, opt) => {
   app.post('/get-total-turn-used', async (req, rep) => {
     try {
 
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
+
       let date = new Date(req.body.date_str.toString().trim());
       if (isNaN(date.getTime())) throw 'Invalid date!';
 
@@ -169,6 +209,16 @@ const dashboardRoute = async (app, opt) => {
 
   app.post('/get-total-turn-remain', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let date = new Date(req.body.date_str.toString().trim());
       if (isNaN(date.getTime())) throw 'Invalid date!';

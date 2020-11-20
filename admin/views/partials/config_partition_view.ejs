@@ -250,11 +250,21 @@
 
 			$.ajax({
 				url					: env.http + window.location.host + '/api/v1/admin/setup/get-all-item',
+				headers			: {
+					'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+					'Content-Type'	:'application/json'
+				},
 				method			: 'GET'
 			})
 				.done((data) => {
 
 					if (data['status_code'] !== 2000) {
+
+						if (data['error'] === 'unvalid token') {
+							window.location.href = env.http + window.location.host + '/api/v1/admin/signin';
+							return;
+						}
+
 						alert(data['error']);
 						return;
 					}
@@ -339,12 +349,22 @@
 			$.ajax({
 				url					: env.http + window.location.host + '/api/v1/admin/setup/delete-partition',
 				method			: 'POST',
+				headers       : {
+					'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+					'Content-Type'	:'application/json'
+				},
 				contentType	: 'application/json; charset=utf-8',
 				data				: JSON.stringify({ pos	: pos })
 			})
 				.done((data) => {
 					
 					if (data['status_code'] !== 2000) {
+
+						if (data['error'] === 'unvalid token') {
+							window.location.href = env.http + window.location.host + '/api/v1/admin/signin';
+							return;
+						}
+
 						alert(data['error']);
 						return;
 					}
@@ -374,12 +394,22 @@
 			$.ajax({
 				url					: env.http + window.location.host + '/api/v1/admin/setup/get-partition-by-id',
 				method			: 'POST',
+				headers       : {
+					'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+					'Content-Type'	:'application/json'
+				},
 				contentType	: 'application/json; charset=utf-8',
 				data				: JSON.stringify({ pos	: pos })
 			})
 				.done((data) => {
 
 					if (data['status_code'] !== 2000) {
+
+						if (data['error'] === 'unvalid token') {
+							window.location.href = env.http + window.location.host + '/api/v1/admin/signin';
+							return;
+						}
+
 						alert(data['error']);
 						return;
 					}
@@ -434,6 +464,10 @@
 			$.ajax({
 				url					: env.http + window.location.host + '/api/v1/admin/setup/update-board',
 				method			: 'POST',
+				headers       : {
+          'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type'	:'application/json'
+        },
 				contentType	: 'application/json; charset=utf-8',
 				data				: JSON.stringify({
 					partition					: partition,
@@ -446,10 +480,15 @@
 				.done((data) => {
 
 					if (data['status_code'] !== 2000) {
+
+						if (data['error'] === 'unvalid token') {
+							window.location.href = env.http + window.location.host + '/api/v1/admin/signin';
+							return;
+						}
+
 						alert(data['error']);
 						return;
 					}
-
 					alert('success');
 
 				})
@@ -585,6 +624,10 @@
 		$.ajax({
 			url					: url,
 			method			: 'POST',
+			headers       : {
+				'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+				'Content-Type'	:'application/json'
+			},
 			contentType	: 'application/json; charset=utf-8',
 			data				: JSON.stringify({
 				id			: id,
@@ -596,6 +639,12 @@
 			.done((data) => {
 
 				if (data['status_code'] !== 2000) {
+
+					if (data['error'] === 'unvalid token') {
+						window.location.href = env.http + window.location.host + '/api/v1/admin/signin';
+						return;
+					}
+
 					alert(data['error']);
 					return;
 				}

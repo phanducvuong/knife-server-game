@@ -4,11 +4,11 @@ const signinFunc              = require('../functions/signin_func');
 
 const userInfoRoute = async (app, opt) => {
 
-  app.get('/:token', async (req, rep) => {
+  app.get('/', async (req, rep) => {
     try {
 
-      let token = req.params.token;
-      if (!jwt.verify(token, signinFunc.SECRETE)) {
+      let token   = req.query.token;
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
@@ -30,6 +30,16 @@ const userInfoRoute = async (app, opt) => {
 
   app.post('/detail', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let megaID = req.body.mega_id.toString().trim();
       if (megaID === null || megaID === undefined) throw 'MegaID is invalid!';
@@ -56,11 +66,11 @@ const userInfoRoute = async (app, opt) => {
     }
   });
 
-  app.get('/general/:token', async (req, rep) => {
+  app.get('/general', async (req, rep) => {
     try {
 
-      let token = req.params.token;
-      if (!jwt.verify(token, signinFunc.SECRETE)) {
+      let token   = req.query.token;
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
@@ -81,11 +91,11 @@ const userInfoRoute = async (app, opt) => {
     }
   });
 
-  app.get('/turnning/:token', async (req, rep) => {
+  app.get('/turnning', async (req, rep) => {
     try {
 
-      let token = req.params.token;
-      if (!jwt.verify(token, signinFunc.SECRETE)) {
+      let token   = req.query.token;
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
@@ -110,11 +120,11 @@ const userInfoRoute = async (app, opt) => {
     }
   });
 
-  app.get('/enter-code/:token', async (req, rep) => {
+  app.get('/enter-code', async (req, rep) => {
     try {
 
-      let token = req.params.token;
-      if (!jwt.verify(token, signinFunc.SECRETE)) {
+      let token   = req.query.token;
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
@@ -135,11 +145,11 @@ const userInfoRoute = async (app, opt) => {
     }
   });
 
-  app.get('/get-log-code-fail/:token', async (req, rep) => {
+  app.get('/get-log-code-fail', async (req, rep) => {
     try {
 
-      let token = req.params.token;
-      if (!jwt.verify(token, signinFunc.SECRETE)) {
+      let token   = req.query.token;
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
         rep.redirect('/api/v1/admin/signin');
         return;
       }

@@ -46,6 +46,10 @@
         $.ajax({
           url             : env.http + window.location.host + '/api/v1/admin/code/check',
           method          : 'POST',
+          headers       : {
+            'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type'	:'application/json'
+          },
           contentType     : 'application/json; charset=uth-8',
           data            : JSON.stringify({
             code          : value
@@ -54,6 +58,12 @@
           .done((data) => {
 
             if (data['status_code'] !== 2000) {
+
+              if (data['error'] === 'unvalid token') {
+                window.location.href = env.http + window.location.host + '/api/v1/admin/signin';
+                return;
+              }
+
               $('#loading').css('display', 'none');
               $('#table-info-code tbody').remove();
               alert(data['error']);

@@ -1,11 +1,19 @@
 const DS              = require('../../repository/datastore');
 const redisClient     = require('../../redis/redis_client');
 const profileFunc     = require('../../functions/profile_user_func');
+const jwt             = require('../../utils/jwt');
+const signinFunc      = require('../functions/signin_func');
 
 const unlockUserRoute = async (app, opt) => {
 
   app.get('/', async (req, rep) => {
     try {
+
+      let token   = req.query.token;
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        rep.redirect('/api/v1/admin/signin');
+        return;
+      }
 
       rep.view('/partials/unlock_user_view.ejs');
 
@@ -21,6 +29,16 @@ const unlockUserRoute = async (app, opt) => {
 
   app.post('/get-user-by-mega-id', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let megaID    = req.body.mega_id.toString().trim();
       let dataUser  = await DS.DSGetDataUser(megaID, 'turn_inven');
@@ -51,6 +69,16 @@ const unlockUserRoute = async (app, opt) => {
 
   app.post('/unlock-user', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let megaID    = req.body.mega_id.toString().trim();
       let dataUser  = await DS.DSGetDataUser(megaID, 'turn_inven');

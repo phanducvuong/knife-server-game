@@ -105,6 +105,34 @@ exports.DSInsertLuckyCode = (kind, data) => {
   }
 }
 
+exports.DSIsExistMailer = async (kind, mailer) => {
+  try {
+    let query     = dbClient.createQuery(kind).filter('mail', '=', mailer);
+    let [result]  = await dbClient.runQuery(query);
+
+    if (result[0] === null || result[0] === undefined) return false;
+    return true;
+  }
+  catch(err) {
+    console.log(err);
+    return null;
+  }
+}
+
+exports.DSGetMailer = async (kind, mailer) => {
+  try {
+    let query     = dbClient.createQuery(kind).filter('mail', '=', mailer);
+    let [result]  = await dbClient.runQuery(query);
+
+    if (result[0] === null || result[0] === undefined) return null;
+    return result[0];
+  }
+  catch(err) {
+    console.log(err);
+    return null;
+  }
+}
+
 exports.DSGetAllItem = async () => {
   try {
     let query     = dbClient.createQuery('items');
@@ -236,19 +264,5 @@ exports.DSGetAllUser = async () => {
   catch(err) {
     console.log(err);
     return [];
-  }
-}
-
-exports.DSTestSaveData = async (data) => {
-  try {
-    let keyEntity = dbClient.key([`abc`, `abc`]);
-    let result    = await dbClient.save({
-      key     : keyEntity,
-      data    : data
-    });
-    return result;
-  }
-  catch(err) {
-    return err;
   }
 }

@@ -208,6 +208,10 @@
       $.ajax({
         url           : env.http + window.location.host + '/api/v1/admin/setup/get-config-mission-by-id',
         method        : 'POST',
+        headers       : {
+          'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type'	:'application/json'
+        },
         contentType   : 'application/json; charset=utf-8',
         data          : JSON.stringify({
           id          : dataID
@@ -216,6 +220,12 @@
         .done((data) => {
 
           if (data['status_code'] !== 2000) {
+
+            if (data['error'] === 'unvalid token') {
+              window.location.href = env.http + window.location.host + '/api/v1/admin/signin';
+              return;
+            }
+
             alert(data['error']);
             return;
           }
@@ -259,6 +269,10 @@
       $.ajax({
         url           : url,
         method        : 'POST',
+        headers       : {
+          'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type'	:'application/json'
+        },
         contentType   : 'application/json; charset=utf-8',
         data          : JSON.stringify({
           id            : id,
@@ -274,6 +288,12 @@
         .done((data) => {
 
           if (data['status_code'] !== 2000) {
+
+            if (data['error'] === 'unvalid token') {
+              window.location.href = env.http + window.location.host + '/api/v1/admin/signin';
+              return;
+            }
+
             alert(data['error']);
             return;
           }
@@ -297,12 +317,22 @@
       $.ajax({
         url         : env.http + window.location.host + '/api/v1/admin/setup/delete-mission',
         method      : 'POST',
+        headers       : {
+          'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type'	:'application/json'
+        },
         contentType : 'application/json; charset=utf-8',
         data        : JSON.stringify({ id: dataID })
       })
         .done((data) => {
 
           if (data['status_code'] !== 2000) {
+
+            if (data['error'] === 'unvalid token') {
+              window.location.href = env.http + window.location.host + '/api/v1/admin/signin';
+              return;
+            }
+
             alert(data['error']);
             return;
           }

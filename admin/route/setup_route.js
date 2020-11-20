@@ -2,6 +2,8 @@ const DS                = require('../../repository/datastore');
 const redisClient       = require('../../redis/redis_client');
 const setupFunc         = require('../functions/setup_func');
 const util              = require('../../utils/util');
+const jwt               = require('../../utils/jwt');
+const signinFunc        = require('../functions/signin_func');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -16,6 +18,16 @@ const setupRoute = async (app, opt) => {
   //setup partition
   app.post('/update-board', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let partition     = parseInt(req.body.partition, 10);
       let veloc         = parseInt(req.body.veloc, 10);
@@ -76,6 +88,12 @@ const setupRoute = async (app, opt) => {
   app.get('/get-config-partition', async (req, rep) => {
     try {
 
+      let token   = req.query.token;
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        rep.redirect('/api/v1/admin/signin');
+        return;
+      }
+
       let dataPartition = await DS.DSGetDataGlobal('admin', 'partitions');
       if (dataPartition === null || dataPartition === undefined) {
         dataPartition = {
@@ -105,6 +123,16 @@ const setupRoute = async (app, opt) => {
 
   app.post('/add-partition', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let id      = parseInt(req.body.id, 10);
       let name    = req.body.name.toString().trim();
@@ -224,6 +252,16 @@ const setupRoute = async (app, opt) => {
   app.post('/delete-partition', async (req, rep) => {
     try {
 
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
+
       let pos = parseInt(req.body.pos, 10);
       if (isNaN(pos)) throw `pos is NaN!`;
 
@@ -257,6 +295,16 @@ const setupRoute = async (app, opt) => {
 
   app.post('/get-partition-by-id', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let pos = parseInt(req.body.pos, 10);
       if (isNaN(pos)) throw `pos is NaN!`;
@@ -295,6 +343,16 @@ const setupRoute = async (app, opt) => {
 
   app.post('/update-partition', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let id      = parseInt(req.body.id, 10);
       let pos     = parseInt(req.body.pos, 10);
@@ -348,6 +406,12 @@ const setupRoute = async (app, opt) => {
   app.get('/get-config-item', async (req, rep) => {
     try {
 
+      let token   = req.query.token;
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        rep.redirect('/api/v1/admin/signin');
+        return;
+      }
+
       let data = await DS.DSGetAllItem();
       if (data === null || data === undefined) {
         data = [];
@@ -370,6 +434,16 @@ const setupRoute = async (app, opt) => {
 
   app.get('/get-all-item', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let lsItem = await DS.DSGetAllItem();
       if (lsItem === null || lsItem === undefined) {
@@ -396,6 +470,16 @@ const setupRoute = async (app, opt) => {
 
   app.post('/add-item', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let id      = parseInt(req.body.id, 10);
       let type    = parseInt(req.body.type, 10);
@@ -453,6 +537,16 @@ const setupRoute = async (app, opt) => {
   app.post('/delete-item', async (req, rep) => {
     try {
 
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
+
       let id                    = parseInt(req.body.id, 10);
       let [lsItem, partitions]  = await Promise.all([
         DS.DSGetAllItem(),
@@ -493,6 +587,16 @@ const setupRoute = async (app, opt) => {
   app.post('/get-item-by-id', async (req, rep) => {
     try {
 
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
+
       let id = parseInt(req.body.id, 10);
       if (isNaN(id)) throw `Id is not a number`;
 
@@ -518,6 +622,16 @@ const setupRoute = async (app, opt) => {
 
   app.post('/update-item', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let id      = parseInt(req.body.id, 10);
       let name    = req.body.name;
@@ -564,6 +678,16 @@ const setupRoute = async (app, opt) => {
   app.post('/recovery-data', async (req, rep) => {
     try {
 
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
+
       let partitions = await DS.DSGetDataGlobal('admin', 'partitions');
       if (partitions === null || partitions === undefined) throw 'recovery data failed!';
       redisClient.updatePartition(JSON.stringify(partitions));
@@ -598,6 +722,12 @@ const setupRoute = async (app, opt) => {
   app.get('/get-config-mission', async (req, rep) => {
     try {
 
+      let token = req.query.token;
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        rep.redirect('/api/v1/admin/signin');
+        return;
+      }
+
       let missionDS = await DS.DSGetDataGlobal('admin', 'missions');
 
       let lsMission;
@@ -626,6 +756,16 @@ const setupRoute = async (app, opt) => {
 
   app.post('/get-config-mission-by-id', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let id = parseInt(req.body.id, 10);
       if (isNaN(id)) throw 'Can not get misson!';
@@ -662,6 +802,16 @@ const setupRoute = async (app, opt) => {
 
   app.post('/add-mission', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let id          = parseInt(req.body.id, 10);
       let description = req.body.description.toString().trim();
@@ -757,6 +907,16 @@ const setupRoute = async (app, opt) => {
   app.post('/update-mission', async (req, rep) => {
     try {
 
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
+
       let id          = parseInt(req.body.id, 10);
       let description = req.body.description.toString().trim();
       let target      = parseInt(req.body.target, 10);
@@ -834,8 +994,57 @@ const setupRoute = async (app, opt) => {
     }
   });
 
+  app.post('/delete-mission', async (req, rep) => {
+    try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
+
+      let id = parseInt(req.body.id, 10);
+      if (isNaN(id)) throw '0. Delete mission failed!';
+
+      if (id === 0) throw 'Can not delete this mission!';
+
+      let missionDS = await DS.DSGetDataGlobal('admin', 'missions');
+      if (missionDS === null || missionDS === undefined) throw '1. Delete mission failed!';
+
+      let result = setupFunc.deleteMissionByID(missionDS['missions'], id);
+      if (!result['status']) throw result['msg'];
+
+      DS.DSUpdateDataGlobal('admin', 'missions', { missions: result['missionUpdate'] });
+      rep.send({
+        status_code   : 2000,
+        missionUpdate : result['missionUpdate']
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  //supporting item
   app.get('/get-supporting-item', async (req, rep) => {
     try {
+
+      let token   = req.query.token;
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        rep.redirect('/api/v1/admin/signin');
+        return;
+      }
 
       let supportItem = await DS.DSGetDataGlobal('admin', 'supporting_item');
       let lsSupportItem;
@@ -863,6 +1072,16 @@ const setupRoute = async (app, opt) => {
 
   app.post('/update-support-item', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let id          = parseInt(req.body.id, 10);
       let description = req.body.description.toString().trim();
@@ -909,41 +1128,20 @@ const setupRoute = async (app, opt) => {
     }
   });
 
-  app.post('/delete-mission', async (req, rep) => {
-    try {
-
-      let id = parseInt(req.body.id, 10);
-      if (isNaN(id)) throw '0. Delete mission failed!';
-
-      if (id === 0) throw 'Can not delete this mission!';
-
-      let missionDS = await DS.DSGetDataGlobal('admin', 'missions');
-      if (missionDS === null || missionDS === undefined) throw '1. Delete mission failed!';
-
-      let result = setupFunc.deleteMissionByID(missionDS['missions'], id);
-      if (!result['status']) throw result['msg'];
-
-      DS.DSUpdateDataGlobal('admin', 'missions', { missions: result['missionUpdate'] });
-      rep.send({
-        status_code   : 2000,
-        missionUpdate : result['missionUpdate']
-      });
-
-    }
-    catch(err) {
-
-      console.log(err);
-      rep.send({
-        status_code : 3000,
-        error       : err
-      });
-
-    }
-  });
-
   //setup event
   app.get('/get-config-event', async (req, rep) => {
     try {
+
+      let token   = req.query.token;
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        rep.redirect('/api/v1/admin/signin');
+        return;
+      }
+
+      if (!jwt.verify(token, signinFunc.SECRETE)) {
+        rep.redirect('/api/v1/admin/signin');
+        return;
+      }
 
       let eventDS = await DS.DSGetDataGlobal('admin', 'events');
 
@@ -973,11 +1171,20 @@ const setupRoute = async (app, opt) => {
   app.post('/get-event-by-id', async (req, rep) => {
     try {
 
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
+
       let idEvent = parseInt(req.body.id, 10);
       if (isNaN(idEvent)) throw 'Can not get event by id';
 
       let eventDS = await DS.DSGetDataGlobal('admin', 'events');
-
       let events;
       if (eventDS === null || eventDS === undefined) {
         events = config.EVENTS;
@@ -1008,6 +1215,16 @@ const setupRoute = async (app, opt) => {
 
   app.post('/add-event', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let id          = parseInt(req.body.id, 10);
       let description = req.body.description.toString().trim();
@@ -1100,6 +1317,16 @@ const setupRoute = async (app, opt) => {
 
   app.post('/update-event', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let id          = parseInt(req.body.id, 10);
       let description = req.body.description.toString().trim();
@@ -1199,6 +1426,16 @@ const setupRoute = async (app, opt) => {
   app.post('/delete-event', async (req, rep) => {
     try {
 
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
+
       let id = parseInt(req.body.id, 10);
       if (isNaN(id)) throw '0. Delete event failed!';
 
@@ -1230,6 +1467,16 @@ const setupRoute = async (app, opt) => {
 
   app.post('/update-time-event', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let startTime = req.body.start.toString().trim();
       let endTime   = req.body.end.toString().trim();
@@ -1272,8 +1519,20 @@ const setupRoute = async (app, opt) => {
     }
   });
 
+  //black list
   app.get('/get-config-black-list', async (req, rep) => {
     try {
+
+      let token   = req.query.token;
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        rep.redirect('/api/v1/admin/signin');
+        return;
+      }
+
+      if (!jwt.verify(token, signinFunc.SECRETE)) {
+        rep.redirect('/api/v1/admin/signin');
+        return;
+      }
 
       let lsBlackList;
       let tmp = await DS.DSGetDataGlobal('admin', 'black_list');
@@ -1298,8 +1557,17 @@ const setupRoute = async (app, opt) => {
   app.post('/add-user-black-list', async (req, rep) => {
     try {
 
-      let lsMegaCode  = req.body.mega_codes; 
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
 
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
+
+      let lsMegaCode = req.body.mega_codes; 
       if (lsMegaCode === null || lsMegaCode === undefined || lsMegaCode.length <= 0) throw 'Check info in form!';
 
       let lsBlackList;
@@ -1329,6 +1597,16 @@ const setupRoute = async (app, opt) => {
 
   app.post('/edit-user-black-list', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let megaID  = req.body.mega_codes.toString().trim();
       let status  = parseInt(req.body.status, 10);
@@ -1368,6 +1646,16 @@ const setupRoute = async (app, opt) => {
   app.post('/get-user-black-list-by-mega-code', async (req, rep) => {
     try {
 
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
+
       let megaID = req.body.mega_code.toString().trim();
       if (megaID === null || megaID === undefined) throw 'Unknow mega code!';
 
@@ -1398,6 +1686,16 @@ const setupRoute = async (app, opt) => {
 
   app.post('/del-user-black-list-by-mega-code', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let megaID = req.body.mega_code.toString().trim();
       if (megaID === null || megaID === undefined) throw 'Unknow mega code!';
@@ -1433,6 +1731,12 @@ const setupRoute = async (app, opt) => {
   //update countdown
   app.get('/get-config-global', async (req, rep) => {
     try {
+
+      let token   = req.query.token;
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        rep.redirect('/api/v1/admin/signin');
+        return;
+      }
 
       let [countDownDS, bonusEnterCodeDS, textShowDS] = await Promise.all([
         DS.DSGetDataGlobal('admin', 'count_down'),
@@ -1478,6 +1782,16 @@ const setupRoute = async (app, opt) => {
   app.post('/update-count-down', async (req, rep) => {
     try {
 
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
+
       let countDown = req.body.count_down;
       let time      = new Date(countDown);
       if (isNaN(time.getTime())) throw `Invalid date! ${countDown}`;
@@ -1510,6 +1824,16 @@ const setupRoute = async (app, opt) => {
   //update bonus enter code
   app.post('/update-bonus-enter-code', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let bonusTurn1          = parseInt(req.body.bonus_turn_1, 10);
       let bonusTurn2          = parseInt(req.body.bonus_turn_2, 10);
@@ -1552,6 +1876,16 @@ const setupRoute = async (app, opt) => {
   app.post('/update-text-show', async (req, rep) => {
     try {
 
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
+
       let text  = req.body.text.toString().trim();
       let count = parseInt(req.body.count, 10);
 
@@ -1585,6 +1919,17 @@ const setupRoute = async (app, opt) => {
   app.get('/get-config-block-acc', async (req, rep) => {
     try {
 
+      let token   = req.query.token;
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        rep.redirect('/api/v1/admin/signin');
+        return;
+      }
+
+      if (!jwt.verify(token, signinFunc.SECRETE)) {
+        rep.redirect('/api/v1/admin/signin');
+        return;
+      }
+
       let result = await DS.DSGetDataGlobal('admin', 'rule_block_acc');
       if (result === null || result === undefined) {
         result = config.RULE_BLOCK_ACC;
@@ -1612,6 +1957,16 @@ const setupRoute = async (app, opt) => {
 
   app.post('/update-block-acc', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let dataRules = req.body.rules;
       if (!setupFunc.isValidRules(dataRules)) {

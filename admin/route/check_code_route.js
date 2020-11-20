@@ -1,10 +1,18 @@
 const DS              = require('../../repository/datastore');
 const util            = require('../../utils/util');
+const jwt             = require('../../utils/jwt');
+const signinFunc      = require('../functions/signin_func');
 
 const checkCodeRoute = async (app, opt) => {
 
   app.get('/', async (req, rep) => {
     try {
+
+      let token   = req.query.token;
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        rep.redirect('/api/v1/admin/signin');
+        return;
+      }
 
       rep.view('/partials/check_code_view.ejs');
 
@@ -20,6 +28,16 @@ const checkCodeRoute = async (app, opt) => {
 
   app.post('/check', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let code    = req.body.code.toString().trim();
       let result  = await DS.DSGetCode('codes_test', util.genEnterCode(code.toUpperCase()));

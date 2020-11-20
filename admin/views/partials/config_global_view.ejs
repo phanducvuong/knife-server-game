@@ -130,6 +130,10 @@
       $.ajax({
         url           : env.http + window.location.host + '/api/v1/admin/setup/update-count-down',
         method        : 'POST',
+        headers       : {
+          'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type'	:'application/json'
+        },
         contentType   : 'application/json; charset=utf-8',
         data          : JSON.stringify({ count_down: countDownStr })
       })
@@ -137,6 +141,12 @@
 
           if (data['status_code'] !== 2000) {
             $('#loading').css('display', 'none');
+
+            if (data['error'] === 'unvalid token') {
+              window.location.href = env.http + window.location.host + '/api/v1/admin/signin';
+              return;
+            }
+
             alert(data['error']);
             return;
           }
@@ -166,6 +176,10 @@
       $.ajax({
         url           : env.http + window.location.host + '/api/v1/admin/setup/update-bonus-enter-code',
         method        : 'POST',
+        headers       : {
+          'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type'	:'application/json'
+        },
         contentType   : 'application/json; charset=utf-8',
         data          : JSON.stringify({
           bonus_turn_1        : bonusTurn1,
@@ -177,6 +191,12 @@
         .done((data) => {
 
           if (data['status_code'] !== 2000) {
+
+            if (data['error'] === 'unvalid token') {
+              window.location.href = env.http + window.location.host + '/api/v1/admin/signin';
+              return;
+            }
+
             alert(data['error']);
             $('#loading').css('display', 'none');
             return;
@@ -204,6 +224,10 @@
       $.ajax({
         url             : env.http + window.location.host + '/api/v1/admin/setup/update-text-show',
         method          : 'POST',
+        headers       : {
+          'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type'	:'application/json'
+        },
         contentType     : 'application/json; charset=utf-8',
         data            : JSON.stringify({
           text          : text,
@@ -213,6 +237,12 @@
         .done((data) => {
   
           if (data['status_code'] !== 2000) {
+
+            if (data['error'] === 'unvalid token') {
+              window.location.href = env.http + window.location.host + '/api/v1/admin/signin';
+              return;
+            }
+
             $('#loading').css('display', 'none');
             alert(data['error']);
             return;

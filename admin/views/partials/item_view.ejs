@@ -115,6 +115,10 @@
       $.ajax({
         url           : env.http + window.location.host + '/api/v1/admin/item/get-total-amount-item-by-id',
         method        : "POST",
+        headers       : {
+          'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type'	:'application/json'
+        },
         contentType   : 'application/json; charset=utf-8',
         data          : JSON.stringify({
           id_item     : idItem,
@@ -124,6 +128,12 @@
         .done((data) => {
           
           if (data['status_code'] !== 2000) {
+
+            if (data['error'] === 'unvalid token') {
+              window.location.href = env.http + window.location.host + '/api/v1/admin/signin';
+              return;
+            }
+
             alert(data['error']);
             $('#loading').css('display', 'none');
             return;

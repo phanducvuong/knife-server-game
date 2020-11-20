@@ -14,11 +14,11 @@ else {
 
 const itemRoute = async (app, opt) => {
 
-  app.get('/get-all-item/:token', async (req, rep) => {
+  app.get('/get-all-item', async (req, rep) => {
     try {
 
-      let token = req.params.token;
-      if (!jwt.verify(token, signinFunc.SECRETE)) {
+      let token   = req.query.token;
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
@@ -40,6 +40,16 @@ const itemRoute = async (app, opt) => {
 
   app.post('/get-total-amount-item-by-id', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let idItem  = parseInt(req.body.id_item, 10);
       let dateStr = req.body.date_str.toString().trim();
@@ -73,6 +83,12 @@ const itemRoute = async (app, opt) => {
   app.get('/view-add-special-item', async (req, rep) => {
     try {
 
+      let token   = req.query.token;
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        rep.redirect('/api/v1/admin/signin');
+        return;
+      }
+
       rep.view('/partials/add_special_item_view.ejs', {
         special_items : config.SPECIAL_ITEM
       });
@@ -89,6 +105,16 @@ const itemRoute = async (app, opt) => {
 
   app.post('/add-special-item', async (req, rep) => {
     try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token   = headers.split(' ')[1];
+      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+        throw `unvalid token`;
+      }
 
       let megaID  = req.body.mega_id.toString().trim();
       let idItem  = parseInt(req.body.id_item, 10);
