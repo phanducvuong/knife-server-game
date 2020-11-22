@@ -89,12 +89,9 @@
         <div class="image">
           <img src="/public/images/user2-160x160.jpg" class="rounded-circle" alt="User Image">
         </div>
-        <!-- <div class="info">
-          <p>Admin Template</p>
-          <a href="" class="link" data-toggle="tooltip" title="" data-original-title="Settings"><i class="ion ion-gear-b"></i></a>
-          <a href="" class="link" data-toggle="tooltip" title="" data-original-title="Email"><i class="ion ion-android-mail"></i></a>
-          <a href="" class="link" data-toggle="tooltip" title="" data-original-title="Logout"><i class="ion ion-power"></i></a>
-        </div> -->
+        <div class="info">
+          <a id="logout" href="#">Logout</a>
+        </div>
       </div>
       <!-- sidebar menu -->
       <ul class="sidebar-menu" data-widget="tree">
@@ -200,9 +197,25 @@
   </div>
 
   <script>
+
+    $(document).ready(() => {
+      $('#logout').click(() => {
+        $.ajax({
+          url               : env.http + window.location.host + '/api/v1/admin/signin/logout',
+          method            : 'POST',
+          contentType       : 'application/json; charset=utf-8',
+          data              : JSON.stringify({
+            mailer          : localStorage.getItem('mailer')
+          })
+        })
+          .done((data) => {
+            window.location.href = env.http + window.location.host + '/api/v1/admin/signin';
+          })
+          .fail(() => {});
+      });
+    });
     
     function callApi(url) {
-      console.log(url);
       window.location.href = url + '?token=' + localStorage.getItem('token');
     }
 

@@ -22,12 +22,12 @@
   </head>
 
   <body class="text-center">
-    <form class="form-signin">
+    <div class="from-group col-3">
       <img class="mb-4" src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
       <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-      <label for="input-mail" class="sr-only">Email address</label>
+      <label class="sr-only">Email address</label>
       <input type="email" id="input-mail" class="form-control" placeholder="Email address" required autofocus>
-      <label id="label-token" for="input-token" class="sr-only">Token</label>
+      <label id="label-token" class="sr-only">Token</label>
       <input type="password" id="input-token" class="form-control" placeholder="Token" required>
       <!-- <div class="checkbox mb-3">
         <label>
@@ -38,10 +38,10 @@
       <br>
       <br>
 
-      <button id="btn-get-token" class="btn btn-lg btn-primary btn-block" type="submit">Get Token</button>
-      <button  id="btn-sign-inn" class="btn btn-lg btn-primary btn-block" type="submit">Sign In</button>
+      <button id="btn-get-token" class="btn btn-lg btn-primary btn-block">Get Token</button>
+      <button id="btn-sign-in" class="btn btn-lg btn-primary btn-block">Sign In</button>
       <p class="mt-5 mb-3 text-muted">&copy; 2020-2021</p>
-    </form>
+    </div>
   </body>
 
   <script src="/public/vendor_components/jquery/dist/jquery.js"></script>
@@ -52,60 +52,60 @@
       hideInputToken();
 
       $('#btn-get-token').click(() => {
-        // let text = $('#btn-sign-in').text();
-        // callApiGetToken($('#input-mail').val());
-        showInputToken();
+        let text = $('#btn-sign-in').text();
+        callApiGetToken($('#input-mail').val());
       });
 
       $('#btn-sign-in').click(() => {
-        // let mailer  = $('#input-mail').val();
-        // let token   = $('#input-token').val();
-        // console.log(token);
-        // callApiSignin(mailer, token);
-        window.location.replace(env.http + window.location.host + '/api/v1/admin/dashboard?token=' + 'asdjsajd');
+        let mailer  = $('#input-mail').val();
+        let token   = $('#input-token').val();
+        callApiSignin(mailer, token);
       });
 
     });
 
     function callApiGetToken(mailer) {
-      // $.ajax({
-      //   url           : env.http + window.location.host + '/api/v1/admin/signin/get-token',
-      //   method        : 'POST',
-      //   contentType   : 'application/json; charset=utf-8',
-      //   data          : JSON.stringify({
-      //     mailer      : mailer
-      //   })
-      // })
-      //   .done((data) => {
+      $.ajax({
+        url           : env.http + window.location.host + '/api/v1/admin/signin/get-token',
+        method        : 'POST',
+        contentType   : 'application/json; charset=utf-8',
+        data          : JSON.stringify({
+          mailer      : mailer
+        })
+      })
+        .done((data) => {
 
-      //     if (data['status_code'] !== 2000) {
-      //       alert(data['error']);
-      //       return;
-      //     }
-      //     showInputToken();
+          if (data['status_code'] !== 2000) {
+            alert(data['error']);
+            return;
+          }
+          showInputToken();
 
-      //   })
-      //   .fail(() => {});
+        })
+        .fail(() => {});
     }
 
     function callApiSignin(mailer, token) {
-      // $.ajax({
-      //   url               : env.http + window.location.host + '/api/v1/admin/signin/sign-in',
-      //   method            : 'POST',
-      //   contentType       : 'application/json; charset=utf-8',
-      //   data              : JSON.stringify({
-      //     token           : token
-      //   })
-      // })
-      //   .done((data) => {
+      $.ajax({
+        url               : env.http + window.location.host + '/api/v1/admin/signin/sign-in',
+        method            : 'POST',
+        contentType       : 'application/json; charset=utf-8',
+        data              : JSON.stringify({
+          mailer          : mailer,
+          token           : token
+        })
+      })
+        .done((data) => {
 
-      //     if (data['status_code'] !== 2000) {
-      //       alert(data['error']);
-      //       return;
-      //     }
-      //     window.location.replace(env.http + window.location.host + '/api/v1/admin/dashboard?token=' + data['token']);
-      //   })
-      //   .fail(() => {});
+          if (data['status_code'] !== 2000) {
+            alert(data['error']);
+            return;
+          }
+          localStorage.setItem('mailer', data['mailer']);
+          localStorage.setItem('token', data['token']);
+          window.location.replace(env.http + window.location.host + '/api/v1/admin/dashboard?token=' + data['token']);
+        })
+        .fail(() => {});
     }
 
     function hideInputToken() {

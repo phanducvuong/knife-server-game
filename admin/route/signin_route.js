@@ -59,7 +59,36 @@ const signinRoute = async (app, opt) => {
 
       rep.send({
         status_code : 2000,
-        token       : token
+        token       : token,
+        mailer      : req.body.mailer
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/logout', async (req, rep) => {
+    try {
+
+      let mailer    = req.body.mailer.toString().trim();
+      let mailerDS  = await DS.DSGetMailer('administrators', mailer);
+
+      DS.DSUpdateDataGlobal('administrators', mailer, {
+        mail  : mailer,
+        token : '',
+        rule  : mailerDS['rule']
+      });
+
+      rep.send({
+        status_code : 2000
       });
 
     }
