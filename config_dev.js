@@ -136,6 +136,7 @@ exports.SPECIAL_ITEM              = [
   {
     id          : 0,
     description : '2 Lượng Vàng PNJ',
+    type        : 3,
     region      : 'Vangpnj'
   }
 ];

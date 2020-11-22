@@ -146,7 +146,6 @@ exports.getTurnningInfo = (lsHistoryAllUser) => {
       }
     }
   }
-  lsTurnningInfo.sort((a, b) => { return b['milli'] - a['milli'] });
   return lsTurnningInfo;
 }
 
@@ -177,23 +176,53 @@ exports.getAllNameOfLsItems = () => {
       name  : e['name'],
       type  : e['type']
     });
-  }
+  } //ls item
+
+  for (let e of config.SPECIAL_ITEM) {
+    tmp.push({
+      name  : e['description'],
+      type  : e['type']
+    });
+  } //ls special item
   return tmp;
 }
 
 exports.getAllCodeFail = async () => {
   let tmp           = [];
   let lsCodeFailed  = await DS.DSGetAllCodeFail();
-  lsCodeFailed.sort((a, b) => { b['time'] - a['time'] });
   for (let d of lsCodeFailed) {
     tmp.push({
       mega_code : d['mega_id'],
       name      : d['name'],
       code      : d['code'],
-      time      : convertTimeToString(d['time'])
+      time      : convertTimeToString(d['time']),
+      milli     : d['time']
     });
   }
+  tmp.sort((a, b) => { return b['milli'] - a['milli'] });
   return tmp;
+}
+
+exports.getSpecialItemsAllUser = (lsAllUser, lsTurnning) => {
+  for (let u of lsAllUser) {
+    for (let s of u['data']['special_item']) {
+      let ss          = s.split('_');                          //{id}_millisecond
+      let itemSpecial = config.SPECIAL_ITEM.find(e => { return e['id'] === parseInt(ss[0], 10) });
+      if (itemSpecial !== null && itemSpecial !== undefined) {
+        lsTurnning.push({
+          mega_code : u['mega_code'],
+          name      : u['data']['name'],
+          phone     : u['data']['phone'],
+          province  : u['data']['province'],
+          reward    : itemSpecial['description'],
+          time      : convertTimeToString(parseInt(ss[1], 10)),
+          milli     : parseInt(ss[1], 10)
+        });
+      }
+    }
+  }
+  lsTurnning.sort((a, b) => { return b['milli'] - a['milli'] });
+  return lsTurnning;
 }
 
 //--------------------------------------------functional-----------------------------------

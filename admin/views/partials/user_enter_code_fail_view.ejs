@@ -235,6 +235,7 @@
       if (currPage >= 4) {
         $('#pagination').empty();
         markup += `
+          <a href="#" class="page" data-id="0">1</a>
           <a href="#" class="three-dot">...</a>
           <a href="#" class="page" data-id="${currPage-2}">${currPage-1}</a>
           <a href="#" class="page" data-id="${currPage-1}">${currPage}</a>

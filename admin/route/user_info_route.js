@@ -4,29 +4,29 @@ const signinFunc              = require('../functions/signin_func');
 
 const userInfoRoute = async (app, opt) => {
 
-  app.get('/', async (req, rep) => {
-    try {
+  // app.get('/', async (req, rep) => {
+  //   try {
 
-      let token   = req.query.token;
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
-        rep.redirect('/api/v1/admin/signin');
-        return;
-      }
+  //     let token   = req.query.token;
+  //     if (!await jwt.verify(token, signinFunc.SECRETE)) {
+  //       rep.redirect('/api/v1/admin/signin');
+  //       return;
+  //     }
 
-      let lsAllUserInfo = await userInfoFunc.getAllUser();
-      rep.view('/partials/user_info_view.ejs', {
-        data: lsAllUserInfo
-      });
+  //     let lsAllUserInfo = await userInfoFunc.getAllDataUser();
+  //     rep.view('/partials/user_info_view.ejs', {
+  //       data: lsAllUserInfo
+  //     });
 
-    }
-    catch(err) {
+  //   }
+  //   catch(err) {
 
-      rep.view('/partials/error_view.ejs', {
-        title_error : err
-      });
+  //     rep.view('/partials/error_view.ejs', {
+  //       title_error : err
+  //     });
 
-    }
-  });
+  //   }
+  // });
 
   app.post('/detail', async (req, rep) => {
     try {
@@ -103,6 +103,7 @@ const userInfoRoute = async (app, opt) => {
       let lsAllDataUser     = await userInfoFunc.getAllDataUser();
       let lsHistoryAllUser  = await userInfoFunc.getHistoryAllUser(lsAllDataUser);
       let result            = userInfoFunc.getTurnningInfo(lsHistoryAllUser);
+      result                = userInfoFunc.getSpecialItemsAllUser(lsAllDataUser, result);
       let items             = userInfoFunc.getAllNameOfLsItems();
 
       rep.view('/partials/user_info_turnning_view.ejs', {
