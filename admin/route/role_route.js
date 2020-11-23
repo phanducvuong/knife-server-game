@@ -15,6 +15,7 @@
 const roleFunc            = require('../functions/role_func');
 const signinFunc          = require('../functions/signin_func');
 const jwt                 = require('../../utils/jwt');
+const DS                  = require('../../repository/datastore');
 
 const ROLE_NUMBER         = 7;
 
@@ -45,6 +46,49 @@ const roleRoute = async (app, opt) => {
       console.log(err);
       rep.view('/partials/error_view.ejs', {
         title_error : err
+      });
+
+    }
+  });
+
+  app.post('/get-user-by-mailer', async (req, rep) => {
+    try {
+
+      let mailer  = req.body.mailer.toString().trim();
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) throw `Unvalid token!`;
+
+      if (!resultVerify['mailer']['role'].includes(ROLE_NUMBER)) throw 'Permission denied!';
+
+      let mailerDS = await DS.DSGetMailer('administrators', mailer);
+      if (mailerDS === null || mailerDS === undefined) throw `${mailerDS} is not exist!`;
+
+      let code = 2000;
+      if (mailer === resultVerify['mailer']['mail']) {
+        code = 2100;
+      }
+
+      rep.send({
+        status_code : code,
+        full_ctr    : roleFunc.isFullControl(mailerDS['role']),
+        roles       : mailerDS['role'],
+        mailer      : mailerDS['mail'],
+        name        : mailerDS['name'],
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
       });
 
     }

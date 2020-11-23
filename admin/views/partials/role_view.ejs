@@ -176,11 +176,14 @@
         }
       }
 
-
       checkboxAll();
       getPagination();
       nextPage();
       previousPage();
+
+      resetModal();
+      eventCheckboxRole();
+      getUserByMailer();
 
       $('#text-search').click(() => {
         $('#user-info-table tbody').empty();
@@ -205,6 +208,54 @@
       getPagination();
     }
 
+    //-----------------------------------------------------event click------------------------------------------------------
+    function getUserByMailer() {
+      $('body').delegate('.edt-role-user', 'click', (event) => {
+        let mailer = event.currentTarget.attributes.getNamedItem('data-id').value;
+        $.ajax({
+          url             : env.http + window.location.host + '/api/v1/admin/role/get-user-by-mailer',
+          method          : 'POST',
+          headers       : {
+            'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type'	:'application/json'
+          },
+          data            : JSON.stringify({
+            mailer        : mailer
+          })
+        })
+          .done((data) => {
+
+            if (data['status_code'] === 3000) {
+              alert(data['error']);
+              return;
+            }
+            setDataModalEditRole(data);
+
+          })
+          .fail(() => {});
+      });
+    }
+
+    function setDataModalEditRole(data) {
+      $('#mail-role-modal').text(data['mailer']);
+      $('#name-role-modal').text(data['name']);
+
+      if (data['full_ctr']) {
+        $('#all-control').prop('checked', true);
+        checkAllRole();
+      }
+      else {
+        checkRoleBy(data['roles']);
+      }
+    }
+
+    function resetModal() {
+      $(".modal").on("hidden.bs.modal", () => {
+        unCheckAllRole();
+      });
+    }
+    //-----------------------------------------------------event click------------------------------------------------------
+
     //-----------------------------------------------------check box--------------------------------------------------------
     function checkboxAll() {
       $('#all-control').click(() => {
@@ -217,9 +268,28 @@
       });
     }
 
+    function eventCheckboxRole() {
+      for (let r of window.roles) {
+        $(`#${r}`).click(() => {
+          if (isCheckAll()) {
+            $('#all-control').prop('checked', true);
+          }
+          else {
+            $('#all-control').prop('checked', false);
+          }
+        });
+      }
+    }
+
     function checkAllRole() {
       for (let i of window.roles) {
-        $(`#${i}`).prop('checked', 'checked');
+        $(`#${i}`).prop('checked', true);
+      }
+    }
+
+    function checkRoleBy(roles) {
+      for (let r of roles) {
+        $(`#${r}`).prop('checked', true);
       }
     }
 

@@ -55,6 +55,10 @@ exports.updateRole = async (mailer, roles) => {
 
 }
 
+exports.isFullControl = (roles) => {
+  return roles.length === ROLES.length;
+}
+
 exports.GETROLES = () => {
   return ROLES;
 }

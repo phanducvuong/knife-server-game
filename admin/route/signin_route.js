@@ -31,8 +31,9 @@ const signinRoute = async (app, opt) => {
 
       DS.DSUpdateDataGlobal('administrators', mailer, {
         mail  : mailer,
+        name  : mailerDS['name'],
         token : result,
-        rule  : mailerDS['rule']
+        role  : mailerDS['role']
       });
 
       rep.send({
