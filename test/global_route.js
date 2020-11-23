@@ -601,10 +601,13 @@ const globalRoute = async (app, opt) => {
 
   app.post('/add-admin', async (req, rep) => {
     let administrator = req.body.admin;
+    let name          = req.body.name;
+    let role          = req.body.role;
     DS.DSUpdateDataGlobal('administrators', administrator, {
       mail  : administrator,
+      name  : name,
       token : '',
-      rule  : []
+      role  : role
     });
     rep.send('ok');
   });

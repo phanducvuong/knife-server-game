@@ -11,12 +11,15 @@ exports.verify = async (token, secret) => {
   try {
     let decode    = jwt.verify(token, secret);
     let mailerDS  = await DS.DSGetMailer('administrators', decode['mailer']);
-    if (mailerDS !== null && mailerDS !== undefined && mailerDS['token'] === token) {
-      return true;
+    if (mailerDS !== null  && mailerDS !== undefined && mailerDS['token'] === token) {
+      return {
+        status  : true,
+        mailer  : mailerDS
+      };
     }
-    return false;
+    return { status: false };
   }
   catch(err) {
-    return false;
+    return { status: false };
   }
 }

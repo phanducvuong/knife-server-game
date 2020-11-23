@@ -145,6 +145,18 @@ exports.DSGetAllItem = async () => {
   }
 }
 
+exports.DSGetAllUserAdmin = async () => {
+  try {
+    let query     = dbClient.createQuery('administrators');
+    let [result]  = await dbClient.runQuery(query);
+    return result;
+  }
+  catch(err) {
+    console.log(err);
+    return [];
+  }
+}
+
 exports.DSGetAllCodeFail = async () => {
   try {
     let query     = dbClient.createQuery('log_code_fail');

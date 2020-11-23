@@ -24,8 +24,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -88,8 +89,9 @@ const setupRoute = async (app, opt) => {
   app.get('/get-config-partition', async (req, rep) => {
     try {
 
-      let token   = req.query.token;
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = req.query.token;
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
@@ -129,8 +131,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -257,8 +260,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -301,8 +305,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -349,8 +354,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -406,8 +412,9 @@ const setupRoute = async (app, opt) => {
   app.get('/get-config-item', async (req, rep) => {
     try {
 
-      let token   = req.query.token;
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = req.query.token;
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
@@ -440,8 +447,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -476,8 +484,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -542,8 +551,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -592,8 +602,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -628,8 +639,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -683,8 +695,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -722,8 +735,9 @@ const setupRoute = async (app, opt) => {
   app.get('/get-config-mission', async (req, rep) => {
     try {
 
-      let token = req.query.token;
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = req.query.token;
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
@@ -762,8 +776,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -808,8 +823,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -912,8 +928,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -1002,8 +1019,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -1040,8 +1058,9 @@ const setupRoute = async (app, opt) => {
   app.get('/get-supporting-item', async (req, rep) => {
     try {
 
-      let token   = req.query.token;
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = req.query.token;
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
@@ -1078,8 +1097,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -1132,8 +1152,9 @@ const setupRoute = async (app, opt) => {
   app.get('/get-config-event', async (req, rep) => {
     try {
 
-      let token   = req.query.token;
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = req.query.token;
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
@@ -1176,8 +1197,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -1221,8 +1243,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -1323,8 +1346,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -1431,8 +1455,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -1473,8 +1498,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -1523,8 +1549,9 @@ const setupRoute = async (app, opt) => {
   app.get('/get-config-black-list', async (req, rep) => {
     try {
 
-      let token   = req.query.token;
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = req.query.token;
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
@@ -1562,8 +1589,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -1603,8 +1631,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -1651,8 +1680,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -1692,8 +1722,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -1732,8 +1763,9 @@ const setupRoute = async (app, opt) => {
   app.get('/get-config-global', async (req, rep) => {
     try {
 
-      let token   = req.query.token;
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = req.query.token;
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
@@ -1787,8 +1819,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -1830,8 +1863,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -1881,8 +1915,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -1919,8 +1954,9 @@ const setupRoute = async (app, opt) => {
   app.get('/get-config-block-acc', async (req, rep) => {
     try {
 
-      let token   = req.query.token;
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = req.query.token;
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
@@ -1963,8 +1999,9 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 

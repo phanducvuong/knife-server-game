@@ -17,8 +17,9 @@ const itemRoute = async (app, opt) => {
   app.get('/get-all-item', async (req, rep) => {
     try {
 
-      let token   = req.query.token;
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = req.query.token;
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
@@ -46,8 +47,9 @@ const itemRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 
@@ -83,8 +85,9 @@ const itemRoute = async (app, opt) => {
   app.get('/view-add-special-item', async (req, rep) => {
     try {
 
-      let token   = req.query.token;
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = req.query.token;
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
@@ -111,8 +114,9 @@ const itemRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 

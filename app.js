@@ -75,6 +75,7 @@ app.register(require('./admin/route/user_info_route'),    { prefix: '/api/v1/adm
 app.register(require('./admin/route/check_code_route'),   { prefix: '/api/v1/admin/code' });
 app.register(require('./admin/route/signin_route'),       { prefix: '/api/v1/admin/signin' });
 app.register(require('./admin/route/unlock_user_route'),  { prefix: '/api/v1/admin/unlock' });
+app.register(require('./admin/route/role_route'),         { prefix: '/api/v1/admin/role' });
 
 //route test
 app.register(require('./test/global_route'),              { prefix: '/api/v1/test' });

@@ -8,8 +8,9 @@ const checkCodeRoute = async (app, opt) => {
   app.get('/', async (req, rep) => {
     try {
 
-      let token   = req.query.token;
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = req.query.token;
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
@@ -34,8 +35,9 @@ const checkCodeRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      let token   = headers.split(' ')[1];
-      if (!await jwt.verify(token, signinFunc.SECRETE)) {
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
         throw `unvalid token`;
       }
 

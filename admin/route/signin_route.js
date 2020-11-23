@@ -55,7 +55,7 @@ const signinRoute = async (app, opt) => {
 
       let token   = req.body.token;
       let result  = await jwt.verify(token, signinFunc.SECRETE);
-      if (!result) throw 'Signin Failed!';
+      if (!result['status']) throw 'Signin Failed!';
 
       rep.send({
         status_code : 2000,

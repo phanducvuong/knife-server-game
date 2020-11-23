@@ -1,0 +1,397 @@
+<%- include('../layouts/header') %>
+
+  <div class="content-wrapper">
+    <section class="content-header">
+      <h1>USERS PROFILE</h1>
+    </section>
+    
+    <section class="content">
+      <div style="background-color: white;">
+        <div class="div-all-item row">
+
+          <!-- <div class="filter-info-user">
+            <a hidden id="csv" href=""></a>
+            <button class="btn btn-primary" id="btn-export">CSV</button>
+          </div> -->
+
+          <!-- search -->
+          <div class="filter-info-user">
+            <label>Search</label>
+            <input type="text" placeholder="megaID/name" id="text-search" value="">
+          </div>
+
+          <!-- select column filter -->
+          <!-- <div class="filter-info-user">
+            <label>Select Column</label>
+            <select id="sel-col">
+              <option selected value="-1">none</option>
+              <option value="3">code đã nhập</option>
+              <option value="4">lượt chơi tổng</option>
+              <option value="5">lượt chơi còn</option>
+              <option value="6">lượt chơi đã sử dụng</option>
+            </select>
+          </div> -->
+
+          <!-- min -->
+          <!-- <div class="filter-info-user">
+            <label>Min</label>
+            <input type="number" placeholder="min" step="0" min="0" id="min" value="">
+          </div> -->
+
+          <!-- max -->
+          <!-- <div class="filter-info-user">
+            <label>Max</label>
+            <input type="number" placeholder="max" step="0" min="0" id="max" value="">
+          </div> -->
+        </div>
+
+        <table id="user-info-admin-table" class="footable table table-stripped">
+          <thead>
+            <tr>
+              <th style="font-weight: bold;">MAIL</th>
+              <th style="font-weight: bold;">NAME</th>
+              <th style="font-weight: bold;">ROLE</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for (let d of data) { %>
+              <tr>
+                <td><%= d['mailer'] %></td>
+                <td><%= d['name'] %></td>
+                <td>
+                  <% if (d['roles'].length === 8) { %>
+                    All-Control
+                  <% }else { %>
+                    <select>
+                      <% for (let r of d['roles']) { %>
+                        <option><%= r %></option>
+                      <% } %>
+                    </select>
+                  <% } %>
+                </td>
+                <td class="text-right">
+									<div class="btn-group">
+											<a href="#" class="edt-role-user" data-id="<%= d['mailer'] %>" data-toggle="modal"
+													data-target="#modal-role">Edit</a>
+											<a href="#" class="del-user" data-id="<%= d['mailer'] %>"
+													style="margin-left: 20px">Delete</a>
+									</div>
+								</td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+        <div style="text-align: end;">
+          <div class="pagination-custom">
+            <a href="#" id="previous-page">&laquo;</a>
+          </div>
+          <div class="pagination-custom" id="pagination">
+            <!-- <a href="#" class="three-dot">...</a> -->
+          </div>
+          <div class="pagination-custom">
+            <a href="#" id="next-page" data-id="0">&raquo;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- THE MODAL ADD PARTITION -->
+		<div class="modal" id="modal-role">
+			<div class="modal-dialog">
+					<div class="modal-content">
+
+							<!-- Modal Header -->
+							<div class="modal-header">
+									<h4 class="modal-title" id="title-modal" style="font-weight: bolder">EDIT ROLE</h4>
+									<button type="button" class="close" data-dismiss="modal">&times;</button>
+              </div>
+
+							<!-- Modal body -->
+							<div class="modal-body">
+
+                <!-- MAIL-->
+								<div class="form-group">
+                  <label class="col-md-12 control-label" for="product_name_fr">MAIL</label>
+                  <div class="col-md-12">
+                    <div class="col-md-12">
+                      <p id="mail-role-modal" style="font-size: 25px; color: darkorange;"></p>
+                    </div>
+                  </div>
+                </div>
+              
+                <!-- NAME-->
+								<div class="form-group">
+                  <label class="col-md-12 control-label" for="product_name_fr">NAME</label>
+                  <div class="col-md-12">
+                    <div class="col-md-12">
+                      <p id="name-role-modal" style="font-size: 25px; color: darkorange;"></p>
+                    </div>
+                  </div>
+                </div>
+
+								<!-- ROLE-->
+								<div class="form-group">
+									<label class="col-md-4 control-label">ROLES</label>
+									<div id="checkbox-role" class="col-md-12">
+                    <input type="checkbox" id="all-control" name="all-control" value="all-controll">
+                    <label for="all-control">All-Control</label><br>
+                    <% for (let r of roles) { %>
+                      <input type="checkbox" id="<%= r['id'] %>" name="<%= r['id'] %>" value="<%= r['id'] %>">
+                      <label for="<%= r['id'] %>"><%= r['description'] %></label><br>
+                    <% } %>
+									</div>
+								</div>
+
+							<br>
+							<br>
+
+							<!-- Button -->
+							<div class="form-group">
+									<div class="col-md-12" style="text-align: center;">
+										<button id="btn-edit-role" name="singlebutton" class="btn btn-success">UPDATE</button>
+									</div>
+							</div>
+						</div>
+
+					</div>
+			</div>
+		</div>
+
+    </section>
+  </div>
+
+  <script>
+
+    $(document).ready(() => {
+
+      window.arrTr      = [];
+      for (let tr of $('#user-info-table tbody tr')) {
+        window.arrTr.push(tr);
+      }
+
+      window.roles = [];
+      for (let input of document.getElementById('checkbox-role').getElementsByTagName('input')) {
+        let idRole = input.attributes.getNamedItem('id').value;
+        if (idRole !== 'all-control') {
+          window.roles.push(parseInt(idRole, 10));
+        }
+      }
+
+
+      checkboxAll();
+      getPagination();
+      nextPage();
+      previousPage();
+
+      $('#text-search').click(() => {
+        $('#user-info-table tbody').empty();
+        $('#pagination').empty();
+        search();
+      });
+
+    });
+
+    function search() {
+      let textSearch = $('#text-search').val();
+      for (let tr of window.arrTr) {
+        let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
+        let name    = tr.getElementsByTagName('td')[1].textContent.toLowerCase();
+
+        if (megaID.includes(textSearch) || name.includes(textSearch)) {
+          tr.style.opacity = 1.0;
+          $('#user-info-table tbody').append(tr);
+        }
+      }
+      
+      getPagination();
+    }
+
+    //-----------------------------------------------------check box--------------------------------------------------------
+    function checkboxAll() {
+      $('#all-control').click(() => {
+        if ($('#all-control').is(':checked')) {
+          checkAllRole();
+        }
+        else {
+          unCheckAllRole();
+        }
+      });
+    }
+
+    function checkAllRole() {
+      for (let i of window.roles) {
+        $(`#${i}`).prop('checked', 'checked');
+      }
+    }
+
+    function unCheckAllRole() {
+      for (let i of window.roles) {
+        $(`#${i}`).prop('checked', false);
+      }
+    }
+
+    function isCheckAll() {
+      for (let i of window.roles) {
+        if (!$(`#${i}`).is(':checked')) {
+          return false;
+        }
+      }
+      return true;
+    }
+    //-----------------------------------------------------check box--------------------------------------------------------
+
+    //-----------------------------------------------------pagination-------------------------------------------------------
+    function getPagination() {
+      let rowsTotal = $('#user-info-table tbody tr').length;
+      let numPages  = parseInt(rowsTotal / env.rows_show, 10);
+
+      if ((rowsTotal % env.rows_show) !== 0) {
+        numPages += 1;
+      }
+
+      let markup = '';
+      if (numPages <= env.max_page) {
+        for (let i=0; i<numPages; i++) {
+          if (i === 0) {
+            markup += `<a href="#" class="page active-page" data-id="${i}">${i+1}</a>`;
+            continue;
+          }
+          markup += `<a href="#" class="page" data-id="${i}">${i+1}</a>`
+        }
+      }
+      else {
+        for (let i=0; i<env.max_page; i++) {
+          if (i === 0) {
+            markup += `<a href="#" class="page active-page" data-id="${i}">${i+1}</a>`;
+            continue;
+          }
+          markup += `<a href="#" class="page" data-id="${i}">${i+1}</a>`;
+        }
+        markup += '<a href="#" class="three-dot">...</a>';
+        markup += `<a href="#" class="page" data-id="${numPages-1}">${numPages}</a>`
+      }
+
+      $('#pagination').append(markup);
+      $('#user-info-table tbody tr').hide();
+      $('#user-info-table tbody tr').slice(0, env.rows_show).show();
+
+      $('body').delegate('.page', 'click', (event) => {
+        let currPage  = parseInt(event.currentTarget.attributes.getNamedItem('data-id').value, 10);
+        updatePagination(numPages, currPage);
+      });
+    }
+
+    function nextPage() {
+      $('#next-page').click(() => {
+        let rowsTotal = $('#user-info-table tbody tr').length;
+        let numPages  = parseInt(rowsTotal / env.rows_show, 10);
+        if ((rowsTotal % env.rows_show) !== 0) {
+          numPages += 1;
+        }
+
+        let currPage  = parseInt($('#next-page').attr('data-id'), 10) + 1;
+        if (currPage >= numPages) {
+          return;
+        }
+
+        updatePagination(numPages, currPage);
+      });
+    }
+
+    function previousPage() {
+      $('#previous-page').click(() => {
+        let rowsTotal = $('#user-info-table tbody tr').length;
+        let numPages  = parseInt(rowsTotal / env.rows_show, 10);
+        if ((rowsTotal % env.rows_show) !== 0) {
+          numPages += 1;
+        }
+
+        let currPage  = parseInt($('#next-page').attr('data-id'), 10) - 1;
+        if (currPage < 0) {
+          return;
+        }
+        
+        updatePagination(numPages, currPage);
+      });
+    }
+
+    function updatePagination(numPages, currPage) {
+      removePageActive();
+      let markup    = '';
+      if (currPage >= 4) {
+        $('#pagination').empty();
+        markup += `
+          <a href="#" class="page" data-id="0">1</a>
+          <a href="#" class="three-dot">...</a>
+          <a href="#" class="page" data-id="${currPage-2}">${currPage-1}</a>
+          <a href="#" class="page" data-id="${currPage-1}">${currPage}</a>
+          <a href="#" class="page active-page" data-id="${currPage}">${currPage+1}</a>
+        `;
+
+        if (numPages - (currPage+1) > 2) {
+          markup += `
+            <a href="#" class="page" data-id="${currPage+1}">${currPage+2}</a>
+            <a href="#" class="page" data-id="${currPage+2}">${currPage+3}</a>
+            <a href="#" class="three-dot">...</a>
+            <a href="#" class="page" data-id="${numPages-1}">${numPages}</a>
+          `;
+        }
+        else {
+          for (let i=currPage+1; i<numPages; i++) {
+            markup += `<a href="#" class="page" data-id="${i}">${i+1}</a>`;
+          }
+        }
+      }
+      else if (numPages <= env.max_page) {
+        $('#pagination').empty();
+        for (let i=0; i<numPages; i++) {
+          if (i === currPage) {
+            markup += `<a href="#" class="page active-page" data-id="${i}">${i+1}</a>`
+            continue;
+          }
+          markup += `<a href="#" class="page" data-id="${i}">${i+1}</a>`
+        }
+      }
+      else {
+        $('#pagination').empty();
+        for (let i=0; i<env.max_page; i++) {
+          if (i === currPage) {
+            markup += `<a href="#" class="page active-page" data-id="${i}">${i+1}</a>`
+            continue;
+          }
+          markup += `<a href="#" class="page" data-id="${i}">${i+1}</a>`;
+        }
+        markup += '<a href="#" class="three-dot">...</a>';
+        markup += `<a href="#" class="page" data-id="${numPages-1}">${numPages}</a>`
+      }
+
+      $('#pagination').append(markup);
+      $('#next-page').attr('data-id', currPage);
+      showDataTableBy(currPage);
+    }
+
+    function removePageActive() {
+      for (let e of $('#pagination a')) {
+        let c = e.getAttribute('class');
+        if (c.includes('active-page')) {
+          e.setAttribute('class', 'page');
+          return;
+        }
+      }
+    }
+
+    function showDataTableBy(currPage) {
+      let startItem = currPage * env.rows_show;
+      let endItem   = startItem + env.rows_show;
+      $('#user-info-table tbody tr')
+          .css('opacity', '0.0')
+          .hide()
+          .slice(startItem, endItem)
+          .css('display', '')
+          .animate({ opacity: 1 }, 300);
+    }
+
+    //-----------------------------------------------------filter------------------------------------------------------------
+
+  </script>
+
+<%- include('../layouts/footer') %>
