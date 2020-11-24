@@ -100,7 +100,7 @@
           <tfoot>
             <tr>
               <td colspan="12" style="text-align: center;">
-                <button type="button" data-toggle="modal" data-target="#modal-event" class="btn btn-success">ADD</button>
+                <button id="btn-add-event-modal" type="button" data-toggle="modal" data-target="#modal-event" class="btn btn-success">ADD</button>
               </td>
             </tr>
           </tfoot>
@@ -253,6 +253,11 @@
         }
       });
 
+      $('#btn-add-event-modal').click(() => {
+        $('#modal-div-target').css('display', 'block');
+        $('#modal-div-supporting-item').css('display', 'block');
+      });
+
       resetDataFormModal();
       addOrUpdateEvent();
       editEvent();
@@ -276,6 +281,7 @@
           $('#modal-div-target').css('display', 'none');
         }
         else {
+          $('#modal-div-target').css('display', 'block');
           $('#modal-div-supporting-item').css('display', 'block');
         }
 
