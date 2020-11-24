@@ -13,6 +13,7 @@
  * 0  -> Nhập Code
  * 1  -> Phóng Phi Tiêu
  * 2  -> Mời Bạn
+ * 3  -> Share FB
  * 
  * @key target evevnt: đạt đủ target mới được nhận bonus
  * 
@@ -170,6 +171,16 @@ exports.EVENTS                    = {
       type          : 0,
       from_date     : '2020-09-29 17:00:00',
       to_date       : '2020-11-29 16:59:59'                       //convert UTC time to localtime
+    },
+    {
+      id            : 1,
+      description   : 'Share Game FB',
+      bonus_turn    : 1,
+      target        : 1,
+      sp_item       : null,
+      bonus_sp_item : 0,
+      status        : 1,
+      type          : 3
     }
   ]
 };

@@ -39,6 +39,7 @@ exports.getRndItem = async () => {
   if (amountItem >= tmpItem['maximum']) {
     tmpItem = this.getItemUnlimit();
     if (tmpItem === null || tmpItem === undefined) return null;
+    return tmpItem;
   }
 
   amountItem        += 1;
@@ -90,6 +91,7 @@ exports.getItemWithRmBox = async (idItemRm) => {
   if (amountItem >= tmpItem['maximum']) {
     tmpItem = this.getItemUnlimit();
     if (tmpItem === null || tmpItem === undefined) return null;
+    return tmpItem;
   }
 
   amountItem        += 1;
@@ -111,6 +113,15 @@ exports.getItemUnlimit = () => {
 
   let rndIndex = Math.round(Math.random() * (map.length-1));
   return map[rndIndex];
+}
+
+exports.incrAmountItemLuckycode = async (item) => {
+  let itemDS = await DS.DSGetDataGlobal('items', item['id']);
+  if (itemDS !== null && itemDS !== undefined) {
+    itemDS['amount'] += 1;
+    redisClient.updateAmountItemBy(itemDS['id'], itemDS['amount']);
+    DS.DSUpdateDataGlobal('items', itemDS['id'], itemDS);
+  }
 }
 
 //đếm số lượng item remove trong partition. nếu idItem trong partition xuất hiện 2 lần thì getItem normal, không thì getItem dạng removeItem

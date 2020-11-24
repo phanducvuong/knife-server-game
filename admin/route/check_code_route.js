@@ -2,6 +2,7 @@ const DS              = require('../../repository/datastore');
 const util            = require('../../utils/util');
 const jwt             = require('../../utils/jwt');
 const signinFunc      = require('../functions/signin_func');
+const roleFunc        = require('../functions/role_func');
 
 const checkCodeRoute = async (app, opt) => {
 
@@ -14,6 +15,8 @@ const checkCodeRoute = async (app, opt) => {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[2]['id'])) throw 'Permission denied!';
 
       rep.view('/partials/check_code_view.ejs');
 
@@ -40,6 +43,8 @@ const checkCodeRoute = async (app, opt) => {
       if (!resultVerify['status']) {
         throw `unvalid token`;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[2]['id'])) throw 'Permission denied!';
 
       let code    = req.body.code.toString().trim();
       let result  = await DS.DSGetCode('codes_test', util.genEnterCode(code.toUpperCase()));

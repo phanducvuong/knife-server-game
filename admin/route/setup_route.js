@@ -4,6 +4,7 @@ const setupFunc         = require('../functions/setup_func');
 const util              = require('../../utils/util');
 const jwt               = require('../../utils/jwt');
 const signinFunc        = require('../functions/signin_func');
+const roleFunc          = require('../functions/role_func');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -29,6 +30,8 @@ const setupRoute = async (app, opt) => {
       if (!resultVerify['status']) {
         throw `unvalid token`;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
       let partition     = parseInt(req.body.partition, 10);
       let veloc         = parseInt(req.body.veloc, 10);
@@ -96,6 +99,8 @@ const setupRoute = async (app, opt) => {
         return;
       }
 
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
+
       let dataPartition = await DS.DSGetDataGlobal('admin', 'partitions');
       if (dataPartition === null || dataPartition === undefined) {
         dataPartition = {
@@ -136,6 +141,8 @@ const setupRoute = async (app, opt) => {
       if (!resultVerify['status']) {
         throw `unvalid token`;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
       let id      = parseInt(req.body.id, 10);
       let name    = req.body.name.toString().trim();
@@ -266,6 +273,8 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
+
       let pos = parseInt(req.body.pos, 10);
       if (isNaN(pos)) throw `pos is NaN!`;
 
@@ -310,6 +319,8 @@ const setupRoute = async (app, opt) => {
       if (!resultVerify['status']) {
         throw `unvalid token`;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
       let pos = parseInt(req.body.pos, 10);
       if (isNaN(pos)) throw `pos is NaN!`;
@@ -359,6 +370,8 @@ const setupRoute = async (app, opt) => {
       if (!resultVerify['status']) {
         throw `unvalid token`;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
       let id      = parseInt(req.body.id, 10);
       let pos     = parseInt(req.body.pos, 10);
@@ -419,6 +432,8 @@ const setupRoute = async (app, opt) => {
         return;
       }
 
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
+
       let data = await DS.DSGetAllItem();
       if (data === null || data === undefined) {
         data = [];
@@ -452,6 +467,8 @@ const setupRoute = async (app, opt) => {
       if (!resultVerify['status']) {
         throw `unvalid token`;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
       let lsItem = await DS.DSGetAllItem();
       if (lsItem === null || lsItem === undefined) {
@@ -489,6 +506,8 @@ const setupRoute = async (app, opt) => {
       if (!resultVerify['status']) {
         throw `unvalid token`;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
       let id      = parseInt(req.body.id, 10);
       let type    = parseInt(req.body.type, 10);
@@ -557,6 +576,8 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
+
       let id                    = parseInt(req.body.id, 10);
       let [lsItem, partitions]  = await Promise.all([
         DS.DSGetAllItem(),
@@ -608,6 +629,8 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
+
       let id = parseInt(req.body.id, 10);
       if (isNaN(id)) throw `Id is not a number`;
 
@@ -644,6 +667,8 @@ const setupRoute = async (app, opt) => {
       if (!resultVerify['status']) {
         throw `unvalid token`;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
       let id      = parseInt(req.body.id, 10);
       let name    = req.body.name;
@@ -687,372 +712,338 @@ const setupRoute = async (app, opt) => {
     }
   });
 
-  app.post('/recovery-data', async (req, rep) => {
-    try {
-
-      let headers = req.headers['authorization'];
-      if (headers === null || headers === undefined) {
-        throw `unvalid token`;
-      }
-
-      let token         = headers.split(' ')[1];
-      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
-      if (!resultVerify['status']) {
-        throw `unvalid token`;
-      }
-
-      let partitions = await DS.DSGetDataGlobal('admin', 'partitions');
-      if (partitions === null || partitions === undefined) throw 'recovery data failed!';
-      redisClient.updatePartition(JSON.stringify(partitions));
-
-      let lsItem = await DS.DSGetAllItem();
-      if (lsItem === null || lsItem === undefined) throw 'recovery data failed!';
-
-      redisClient.updateArrItem(JSON.stringify(lsItem));
-      for (e of lsItem) {
-        redisClient.updateAmountItemBy(e['id'], e['amount']);
-      }
-
-      //TODO: recovery all data global
-
-      rep.send({
-        status_code : 2000
-      });
-
-    }
-    catch(err) {
-
-      console.log(err);
-      rep.send({
-        status_code : 3000,
-        error       : err
-      });
-
-    }
-  });
-
   //setup mission
-  app.get('/get-config-mission', async (req, rep) => {
-    try {
+  // app.get('/get-config-mission', async (req, rep) => {
+  //   try {
 
-      let token         = req.query.token;
-      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
-      if (!resultVerify['status']) {
-        rep.redirect('/api/v1/admin/signin');
-        return;
-      }
+  //     let token         = req.query.token;
+  //     let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+  //     if (!resultVerify['status']) {
+  //       rep.redirect('/api/v1/admin/signin');
+  //       return;
+  //     }
 
-      let missionDS = await DS.DSGetDataGlobal('admin', 'missions');
+  //     if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
-      let lsMission;
-      if (missionDS === null || missionDS === undefined) {
-        lsMission = [];
-        lsMission.push(...config.MISSIONS);
-      }
-      else {
-        lsMission = missionDS.missions;
-      }
+  //     let missionDS = await DS.DSGetDataGlobal('admin', 'missions');
 
-      rep.view('/partials/config_mission_view.ejs', {
-        data  : lsMission
-      });
+  //     let lsMission;
+  //     if (missionDS === null || missionDS === undefined) {
+  //       lsMission = [];
+  //       lsMission.push(...config.MISSIONS);
+  //     }
+  //     else {
+  //       lsMission = missionDS.missions;
+  //     }
 
-    }
-    catch(err) {
+  //     rep.view('/partials/config_mission_view.ejs', {
+  //       data  : lsMission
+  //     });
 
-      console.log(err);
-      rep.view('/partials/error_view.ejs', {
-        title_error : err
-      });
+  //   }
+  //   catch(err) {
 
-    }
-  });
+  //     console.log(err);
+  //     rep.view('/partials/error_view.ejs', {
+  //       title_error : err
+  //     });
 
-  app.post('/get-config-mission-by-id', async (req, rep) => {
-    try {
+  //   }
+  // });
 
-      let headers = req.headers['authorization'];
-      if (headers === null || headers === undefined) {
-        throw `unvalid token`;
-      }
+  // app.post('/get-config-mission-by-id', async (req, rep) => {
+  //   try {
 
-      let token         = headers.split(' ')[1];
-      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
-      if (!resultVerify['status']) {
-        throw `unvalid token`;
-      }
+  //     let headers = req.headers['authorization'];
+  //     if (headers === null || headers === undefined) {
+  //       throw `unvalid token`;
+  //     }
 
-      let id = parseInt(req.body.id, 10);
-      if (isNaN(id)) throw 'Can not get misson!';
+  //     let token         = headers.split(' ')[1];
+  //     let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+  //     if (!resultVerify['status']) {
+  //       throw `unvalid token`;
+  //     }
 
-      let missionsDS = await DS.DSGetDataGlobal('admin', 'missions');
+  //     if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
-      let lsMission;
-      if (missionsDS === null || missionsDS === undefined) {
-        lsMission = config.MISSIONS;
-      }
-      else {
-        lsMission = missionsDS.missions;
-      }
+  //     let id = parseInt(req.body.id, 10);
+  //     if (isNaN(id)) throw 'Can not get misson!';
 
-      let itemMission = lsMission.find(e => { return e['id'] === id });
-      if (itemMission === null || itemMission === undefined) throw `${id} is not exist!`;
+  //     let missionsDS = await DS.DSGetDataGlobal('admin', 'missions');
 
-      rep.send({
-        status_code : 2000,
-        mission     : itemMission
-      });
+  //     let lsMission;
+  //     if (missionsDS === null || missionsDS === undefined) {
+  //       lsMission = config.MISSIONS;
+  //     }
+  //     else {
+  //       lsMission = missionsDS.missions;
+  //     }
 
-    }
-    catch(err) {
+  //     let itemMission = lsMission.find(e => { return e['id'] === id });
+  //     if (itemMission === null || itemMission === undefined) throw `${id} is not exist!`;
 
-      console.log(err);
-      rep.send({
-        status_code : 3000,
-        error       : err
-      });
+  //     rep.send({
+  //       status_code : 2000,
+  //       mission     : itemMission
+  //     });
 
-    }
-  });
+  //   }
+  //   catch(err) {
 
-  app.post('/add-mission', async (req, rep) => {
-    try {
+  //     console.log(err);
+  //     rep.send({
+  //       status_code : 3000,
+  //       error       : err
+  //     });
 
-      let headers = req.headers['authorization'];
-      if (headers === null || headers === undefined) {
-        throw `unvalid token`;
-      }
+  //   }
+  // });
 
-      let token         = headers.split(' ')[1];
-      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
-      if (!resultVerify['status']) {
-        throw `unvalid token`;
-      }
+  // app.post('/add-mission', async (req, rep) => {
+  //   try {
 
-      let id          = parseInt(req.body.id, 10);
-      let description = req.body.description.toString().trim();
-      let target      = parseInt(req.body.target, 10);
-      let bonusTurn   = parseInt(req.body.bonus_turn, 10);
-      let spItem      = parseInt(req.body.sp_item, 10);
-      let bonusSpItem = parseInt(req.body.bonus_sp_item, 10);
-      let status      = parseInt(req.body.status, 10);
-      let type        = parseInt(req.body.type, 10);
+  //     let headers = req.headers['authorization'];
+  //     if (headers === null || headers === undefined) {
+  //       throw `unvalid token`;
+  //     }
 
-      if (isNaN(id) || isNaN(target) || isNaN(bonusTurn) || isNaN(status)        || isNaN(spItem)             || isNaN(bonusSpItem) || isNaN(type) ||
-          id < 0    || target <= 0   || bonusTurn < 0    || description === null || description === undefined || description === '') {
-        throw 'Check info mission!';
-      }
-      else if (bonusTurn === 0 && bonusSpItem <= 0) {
-        throw 'Check info bonus turn or bonus sp item';
-      }
+  //     let token         = headers.split(' ')[1];
+  //     let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+  //     if (!resultVerify['status']) {
+  //       throw `unvalid token`;
+  //     }
 
-      let [missionDS, supportingItemDS] = await Promise.all([
-        DS.DSGetDataGlobal('admin', 'missions'),
-        DS.DSGetDataGlobal('admin', 'supporting_item')
-      ]);
+  //     if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
-      let missions;
-      if (missionDS === null || missionDS === undefined) {
-        missions = config.MISSIONS;
-      }
-      else {
-        missions = missionDS['missions'];
-      }
+  //     let id          = parseInt(req.body.id, 10);
+  //     let description = req.body.description.toString().trim();
+  //     let target      = parseInt(req.body.target, 10);
+  //     let bonusTurn   = parseInt(req.body.bonus_turn, 10);
+  //     let spItem      = parseInt(req.body.sp_item, 10);
+  //     let bonusSpItem = parseInt(req.body.bonus_sp_item, 10);
+  //     let status      = parseInt(req.body.status, 10);
+  //     let type        = parseInt(req.body.type, 10);
 
-      let supportingItems;
-      if (supportingItemDS === null || supportingItemDS === undefined) {
-        supportingItems = config.SUPPORTING_ITEM;
-      }
-      else {
-        supportingItems = supportingItemDS['supporting_item'];
-      }
+  //     if (isNaN(id) || isNaN(target) || isNaN(bonusTurn) || isNaN(status)        || isNaN(spItem)             || isNaN(bonusSpItem) || isNaN(type) ||
+  //         id < 0    || target <= 0   || bonusTurn < 0    || description === null || description === undefined || description === '') {
+  //       throw 'Check info mission!';
+  //     }
+  //     else if (bonusTurn === 0 && bonusSpItem <= 0) {
+  //       throw 'Check info bonus turn or bonus sp item';
+  //     }
 
-      let missionFind = missions.find(e => { return e['id'] === id });
-      if (missionFind !== null && missionFind !== undefined) {
-        throw `${id} mission is exist!`;
-      }
+  //     let [missionDS, supportingItemDS] = await Promise.all([
+  //       DS.DSGetDataGlobal('admin', 'missions'),
+  //       DS.DSGetDataGlobal('admin', 'supporting_item')
+  //     ]);
 
-      let missionAdd;
-      let spItemFind = supportingItems.find(e => { return e['id'] === spItem });
-      if (spItemFind === null || spItemFind === undefined) {
-        if (bonusTurn <= 0) throw `Check bonus turn when sp_item is null ${bonusTurn}  ${spItem}`;
-        missionAdd = {
-          id            : id,
-          description   : description,
-          target        : target,
-          bonus_turn    : bonusTurn,
-          sp_item       : null,
-          bonus_sp_item : 0,
-          status        : status,
-          type          : type
-        }
-      }
-      else {
-        missionAdd = {
-          id            : id,
-          description   : description,
-          target        : target,
-          bonus_turn    : bonusTurn,
-          sp_item       : spItemFind,
-          bonus_sp_item : bonusSpItem,
-          status        : status,
-          type          : type
-        }
-      }
+  //     let missions;
+  //     if (missionDS === null || missionDS === undefined) {
+  //       missions = config.MISSIONS;
+  //     }
+  //     else {
+  //       missions = missionDS['missions'];
+  //     }
 
-      missions.push(missionAdd);
-      DS.DSUpdateDataGlobal('admin', 'missions', { missions: missions });
+  //     let supportingItems;
+  //     if (supportingItemDS === null || supportingItemDS === undefined) {
+  //       supportingItems = config.SUPPORTING_ITEM;
+  //     }
+  //     else {
+  //       supportingItems = supportingItemDS['supporting_item'];
+  //     }
 
-      rep.send({
-        status_code   : 2000,
-        missionUpdate : missions
-      });
+  //     let missionFind = missions.find(e => { return e['id'] === id });
+  //     if (missionFind !== null && missionFind !== undefined) {
+  //       throw `${id} mission is exist!`;
+  //     }
 
-    }
-    catch(err) {
+  //     let missionAdd;
+  //     let spItemFind = supportingItems.find(e => { return e['id'] === spItem });
+  //     if (spItemFind === null || spItemFind === undefined) {
+  //       if (bonusTurn <= 0) throw `Check bonus turn when sp_item is null ${bonusTurn}  ${spItem}`;
+  //       missionAdd = {
+  //         id            : id,
+  //         description   : description,
+  //         target        : target,
+  //         bonus_turn    : bonusTurn,
+  //         sp_item       : null,
+  //         bonus_sp_item : 0,
+  //         status        : status,
+  //         type          : type
+  //       }
+  //     }
+  //     else {
+  //       missionAdd = {
+  //         id            : id,
+  //         description   : description,
+  //         target        : target,
+  //         bonus_turn    : bonusTurn,
+  //         sp_item       : spItemFind,
+  //         bonus_sp_item : bonusSpItem,
+  //         status        : status,
+  //         type          : type
+  //       }
+  //     }
 
-      console.log(err);
-      rep.send({
-        status_code : 3000,
-        error       : err
-      });
+  //     missions.push(missionAdd);
+  //     DS.DSUpdateDataGlobal('admin', 'missions', { missions: missions });
 
-    }
-  });
+  //     rep.send({
+  //       status_code   : 2000,
+  //       missionUpdate : missions
+  //     });
 
-  app.post('/update-mission', async (req, rep) => {
-    try {
+  //   }
+  //   catch(err) {
 
-      let headers = req.headers['authorization'];
-      if (headers === null || headers === undefined) {
-        throw `unvalid token`;
-      }
+  //     console.log(err);
+  //     rep.send({
+  //       status_code : 3000,
+  //       error       : err
+  //     });
 
-      let token         = headers.split(' ')[1];
-      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
-      if (!resultVerify['status']) {
-        throw `unvalid token`;
-      }
+  //   }
+  // });
 
-      let id          = parseInt(req.body.id, 10);
-      let description = req.body.description.toString().trim();
-      let target      = parseInt(req.body.target, 10);
-      let bonusTurn   = parseInt(req.body.bonus_turn, 10);
-      let spItem      = parseInt(req.body.sp_item, 10);
-      let bonusSpItem = parseInt(req.body.bonus_sp_item, 10);
-      let status      = parseInt(req.body.status, 10);
+  // app.post('/update-mission', async (req, rep) => {
+  //   try {
 
-      if (isNaN(id) || isNaN(target) || isNaN(bonusTurn) || isNaN(status)        || isNaN(spItem)             || isNaN(bonusSpItem)       ||
-          id < 0    || target < 0   || bonusTurn < 0    || description === null || description === undefined || description === '') {
-        throw 'Check info mission!';
-      }
-      else if (bonusTurn === 0 && bonusSpItem <= 0) {
-        throw 'Check info bonus turn or bonus sp item';
-      }
+  //     let headers = req.headers['authorization'];
+  //     if (headers === null || headers === undefined) {
+  //       throw `unvalid token`;
+  //     }
 
-      let [missionDS, supportingItemDS] = await Promise.all([
-        DS.DSGetDataGlobal('admin', 'missions'),
-        DS.DSGetDataGlobal('admin', 'supporting_item')
-      ]);
+  //     let token         = headers.split(' ')[1];
+  //     let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+  //     if (!resultVerify['status']) {
+  //       throw `unvalid token`;
+  //     }
 
-      let missions;
-      if (missionDS === null || missionDS === undefined) {
-        missions = config.MISSIONS;
-      }
-      else {
-        missions = missionDS['missions'];
-      }
+  //     if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
-      let supportingItems;
-      if (supportingItemDS === null || supportingItemDS === undefined) {
-        supportingItems = config.SUPPORTING_ITEM;
-      }
-      else {
-        supportingItems = supportingItemDS['supporting_item'];
-      }
+  //     let id          = parseInt(req.body.id, 10);
+  //     let description = req.body.description.toString().trim();
+  //     let target      = parseInt(req.body.target, 10);
+  //     let bonusTurn   = parseInt(req.body.bonus_turn, 10);
+  //     let spItem      = parseInt(req.body.sp_item, 10);
+  //     let bonusSpItem = parseInt(req.body.bonus_sp_item, 10);
+  //     let status      = parseInt(req.body.status, 10);
 
-      let missionFind = missions.find(e => { return e['id'] === id });
-      if (missionFind === null || missionFind === undefined) throw `${id} mission is not exist!`;
+  //     if (isNaN(id) || isNaN(target) || isNaN(bonusTurn) || isNaN(status)        || isNaN(spItem)             || isNaN(bonusSpItem)       ||
+  //         id < 0    || target < 0   || bonusTurn < 0    || description === null || description === undefined || description === '') {
+  //       throw 'Check info mission!';
+  //     }
+  //     else if (bonusTurn === 0 && bonusSpItem <= 0) {
+  //       throw 'Check info bonus turn or bonus sp item';
+  //     }
 
-      let spItemFind = supportingItems.find(e => { return e['id'] === spItem });
-      if (spItemFind === null || spItemFind === undefined) {
-        if (bonusTurn <= 0) throw `Check bonus turn when bonus sp item is < 0 ${bonusTurn}   ${bonusSpItem}`;
-        missionFind['sp_item']        = null;
-        missionFind['description']    = description;
-        missionFind['target']         = target;
-        missionFind['bonus_turn']     = bonusTurn;
-        missionFind['bonus_sp_item']  = 0;
-        missionFind['status']         = status;
-      }
-      else {
-        missionFind['sp_item']        = spItemFind;
-        missionFind['description']    = description;
-        missionFind['target']         = target;
-        missionFind['bonus_turn']     = bonusTurn;
-        missionFind['bonus_sp_item']  = bonusSpItem;
-        missionFind['status']         = status;
-      }
+  //     let [missionDS, supportingItemDS] = await Promise.all([
+  //       DS.DSGetDataGlobal('admin', 'missions'),
+  //       DS.DSGetDataGlobal('admin', 'supporting_item')
+  //     ]);
 
-      DS.DSUpdateDataGlobal('admin', 'missions', { missions: missions });
-      rep.send({
-        status_code     : 2000,
-        missionUpdate  : missions
-      });
+  //     let missions;
+  //     if (missionDS === null || missionDS === undefined) {
+  //       missions = config.MISSIONS;
+  //     }
+  //     else {
+  //       missions = missionDS['missions'];
+  //     }
 
-    }
-    catch(err) {
+  //     let supportingItems;
+  //     if (supportingItemDS === null || supportingItemDS === undefined) {
+  //       supportingItems = config.SUPPORTING_ITEM;
+  //     }
+  //     else {
+  //       supportingItems = supportingItemDS['supporting_item'];
+  //     }
 
-      console.log(err);
-      rep.send({
-        status_code : 3000,
-        error       : err
-      });
+  //     let missionFind = missions.find(e => { return e['id'] === id });
+  //     if (missionFind === null || missionFind === undefined) throw `${id} mission is not exist!`;
 
-    }
-  });
+  //     let spItemFind = supportingItems.find(e => { return e['id'] === spItem });
+  //     if (spItemFind === null || spItemFind === undefined) {
+  //       if (bonusTurn <= 0) throw `Check bonus turn when bonus sp item is < 0 ${bonusTurn}   ${bonusSpItem}`;
+  //       missionFind['sp_item']        = null;
+  //       missionFind['description']    = description;
+  //       missionFind['target']         = target;
+  //       missionFind['bonus_turn']     = bonusTurn;
+  //       missionFind['bonus_sp_item']  = 0;
+  //       missionFind['status']         = status;
+  //     }
+  //     else {
+  //       missionFind['sp_item']        = spItemFind;
+  //       missionFind['description']    = description;
+  //       missionFind['target']         = target;
+  //       missionFind['bonus_turn']     = bonusTurn;
+  //       missionFind['bonus_sp_item']  = bonusSpItem;
+  //       missionFind['status']         = status;
+  //     }
 
-  app.post('/delete-mission', async (req, rep) => {
-    try {
+  //     DS.DSUpdateDataGlobal('admin', 'missions', { missions: missions });
+  //     rep.send({
+  //       status_code     : 2000,
+  //       missionUpdate  : missions
+  //     });
 
-      let headers = req.headers['authorization'];
-      if (headers === null || headers === undefined) {
-        throw `unvalid token`;
-      }
+  //   }
+  //   catch(err) {
 
-      let token         = headers.split(' ')[1];
-      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
-      if (!resultVerify['status']) {
-        throw `unvalid token`;
-      }
+  //     console.log(err);
+  //     rep.send({
+  //       status_code : 3000,
+  //       error       : err
+  //     });
 
-      let id = parseInt(req.body.id, 10);
-      if (isNaN(id)) throw '0. Delete mission failed!';
+  //   }
+  // });
 
-      if (id === 0) throw 'Can not delete this mission!';
+  // app.post('/delete-mission', async (req, rep) => {
+  //   try {
 
-      let missionDS = await DS.DSGetDataGlobal('admin', 'missions');
-      if (missionDS === null || missionDS === undefined) throw '1. Delete mission failed!';
+  //     let headers = req.headers['authorization'];
+  //     if (headers === null || headers === undefined) {
+  //       throw `unvalid token`;
+  //     }
 
-      let result = setupFunc.deleteMissionByID(missionDS['missions'], id);
-      if (!result['status']) throw result['msg'];
+  //     let token         = headers.split(' ')[1];
+  //     let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+  //     if (!resultVerify['status']) {
+  //       throw `unvalid token`;
+  //     }
 
-      DS.DSUpdateDataGlobal('admin', 'missions', { missions: result['missionUpdate'] });
-      rep.send({
-        status_code   : 2000,
-        missionUpdate : result['missionUpdate']
-      });
+  //     if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
-    }
-    catch(err) {
+  //     let id = parseInt(req.body.id, 10);
+  //     if (isNaN(id)) throw '0. Delete mission failed!';
 
-      console.log(err);
-      rep.send({
-        status_code : 3000,
-        error       : err
-      });
+  //     if (id === 0) throw 'Can not delete this mission!';
 
-    }
-  });
+  //     let missionDS = await DS.DSGetDataGlobal('admin', 'missions');
+  //     if (missionDS === null || missionDS === undefined) throw '1. Delete mission failed!';
+
+  //     let result = setupFunc.deleteMissionByID(missionDS['missions'], id);
+  //     if (!result['status']) throw result['msg'];
+
+  //     DS.DSUpdateDataGlobal('admin', 'missions', { missions: result['missionUpdate'] });
+  //     rep.send({
+  //       status_code   : 2000,
+  //       missionUpdate : result['missionUpdate']
+  //     });
+
+  //   }
+  //   catch(err) {
+
+  //     console.log(err);
+  //     rep.send({
+  //       status_code : 3000,
+  //       error       : err
+  //     });
+
+  //   }
+  // });
 
   //supporting item
   app.get('/get-supporting-item', async (req, rep) => {
@@ -1064,6 +1055,8 @@ const setupRoute = async (app, opt) => {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
       let supportItem = await DS.DSGetDataGlobal('admin', 'supporting_item');
       let lsSupportItem;
@@ -1102,6 +1095,8 @@ const setupRoute = async (app, opt) => {
       if (!resultVerify['status']) {
         throw `unvalid token`;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
       let id          = parseInt(req.body.id, 10);
       let description = req.body.description.toString().trim();
@@ -1159,13 +1154,9 @@ const setupRoute = async (app, opt) => {
         return;
       }
 
-      if (!jwt.verify(token, signinFunc.SECRETE)) {
-        rep.redirect('/api/v1/admin/signin');
-        return;
-      }
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
       let eventDS = await DS.DSGetDataGlobal('admin', 'events');
-
       let events;
       if (eventDS === null || eventDS === undefined) {
         events = config.EVENTS
@@ -1202,6 +1193,8 @@ const setupRoute = async (app, opt) => {
       if (!resultVerify['status']) {
         throw `unvalid token`;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
       let idEvent = parseInt(req.body.id, 10);
       if (isNaN(idEvent)) throw 'Can not get event by id';
@@ -1248,6 +1241,8 @@ const setupRoute = async (app, opt) => {
       if (!resultVerify['status']) {
         throw `unvalid token`;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
       let id          = parseInt(req.body.id, 10);
       let description = req.body.description.toString().trim();
@@ -1351,6 +1346,8 @@ const setupRoute = async (app, opt) => {
       if (!resultVerify['status']) {
         throw `unvalid token`;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
       let id          = parseInt(req.body.id, 10);
       let description = req.body.description.toString().trim();
@@ -1461,10 +1458,12 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
+
       let id = parseInt(req.body.id, 10);
       if (isNaN(id)) throw '0. Delete event failed!';
 
-      if (id === 0) throw 'Can not delete this event!';
+      if (id === 0 || id === 1) throw 'Can not delete this event!';
 
       let eventDS = await DS.DSGetDataGlobal('admin', 'events');
       if (eventDS === null || eventDS === undefined) throw '1. Delete event failed!';
@@ -1503,6 +1502,8 @@ const setupRoute = async (app, opt) => {
       if (!resultVerify['status']) {
         throw `unvalid token`;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
       let startTime = req.body.start.toString().trim();
       let endTime   = req.body.end.toString().trim();
@@ -1556,10 +1557,7 @@ const setupRoute = async (app, opt) => {
         return;
       }
 
-      if (!jwt.verify(token, signinFunc.SECRETE)) {
-        rep.redirect('/api/v1/admin/signin');
-        return;
-      }
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
       let lsBlackList;
       let tmp = await DS.DSGetDataGlobal('admin', 'black_list');
@@ -1594,6 +1592,8 @@ const setupRoute = async (app, opt) => {
       if (!resultVerify['status']) {
         throw `unvalid token`;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
       let lsMegaCode = req.body.mega_codes; 
       if (lsMegaCode === null || lsMegaCode === undefined || lsMegaCode.length <= 0) throw 'Check info in form!';
@@ -1636,6 +1636,8 @@ const setupRoute = async (app, opt) => {
       if (!resultVerify['status']) {
         throw `unvalid token`;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
       let megaID  = req.body.mega_codes.toString().trim();
       let status  = parseInt(req.body.status, 10);
@@ -1686,6 +1688,8 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
+
       let megaID = req.body.mega_code.toString().trim();
       if (megaID === null || megaID === undefined) throw 'Unknow mega code!';
 
@@ -1728,6 +1732,8 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
+
       let megaID = req.body.mega_code.toString().trim();
       if (megaID === null || megaID === undefined) throw 'Unknow mega code!';
 
@@ -1769,6 +1775,8 @@ const setupRoute = async (app, opt) => {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
       let [countDownDS, bonusEnterCodeDS, textShowDS] = await Promise.all([
         DS.DSGetDataGlobal('admin', 'count_down'),
@@ -1825,6 +1833,8 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
+
       let countDown = req.body.count_down;
       let time      = new Date(countDown);
       if (isNaN(time.getTime())) throw `Invalid date! ${countDown}`;
@@ -1868,6 +1878,8 @@ const setupRoute = async (app, opt) => {
       if (!resultVerify['status']) {
         throw `unvalid token`;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
       let bonusTurn1          = parseInt(req.body.bonus_turn_1, 10);
       let bonusTurn2          = parseInt(req.body.bonus_turn_2, 10);
@@ -1921,6 +1933,8 @@ const setupRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
+
       let text  = req.body.text.toString().trim();
       let count = parseInt(req.body.count, 10);
 
@@ -1961,10 +1975,7 @@ const setupRoute = async (app, opt) => {
         return;
       }
 
-      if (!jwt.verify(token, signinFunc.SECRETE)) {
-        rep.redirect('/api/v1/admin/signin');
-        return;
-      }
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
       let result = await DS.DSGetDataGlobal('admin', 'rule_block_acc');
       if (result === null || result === undefined) {
@@ -2004,6 +2015,8 @@ const setupRoute = async (app, opt) => {
       if (!resultVerify['status']) {
         throw `unvalid token`;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
 
       let dataRules = req.body.rules;
       if (!setupFunc.isValidRules(dataRules)) {

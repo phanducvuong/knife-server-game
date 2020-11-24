@@ -1,6 +1,7 @@
 const userInfoFunc            = require('../functions/user_info_func');
 const jwt                     = require('../../utils/jwt');
 const signinFunc              = require('../functions/signin_func');
+const roleFunc                = require('../functions/role_func');
 
 const userInfoRoute = async (app, opt) => {
 
@@ -42,6 +43,8 @@ const userInfoRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[5]['id'])) throw 'Permission denied!';
+
       let megaID = req.body.mega_id.toString().trim();
       if (megaID === null || megaID === undefined) throw 'MegaID is invalid!';
 
@@ -77,6 +80,8 @@ const userInfoRoute = async (app, opt) => {
         return;
       }
 
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[5]['id'])) throw 'Permission denied!';
+
       let lsAllDataUser = await userInfoFunc.getAllDataUser();
       let lsGeneral     = userInfoFunc.getGeneralInfo(lsAllDataUser);
       rep.view('/partials/user_general_info_view.ejs', {
@@ -102,6 +107,8 @@ const userInfoRoute = async (app, opt) => {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[5]['id'])) throw 'Permission denied!';
 
       let lsAllDataUser     = await userInfoFunc.getAllDataUser();
       let lsHistoryAllUser  = await userInfoFunc.getHistoryAllUser(lsAllDataUser);
@@ -134,6 +141,8 @@ const userInfoRoute = async (app, opt) => {
         return;
       }
 
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[5]['id'])) throw 'Permission denied!';
+
       let lsAllDataUser = await userInfoFunc.getAllDataUser();
       let result        = userInfoFunc.getEnterCodeInfo(lsAllDataUser);
       rep.view('/partials/user_enter_code_view.ejs', {
@@ -159,6 +168,8 @@ const userInfoRoute = async (app, opt) => {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[5]['id'])) throw 'Permission denied!';
 
       let result = await userInfoFunc.getAllCodeFail();
       rep.view('/partials/user_enter_code_fail_view.ejs', {

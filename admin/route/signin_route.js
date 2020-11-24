@@ -2,6 +2,7 @@ const signinFunc          = require('../functions/signin_func');
 const jwt                 = require('../../utils/jwt');
 const sendMail            = require('../../utils/send_mail');
 const DS                  = require('../../repository/datastore');
+const roleFunc            = require('../functions/role_func');
 
 const signinRoute = async (app, opt) => {
 
@@ -58,10 +59,12 @@ const signinRoute = async (app, opt) => {
       let result  = await jwt.verify(token, signinFunc.SECRETE);
       if (!result['status']) throw 'Signin Failed!';
 
+      let roleFind = roleFunc.GETROLES().find(e => { return e['id'] === result['mailer']['role'][0] });
       rep.send({
         status_code : 2000,
         token       : token,
-        mailer      : req.body.mailer
+        mailer      : req.body.mailer,
+        redirect    : roleFind['redirect']
       });
 
     }
@@ -85,7 +88,8 @@ const signinRoute = async (app, opt) => {
       DS.DSUpdateDataGlobal('administrators', mailer, {
         mail  : mailer,
         token : '',
-        rule  : mailerDS['rule']
+        name  : mailerDS['name'],
+        role  : mailerDS['role']
       });
 
       rep.send({

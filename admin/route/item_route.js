@@ -3,6 +3,7 @@ const redisClient           = require('../../redis/redis_client');
 const DS                    = require('../../repository/datastore');
 const jwt                   = require('../../utils/jwt');
 const signinFunc            = require('../functions/signin_func');
+const roleFunc              = require('../functions/role_func');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -23,6 +24,8 @@ const itemRoute = async (app, opt) => {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[1]['id'])) throw 'Permission denied!';
 
       let lsFilter = await itemFunc.filterOptionItem();
       rep.view('/partials/item_view.ejs', {
@@ -52,6 +55,8 @@ const itemRoute = async (app, opt) => {
       if (!resultVerify['status']) {
         throw `unvalid token`;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[1]['id'])) throw 'Permission denied!';
 
       let idItem  = parseInt(req.body.id_item, 10);
       let dateStr = req.body.date_str.toString().trim();
@@ -92,6 +97,8 @@ const itemRoute = async (app, opt) => {
         return;
       }
 
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[1]['id'])) throw 'Permission denied!';
+
       rep.view('/partials/add_special_item_view.ejs', {
         special_items : config.SPECIAL_ITEM
       });
@@ -119,6 +126,8 @@ const itemRoute = async (app, opt) => {
       if (!resultVerify['status']) {
         throw `unvalid token`;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[1]['id'])) throw 'Permission denied!';
 
       let megaID  = req.body.mega_id.toString().trim();
       let idItem  = parseInt(req.body.id_item, 10);

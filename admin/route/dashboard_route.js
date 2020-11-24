@@ -1,8 +1,8 @@
 const DS                  = require('../../repository/datastore');
 const dashboardFunc       = require('../functions/dashboard_func');
-const util                = require('../../utils/util');
 const jwt                 = require('../../utils/jwt');
 const signinFunc          = require('../functions/signin_func');
+const roleFunc            = require('../functions/role_func');
 
 const dashboardRoute = async (app, opt) => {
 
@@ -15,6 +15,8 @@ const dashboardRoute = async (app, opt) => {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[0]['id'])) throw 'Permission denied!';
 
       let date = new Date();
       date.setHours(0, 0, 0, 0);
@@ -65,6 +67,8 @@ const dashboardRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[0]['id'])) throw 'Permission denied!';
+
       let fromDate    = req.body.from_date.toString().trim();
       let toDate      = req.body.to_date.toString().trim();
 
@@ -112,6 +116,8 @@ const dashboardRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[0]['id'])) throw 'Permission denied!';
+
       let date = new Date(req.body.date_str.toString().trim());
       if (isNaN(date.getTime())) throw 'Invalid date!';
 
@@ -149,6 +155,8 @@ const dashboardRoute = async (app, opt) => {
       if (!resultVerify['status']) {
         throw `unvalid token`;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[0]['id'])) throw 'Permission denied!';
 
       let date = new Date(req.body.date_str.toString().trim());
       if (isNaN(date.getTime())) throw 'Invalid date!';
@@ -188,6 +196,8 @@ const dashboardRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[0]['id'])) throw 'Permission denied!';
+
       let date = new Date(req.body.date_str.toString().trim());
       if (isNaN(date.getTime())) throw 'Invalid date!';
 
@@ -225,6 +235,8 @@ const dashboardRoute = async (app, opt) => {
       if (!resultVerify['status']) {
         throw `unvalid token`;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[0]['id'])) throw 'Permission denied!';
 
       let date = new Date(req.body.date_str.toString().trim());
       if (isNaN(date.getTime())) throw 'Invalid date!';

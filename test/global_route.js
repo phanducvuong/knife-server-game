@@ -612,6 +612,15 @@ const globalRoute = async (app, opt) => {
     rep.send('ok');
   });
 
+  app.get('/del-user', async (req, rep) => {
+    let lsAllDataUser = await DS.DSGetAllUser();
+    for (let u of lsAllDataUser) {
+      DS.DSDeleteUserRole(u, 'turn_inven');
+      DS.DSDeleteUserRole(u, 'histories');
+    }
+    rep.send('ok');
+  });
+
 }
 
 module.exports = globalRoute;

@@ -204,6 +204,16 @@ exports.DSIncreaseAmountItem = async (id) => {
   }
 }
 
+exports.DSDeleteUserRole = (kind, key) => {
+  try {
+    let keyEntity = dbClient.key([`${kind}`, `${key}`]);
+    dbClient.delete(keyEntity);
+  }
+  catch(err) {
+    console.log(err);
+  }
+}
+
 //----------------------------------------data user------------------------------------
 exports.DSGetDataUser = (kind, key) => {
   return new Promise((resv, rej) => {

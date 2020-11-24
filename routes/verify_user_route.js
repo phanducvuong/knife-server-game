@@ -21,6 +21,7 @@ else {
  * index at 0 -> nhập code
  * index at 1 -> phóng phi tiêu
  * index at 2 -> mời bạn
+ * index at 3 -> share fb
  * 
  * @key block_acc (lưu lại trạng thái user nhập code sai quá nhiều. Nếu thỏa rule => khóa acc)
  * rule_1: { count: //số lần nhập sai, time: thời gian user bắt đầu nhập sai }
@@ -36,7 +37,7 @@ const dataInitUser = {
   total_turned  : 0,
   token         :'',
   actions       : [0, 0],
-  events        : [0, 0, 0],                  //lưu lại số lần nhập code, phóng phi tiêu của user => nhận bonus
+  events        : [0, 0, 0, 0],                  //lưu lại số lần nhập code, phóng phi tiêu của user => nhận bonus
   lucky_code    : [],
   sp_item       : [],
   mission       : [],

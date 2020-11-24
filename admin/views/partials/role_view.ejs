@@ -9,40 +9,15 @@
       <div style="background-color: white;">
         <div class="div-all-item row">
 
-          <!-- <div class="filter-info-user">
-            <a hidden id="csv" href=""></a>
-            <button class="btn btn-primary" id="btn-export">CSV</button>
-          </div> -->
-
-          <!-- search -->
+          <!-- button add -->
           <div class="filter-info-user">
-            <label>Search</label>
-            <input type="text" placeholder="megaID/name" id="text-search" value="">
+            <!-- <label>Search</label>
+            <input type="text" placeholder="megaID/name" id="text-search" value=""> -->
+            <button id="btn-add-user" name="singlebutton" class="btn btn-success"
+                    data-toggle="modal" data-target="#modal-role">
+                    ADD
+            </button>
           </div>
-
-          <!-- select column filter -->
-          <!-- <div class="filter-info-user">
-            <label>Select Column</label>
-            <select id="sel-col">
-              <option selected value="-1">none</option>
-              <option value="3">code đã nhập</option>
-              <option value="4">lượt chơi tổng</option>
-              <option value="5">lượt chơi còn</option>
-              <option value="6">lượt chơi đã sử dụng</option>
-            </select>
-          </div> -->
-
-          <!-- min -->
-          <!-- <div class="filter-info-user">
-            <label>Min</label>
-            <input type="number" placeholder="min" step="0" min="0" id="min" value="">
-          </div> -->
-
-          <!-- max -->
-          <!-- <div class="filter-info-user">
-            <label>Max</label>
-            <input type="number" placeholder="max" step="0" min="0" id="max" value="">
-          </div> -->
         </div>
 
         <table id="user-info-admin-table" class="footable table table-stripped">
@@ -113,7 +88,8 @@
                   <label class="col-md-12 control-label" for="product_name_fr">MAIL</label>
                   <div class="col-md-12">
                     <div class="col-md-12">
-                      <p id="mail-role-modal" style="font-size: 25px; color: darkorange;"></p>
+                    <input id="mail-role-modal" type="text" placeholder="GMail"
+                          class="form-control input-md">
                     </div>
                   </div>
                 </div>
@@ -123,7 +99,8 @@
                   <label class="col-md-12 control-label" for="product_name_fr">NAME</label>
                   <div class="col-md-12">
                     <div class="col-md-12">
-                      <p id="name-role-modal" style="font-size: 25px; color: darkorange;"></p>
+                      <input id="name-role-modal" type="text" placeholder="Name"
+                            class="form-control input-md">
                     </div>
                   </div>
                 </div>
@@ -185,6 +162,10 @@
       eventCheckboxRole();
       getUserByMailer();
 
+      addRoleUser();
+      updateOrAddRoleUser();
+      delRoleUser();
+
       $('#text-search').click(() => {
         $('#user-info-table tbody').empty();
         $('#pagination').empty();
@@ -236,9 +217,93 @@
       });
     }
 
+    function addRoleUser() {
+      $('#btn-add-user').click(() => {
+        $('#btn-edit-role').text('ADD');
+      });
+    }
+
+    function updateOrAddRoleUser() {
+      $('#btn-edit-role').click(() => {
+        let mailer    = $('#mail-role-modal').val();
+        let name      = $('#name-role-modal').val();
+        let roles     = getRoles();
+
+        if (roles.length <= 0 || mailer === '') {
+          alert('Check data!');
+          return;
+        }
+
+        let url = env.http + window.location.host + '/api/v1/admin/role/edit-role';
+        if ($('#btn-edit-role').text() === 'ADD') {
+          url = env.http + window.location.host + '/api/v1/admin/role/add-role';
+        }
+
+        $.ajax({
+          url               : url,
+          method            : 'POST',
+          headers       : {
+            'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type'	:'application/json'
+          },
+          data              : JSON.stringify({
+            mailer          : mailer,
+            name            : name,
+            roles           : roles
+          })
+        })
+          .done((data) => {
+
+            if (data['status_code'] !== 2000) {
+              alert(data['error']);
+              return;
+            }
+            alert(data['msg']);
+            window.location.reload();
+
+          })
+          .fail(() => {});
+      });
+    }
+
+    function delRoleUser() {
+      $('body').delegate('.del-user', 'click', (event) => {
+        let mailer    = event.currentTarget.attributes.getNamedItem('data-id').value;
+        if (mailer === '') {
+          alert('Check data!');
+          return;
+        }
+
+        $.ajax({
+          url               : env.http + window.location.host + '/api/v1/admin/role/del-role-user',
+          method            : 'POST',
+          headers       : {
+            'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type'	:'application/json'
+          },
+          data              : JSON.stringify({
+            mailer          : mailer,
+          })
+        })
+          .done((data) => {
+
+            if (data['status_code'] !== 2000) {
+              alert(data['error']);
+              return;
+            }
+            alert(data['msg']);
+            window.location.reload();
+
+          })
+          .fail(() => {});
+      });
+    }
+
     function setDataModalEditRole(data) {
-      $('#mail-role-modal').text(data['mailer']);
-      $('#name-role-modal').text(data['name']);
+      $('#mail-role-modal').val(data['mailer']);
+      $('#name-role-modal').val(data['name']);
+
+      $('#mail-role-modal').attr('disabled', true);
 
       if (data['full_ctr']) {
         $('#all-control').prop('checked', true);
@@ -251,6 +316,8 @@
 
     function resetModal() {
       $(".modal").on("hidden.bs.modal", () => {
+        $('#mail-role-modal').attr('disabled', false);
+        $('#btn-edit-role').text('UPDATE');
         unCheckAllRole();
       });
     }
@@ -306,6 +373,16 @@
         }
       }
       return true;
+    }
+
+    function getRoles() {
+      let roles = [];
+      for (let r of window.roles) {
+        if ($(`#${r}`).is(':checked') && !roles.includes(r)) {
+          roles.push(r);
+        }
+      }
+      return roles;
     }
     //-----------------------------------------------------check box--------------------------------------------------------
 

@@ -22,6 +22,7 @@ exports.filterLsEventWithSpItem = (lsEvent) => {
       if (m['type'] === 0)      did = lsEvent[0];
       else if (m['type'] === 1) did = lsEvent[1];
       else if (m['type'] === 2) did = lsEvent[2];
+      else if (m['type'] === 3) did = lsEvent[3];
 
       let status    = true;
       let fromDate  = (m['from_date'] !== undefined && m['from_date'] !== null) ? this.convertStrDateEvent(m['from_date'], true) : '';
@@ -95,6 +96,16 @@ exports.joinEvent = (dataUser, idEvent) => {
       if (dataUser['events'][1] < tmpEvent['target']) return { status: false, msg: 'Not eligible yet!' };
       resultBonus            = profileFunc.getBonusFromMissionOrEvent(tmpEvent, dataUser);
       dataUser['events'][1] -= tmpEvent['target'];
+
+      break;
+    }
+    case 3: {
+
+      //với case = 3 (event share fb) user chỉ làm một lần trong suốt thời gian event đang diễn ra. với thời gian event khác được làm lại
+
+      if (dataUser['events'][3] >= tmpEvent['target']) return { status: false, msg: 'Not eligible yet!' };
+      resultBonus            = profileFunc.getBonusFromMissionOrEvent(tmpEvent, dataUser);
+      dataUser['events'][3] += tmpEvent['target'];
 
       break;
     }

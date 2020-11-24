@@ -17,8 +17,6 @@ const signinFunc          = require('../functions/signin_func');
 const jwt                 = require('../../utils/jwt');
 const DS                  = require('../../repository/datastore');
 
-const ROLE_NUMBER         = 7;
-
 const roleRoute = async (app, opt) => {
 
   app.get('/', async (req, rep) => {
@@ -32,7 +30,7 @@ const roleRoute = async (app, opt) => {
         return;
       }
 
-      if (!resultVerify['mailer']['role'].includes(ROLE_NUMBER)) throw 'Permission denied!';
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[7]['id'])) throw 'Permission denied!';
 
       let result = await roleFunc.getAllUserAdmin();
       rep.view('/partials/role_view.ejs', {
@@ -64,7 +62,7 @@ const roleRoute = async (app, opt) => {
       let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
       if (!resultVerify['status']) throw `Unvalid token!`;
 
-      if (!resultVerify['mailer']['role'].includes(ROLE_NUMBER)) throw 'Permission denied!';
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[7]['id'])) throw 'Permission denied!';
 
       let mailerDS = await DS.DSGetMailer('administrators', mailer);
       if (mailerDS === null || mailerDS === undefined) throw `${mailerDS} is not exist!`;
@@ -94,11 +92,130 @@ const roleRoute = async (app, opt) => {
     }
   });
 
+  app.post('/add-role', async (req, rep) => {
+    try {
+
+      let mailer        = req.body.mailer.toString().trim();
+      let name          = req.body.name.toString().trim();
+      let roles         = req.body.roles;
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) throw 'unvalid token!';
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[7]['id'])) throw 'Permission denied!';
+
+      let mailerDS = await DS.DSGetMailer('administrators', mailer);
+      if (mailerDS !== null && mailerDS !== undefined) throw `${mailer} is exist!`;
+
+      let resultChkRoleRequest = roleFunc.chkRolesRequest(roles);
+      if (resultChkRoleRequest.length <= 0) throw 'Role is not except!';
+
+      DS.DSUpdateDataGlobal('administrators', mailer, {
+        mail  : mailer,
+        role  : resultChkRoleRequest,
+        name  : name,
+        token : ''
+      });
+
+      rep.send({
+        status_code : 2000,
+        msg         : 'Success!'
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
   app.post('/edit-role', async (req, rep) => {
     try {
 
       let mailer        = req.body.mailer.toString().trim();
+      let name          = req.body.name.toString().trim();
       let roles         = req.body.roles;
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) throw 'unvalid token!';
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[7]['id'])) throw 'Permission denied!';
+
+      let mailerDS = await DS.DSGetMailer('administrators', mailer);
+      if (mailerDS === null || mailerDS === undefined) throw `${mailer} is not exist!`;
+
+      if (mailerDS['mail'] === resultVerify['mailer']['mail']) throw 'Can not edit yourself!';
+
+      let resultChkRoleRequest = roleFunc.chkRolesRequest(roles);
+      if (resultChkRoleRequest.length <= 0) throw 'Role is not except!';
+
+      DS.DSUpdateDataGlobal('administrators', mailer, {
+        mail  : mailer,
+        role  : resultChkRoleRequest,
+        name  : name,
+        token : mailerDS['token']
+      });
+
+      rep.send({
+        status_code : 2000,
+        msg         : 'Success!'
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/del-role-user', async (req, rep) => {
+    try {
+
+      let mailer        = req.body.mailer.toString().trim();
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) throw 'unvalid token!';
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[7]['id'])) throw 'Permission denied!';
+
+      let mailerDS = await DS.DSGetMailer('administrators', mailer);
+      if (mailerDS === null || mailerDS === undefined) throw `${mailer} is not exist!`;
+
+      if (mailerDS['mail'] === resultVerify['mailer']['mail']) throw 'Can not edit yourself!';
+
+      DS.DSDeleteUserRole('administrators', mailer);
+      rep.send({
+        status_code : 2000,
+        msg         : 'Success!'
+      });
 
     }
     catch(err) {

@@ -178,7 +178,10 @@
         $.ajax({
           url           : env.http + window.location.host + '/api/v1/admin/dashboard/get-unique-user',
           method        : 'POST',
-          contentType   : 'application/json; charset=utf-8',
+          headers       : {
+            'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type'	:'application/json'
+          },
           data          : JSON.stringify({
             from_date   : fromDate,
             to_date     : toDate

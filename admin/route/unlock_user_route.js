@@ -3,6 +3,7 @@ const redisClient     = require('../../redis/redis_client');
 const profileFunc     = require('../../functions/profile_user_func');
 const jwt             = require('../../utils/jwt');
 const signinFunc      = require('../functions/signin_func');
+const roleFunc        = require('../functions/role_func');
 
 const unlockUserRoute = async (app, opt) => {
 
@@ -15,6 +16,8 @@ const unlockUserRoute = async (app, opt) => {
         rep.redirect('/api/v1/admin/signin');
         return;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[4]['id'])) throw 'Permission denied!';
 
       rep.view('/partials/unlock_user_view.ejs');
 
@@ -41,6 +44,8 @@ const unlockUserRoute = async (app, opt) => {
       if (!resultVerify['status']) {
         throw `unvalid token`;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[4]['id'])) throw 'Permission denied!';
 
       let megaID    = req.body.mega_id.toString().trim();
       let dataUser  = await DS.DSGetDataUser(megaID, 'turn_inven');
@@ -82,6 +87,8 @@ const unlockUserRoute = async (app, opt) => {
       if (!resultVerify['status']) {
         throw `unvalid token`;
       }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[4]['id'])) throw 'Permission denied!';
 
       let megaID    = req.body.mega_id.toString().trim();
       let dataUser  = await DS.DSGetDataUser(megaID, 'turn_inven');

@@ -128,23 +128,23 @@ exports.getTurnningInfo = (lsHistoryAllUser) => {
       }
     }//duyệt qua history
 
-    for (let l of h['lucky_code']) {
-      let split = l.split('_');
-      let find  = lsTurnningInfo.find(e => { e['reward'] === `MCH: ${split[0]}` });
+    // for (let l of h['lucky_code']) {
+    //   let split = l.split('_');
+    //   let find  = lsTurnningInfo.find(e => { e['reward'] === `MCH: ${split[0]}` });
 
-      if (find === null || find === undefined) {
-        let time = parseInt(split[1], 10);
-        lsTurnningInfo.push({
-          mega_code   : h['mega_code'],
-          name        : h['name'],
-          phone       : h['phone'],
-          province    : h['province'],
-          reward      : `MCH: ${split[0]}`,
-          time        : util.convertTimeToString(time),
-          milli       : time
-        });
-      }
-    }
+    //   if (find === null || find === undefined) {
+    //     let time = parseInt(split[1], 10);
+    //     lsTurnningInfo.push({
+    //       mega_code   : h['mega_code'],
+    //       name        : h['name'],
+    //       phone       : h['phone'],
+    //       province    : h['province'],
+    //       reward      : `MCH: ${split[0]}`,
+    //       time        : util.convertTimeToString(time),
+    //       milli       : time
+    //     });
+    //   }
+    // }
   }
   return lsTurnningInfo;
 }

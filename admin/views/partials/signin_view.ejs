@@ -103,7 +103,7 @@
           }
           localStorage.setItem('mailer', data['mailer']);
           localStorage.setItem('token', data['token']);
-          window.location.replace(env.http + window.location.host + '/api/v1/admin/dashboard?token=' + data['token']);
+          window.location.replace(env.http + window.location.host + data['redirect'] + '?token=' + data['token']);
         })
         .fail(() => {});
     }
