@@ -97,7 +97,7 @@ const itemRoute = async (app, opt) => {
         return;
       }
 
-      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[1]['id'])) throw 'Permission denied!';
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[3]['id'])) throw 'Permission denied!';
 
       rep.view('/partials/add_special_item_view.ejs', {
         special_items : config.SPECIAL_ITEM
@@ -127,7 +127,7 @@ const itemRoute = async (app, opt) => {
         throw `unvalid token`;
       }
 
-      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[1]['id'])) throw 'Permission denied!';
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[3]['id'])) throw 'Permission denied!';
 
       let megaID  = req.body.mega_id.toString().trim();
       let idItem  = parseInt(req.body.id_item, 10);
@@ -161,6 +161,53 @@ const itemRoute = async (app, opt) => {
     }
   });
 
+  //set turn for user
+  app.post('/set-turn', async (req, rep) => {
+    try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
+        throw `unvalid token`;
+      }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[3]['id'])) throw 'Permission denied!';
+
+      let megaID  = req.body.mega_id.toString().trim();
+      let turn    = parseInt(req.body.turn, 10);
+
+      if (megaID === null || megaID === undefined || isNaN(turn)) throw `Check input data!`;
+
+      let dataUser    = await DS.DSGetDataUser(megaID, 'turn_inven');
+      if (dataUser === null || dataUser === undefined) {
+        throw `${megaID} is not exist!`;
+      }
+
+      dataUser['turn'] += turn;
+      redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
+      DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
+
+      rep.send({
+        status_code : 2000,
+        msg         : 'Success'
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
 }
 
 module.exports = itemRoute;

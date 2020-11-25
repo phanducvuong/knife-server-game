@@ -1,6 +1,5 @@
 const profileFunc             = require('./profile_user_func');
 const util                    = require('../utils/util');
-const { fileLoader } = require('ejs');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -83,19 +82,19 @@ exports.joinEvent = (dataUser, idEvent) => {
   switch (tmpEvent['type']) {
     case 0: {
 
-      if (dataUser['events'][0] < tmpEvent['target'])
+      if (dataUser['events'][0] !== tmpEvent['target'])
         return { status: false, msg: 'Not eligible yet!' };
 
       resultBonus            = profileFunc.getBonusFromMissionOrEvent(tmpEvent, dataUser);
-      dataUser['events'][0] -= tmpEvent['target'];
+      // dataUser['events'][0] -= tmpEvent['target'];
 
       break;
     }
     case 1: {
 
-      if (dataUser['events'][1] < tmpEvent['target']) return { status: false, msg: 'Not eligible yet!' };
+      if (dataUser['events'][1] !== tmpEvent['target']) return { status: false, msg: 'Not eligible yet!' };
       resultBonus            = profileFunc.getBonusFromMissionOrEvent(tmpEvent, dataUser);
-      dataUser['events'][1] -= tmpEvent['target'];
+      // dataUser['events'][1] -= tmpEvent['target'];
 
       break;
     }

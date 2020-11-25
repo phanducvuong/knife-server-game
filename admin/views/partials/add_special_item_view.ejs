@@ -11,35 +11,63 @@
   <!-- Main content -->
   <!-- Task Manager -->
   <section class="content">
-  <div class="row">
-    <div class="col-xl-12 col-12">
-      <div class="box" style="box-shadow: 1px 0 10px rgba(0,0,0,0.1);">
-        <div class="panel-body">
+    <div class="row">
+      <div class="col-xl-12 col-12">
+        <div class="box" style="box-shadow: 1px 0 10px rgba(0,0,0,0.1);">
+          <div class="panel-body">
 
-          <!-- rule 1 -->
-          <div class="form-group row">
-            <div class="col-sm-3">
-              <label>Mega ID</label>
-              <input type="text" id="input-mega-id" class="form-control" value="">
-            </div>
-            <div class="col-sm-4" style="position: absolute; top: 50%; left: 30%;">
-              <label>Loại Quà</label>
-              <select id="sel-special-item">
-                <% for (let e of special_items) { %>
-                  <option value="<%= e['id'] %>"><%= e['description'] %></option>
-                <% } %>
-              </select>
-            </div>
+            <!-- ADD SPECIAL ITEM -->
+            <div class="form-group row">
+              <div class="col-sm-3">
+                <label>Mega ID</label>
+                <input type="text" id="input-mega-id" class="form-control" value="">
+              </div>
+              <div class="col-sm-4" style="position: absolute; top: 50%; left: 30%;">
+                <label>Loại Quà</label>
+                <select id="sel-special-item">
+                  <% for (let e of special_items) { %>
+                    <option value="<%= e['id'] %>"><%= e['description'] %></option>
+                  <% } %>
+                </select>
+              </div>
 
-            <div class="col-sm-4" style="text-align: center; position: absolute; top: 40%; left: 50%;">
-              <button style="width: 80px;" class="btn-update-global" id="btn-add-special-item">Thêm</button>
+              <div class="col-sm-4" style="text-align: center; position: absolute; top: 40%; left: 50%;">
+                <button style="width: 80px;" class="btn-update-global" id="btn-add-special-item">Thêm</button>
+              </div>
             </div>
           </div>
-          
         </div>
       </div>
     </div>
-  </div>
+
+    <div class="row">
+      <div class="col-xl-12 col-12">
+        <div class="box" style="box-shadow: 1px 0 10px rgba(0,0,0,0.1);">
+          <div class="panel-body">
+
+            <!-- SET TURN FOR USER -->
+          <div class="form-group row">
+            <div class="col-sm-3">
+              <label>Mega ID</label>
+              <input type="text" id="input-mega-id-turn" class="form-control" value="">
+            </div>
+            <div class="col-sm-3" style="position: absolute; top: 13%; left: 30%;">
+              <label>Số Lượt</label>
+              <input  id="input-turn" placeholder="Số lượt"
+                      class="form-control input-md" type="number"
+                      step="0" min="0">
+            </div>
+
+            <div class="col-sm-4" style="text-align: center; position: absolute; top: 40%; left: 50%;">
+              <button style="width: 80px;" class="btn-update-global" id="btn-set-turn">Cập Nhật</button>
+            </div>
+          </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
 </section>
   <!-- /.content -->
@@ -65,9 +93,8 @@
           'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type'	:'application/json'
         },
-        contentType       : 'application/json; charset=utf-8',
         data              : JSON.stringify({
-          mega_id         : megaID,
+          mega_id         : megaID.toUpperCase(),
           id_item         : idItem
         })
       })
@@ -80,6 +107,39 @@
               return;
             }
 
+            alert(data['error']);
+            return;
+          }
+          alert(data['msg']);
+
+        })
+        .fail(() => {});
+    });
+
+    $('#btn-set-turn').click(() => {
+      let megaID  = $('#input-mega-id-turn').val();
+      let turn    = $('#input-turn').val();
+
+      if (megaID === '' || turn === '') {
+        alert('Check input data!');
+        return;
+      }
+
+      $.ajax({
+        url               : env.http + window.location.host + '/api/v1/admin/item/set-turn',
+        method            : 'POST',
+        headers       : {
+          'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type'	:'application/json'
+        },
+        data              : JSON.stringify({
+          mega_id         : megaID.toUpperCase(),
+          turn            : turn
+        })
+      })
+        .done((data) => {
+
+          if (data['status_code'] !== 2000) {
             alert(data['error']);
             return;
           }
