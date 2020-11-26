@@ -13,29 +13,47 @@ else {
  * event với id = 0 là event đặc biệt. x2/setnumber số lượt cho user khi nhập code trong thời gian event này diễ ra
  * @key did -> lấy số lần nhập code/phóng phi tiêu của user trong lúc event đang diẽn ra
  */
-exports.filterLsEventWithSpItem = (lsEvent) => {
+exports.filterLsEventWithSpItem = (lsEvent, lsEventDid) => {
+  let fromDate  = this.convertStrDateEvent(config.EVENTS['start'], true);
+  let toDate    = this.convertStrDateEvent(config.EVENTS['end'], false);
+
   let filter = [];
   for (let m of config.EVENTS.data) {
     if (m['status'] === 1) {
-      let did = 0;
-      if (m['type'] === 0)      did = lsEvent[0];
-      else if (m['type'] === 1) did = lsEvent[1];
-      else if (m['type'] === 2) did = lsEvent[2];
-      else if (m['type'] === 3) did = lsEvent[3];
+      let did       = 0;
+      let is_finish = false;
+
+      let resultGetDid;
+      if (m['type'] === 0) {
+        resultGetDid = getEventDid(m['id'], m['target'], lsEventDid, lsEvent[0]);
+      }
+      else if (m['type'] === 1) {
+        resultGetDid = getEventDid(m['id'], m['target'], lsEventDid, lsEvent[1]);
+      }
+      else if (m['type'] === 2) {
+        resultGetDid = getEventDid(m['id'], m['target'], lsEventDid, lsEvent[2]);
+      }
+      else if (m['type'] === 3) {
+        resultGetDid = getEventDid(m['id'], m['target'], lsEventDid, lsEvent[3]);
+      }
 
       let status    = true;
-      let fromDate  = (m['from_date'] !== undefined && m['from_date'] !== null) ? this.convertStrDateEvent(m['from_date'], true) : '';
-      let toDate    = (m['to_date'] !== undefined && m['to_date'] !== null) ? this.convertStrDateEvent(m['to_date'], false) : '';
+      if (m['id'] === 0) {
+        fromDate  = this.convertStrDateEvent(m['from_date'], true);
+        toDate    = this.convertStrDateEvent(m['to_date'], false);
+      }
+
       if (m['id'] === 0 && !util.isEligibleEventById0(m['from_date'], m['to_date'])) {
         status = false;
-      }
+      } //status x2 event
       
       if (m['sp_item'] !== null && m['bonus_turn'] > 0) {
         filter.push({
           id            : m['id'],
           description   : m['description'],
           target        : m['target'],
-          did           : did,
+          did           : resultGetDid['did'],
+          is_finish     : resultGetDid['is_finish'],
           status        : status,
           bonus_str_1   : `${m['bonus_turn']} LƯỢT`,
           bonus_str_2   : `${m['bonus_sp_item']} ${m['sp_item']['description']}`,
@@ -48,7 +66,8 @@ exports.filterLsEventWithSpItem = (lsEvent) => {
           id            : m['id'],
           description   : m['description'],
           target        : m['target'],
-          did           : did,
+          did           : resultGetDid['did'],
+          is_finish     : resultGetDid['is_finish'],
           status        : status,
           bonus_str_1   : '',
           bonus_str_2   : `${m['bonus_sp_item']} ${m['sp_item']['description']}`,
@@ -61,7 +80,8 @@ exports.filterLsEventWithSpItem = (lsEvent) => {
           id            : m['id'],
           description   : m['description'],
           target        : m['target'],
-          did           : did,
+          did           : resultGetDid['did'],
+          is_finish     : resultGetDid['is_finish'],
           status        : status,
           bonus_str_1   : `${m['bonus_turn']} LƯỢT`,
           bonus_str_2   : '',
@@ -82,19 +102,21 @@ exports.joinEvent = (dataUser, idEvent) => {
   switch (tmpEvent['type']) {
     case 0: {
 
-      if (dataUser['events'][0] !== tmpEvent['target'])
+      if (dataUser['events'][0] < tmpEvent['target'] || dataUser['event_did'].includes(tmpEvent['id']))
         return { status: false, msg: 'Not eligible yet!' };
 
-      resultBonus            = profileFunc.getBonusFromMissionOrEvent(tmpEvent, dataUser);
-      // dataUser['events'][0] -= tmpEvent['target'];
+      resultBonus = profileFunc.getBonusFromMissionOrEvent(tmpEvent, dataUser);
+      dataUser['event_did'].push(tmpEvent['id']);
 
       break;
     }
     case 1: {
 
-      if (dataUser['events'][1] !== tmpEvent['target']) return { status: false, msg: 'Not eligible yet!' };
-      resultBonus            = profileFunc.getBonusFromMissionOrEvent(tmpEvent, dataUser);
-      // dataUser['events'][1] -= tmpEvent['target'];
+      if (dataUser['events'][1] < tmpEvent['target'] || dataUser['event_did'].includes(tmpEvent['id']))
+        return { status: false, msg: 'Not eligible yet!' };
+
+      resultBonus = profileFunc.getBonusFromMissionOrEvent(tmpEvent, dataUser);
+      dataUser['event_did'].push(tmpEvent['id']);
 
       break;
     }
@@ -102,9 +124,12 @@ exports.joinEvent = (dataUser, idEvent) => {
 
       //với case = 3 (event share fb) user chỉ làm một lần trong suốt thời gian event đang diễn ra. với thời gian event khác được làm lại
 
-      if (dataUser['events'][3] >= tmpEvent['target']) return { status: false, msg: 'Not eligible yet!' };
-      resultBonus            = profileFunc.getBonusFromMissionOrEvent(tmpEvent, dataUser);
+      if (dataUser['events'][3] >= tmpEvent['target'] || dataUser['event_did'].includes(tmpEvent['id']))
+        return { status: false, msg: 'Not eligible yet!' };
+
+      resultBonus = profileFunc.getBonusFromMissionOrEvent(tmpEvent, dataUser);
       dataUser['events'][3] += tmpEvent['target'];
+      dataUser['event_did'].push(tmpEvent['id']);
 
       break;
     }
@@ -132,4 +157,20 @@ exports.convertStrDateEvent = (strDate, isFrom) => {
     return `00:00 ${tmp1[2]}/${tmp1[1]}/${tmp1[0]}`;
   }
   return `23:59 ${tmp1[2]}/${tmp1[1]}/${tmp1[0]}`;
+}
+
+function getEventDid(idEvent, target, lsEventDid, countEventDid) {
+  if (lsEventDid.includes(idEvent)) {
+    return {
+      did       : target,
+      is_finish : true
+    };
+  }
+  else {
+    let did = (countEventDid >= target) ? target : countEventDid;
+    return {
+      did       : did,
+      is_finish : false
+    };
+  }
 }

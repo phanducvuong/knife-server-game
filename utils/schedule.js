@@ -139,6 +139,7 @@ async function resetDataUser() {
         dataUser['events'][1] = 0;
         dataUser['events'][2] = 0;
         dataUser['events'][3] = 0;
+        dataUser['event_did'] = [];
       }
 
       if (profileFunc.isBlockAcc(dataUser['block_acc'])['status'] === false) {

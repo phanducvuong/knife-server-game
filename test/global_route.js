@@ -8,6 +8,7 @@ const topup         = require('../repository/topup');
 const readCode      = require('./read_code');
 const genstr        = require('../utils/generate_string');
 const jwt           = require('../utils/jwt');
+const log           = require('../utils/log');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -618,6 +619,14 @@ const globalRoute = async (app, opt) => {
       DS.DSDeleteUserRole(u, 'turn_inven');
       DS.DSDeleteUserRole(u, 'histories');
     }
+    rep.send('ok');
+  });
+
+  app.post('/test-log', async (req, rep) => {
+    let action  = req.body.action;
+    let data    = req.body.data;
+    log.logAdminTool(action, data);
+    
     rep.send('ok');
   });
 

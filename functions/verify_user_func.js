@@ -20,7 +20,7 @@ exports.verifyTokenUser = (token) => {
 
       if (err) return rej(err);
 
-      console.log(body);
+      // console.log(body);
 
       let jsonData = JSON.parse(body);
       if (jsonData.code !== 2000) {

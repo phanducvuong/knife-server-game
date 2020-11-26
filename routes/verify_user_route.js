@@ -23,6 +23,8 @@ else {
  * index at 2 -> mời bạn
  * index at 3 -> share fb
  * 
+ * @key event_did lưu lại id của list event mà user đã làm
+ * 
  * @key block_acc (lưu lại trạng thái user nhập code sai quá nhiều. Nếu thỏa rule => khóa acc)
  * rule_1: { count: //số lần nhập sai, time: thời gian user bắt đầu nhập sai }
  * rule_2: { count: //số lần nhập sai, time: thời gian user bắt đầu nhập sai }
@@ -38,6 +40,7 @@ const dataInitUser = {
   token         :'',
   actions       : [0, 0],
   events        : [0, 0, 0, 0],                  //lưu lại số lần nhập code, phóng phi tiêu của user => nhận bonus
+  event_did     : [],
   lucky_code    : [],
   sp_item       : [],
   mission       : [],

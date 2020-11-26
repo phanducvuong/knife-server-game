@@ -59,7 +59,7 @@ const eventRoute = async (app, opt) => {
         return;
       } //trả về event đặc biệt x2 lượt khi nhập code
 
-      let lsFilter = eventFunc.filterLsEventWithSpItem(dataUser['events']);
+      let lsFilter = eventFunc.filterLsEventWithSpItem(dataUser['events'], dataUser['event_did']);
       rep.send({
         status_code : 2000,
         ls_event    : lsFilter,
@@ -202,7 +202,7 @@ const eventRoute = async (app, opt) => {
         }
       });
 
-      let lsFilter   = eventFunc.filterLsEventWithSpItem(resultJoinEvent['dataUserUpdate']['events']);
+      let lsFilter   = eventFunc.filterLsEventWithSpItem(resultJoinEvent['dataUserUpdate']['events'], resultJoinEvent['dataUserUpdate']['event_did']);
       rep.send({
         status_code   : 2000,
         bonus_str     : resultJoinEvent['bonusStr'],

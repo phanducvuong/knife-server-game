@@ -2,6 +2,7 @@ const userInfoFunc            = require('../functions/user_info_func');
 const jwt                     = require('../../utils/jwt');
 const signinFunc              = require('../functions/signin_func');
 const roleFunc                = require('../functions/role_func');
+const log                     = require('../../utils/log');
 
 const userInfoRoute = async (app, opt) => {
 
