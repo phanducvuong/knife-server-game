@@ -145,7 +145,8 @@ exports.joinEvent = (dataUser, idEvent) => {
   return {
     status          : true,
     bonusStr        : resultBonus['bonus_str'],
-    dataUserUpdate  : dataUser
+    dataUserUpdate  : dataUser,
+    id_event        : tmpEvent['id']
   };
 }
 

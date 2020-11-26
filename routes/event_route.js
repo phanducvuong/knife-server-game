@@ -207,7 +207,8 @@ const eventRoute = async (app, opt) => {
         status_code   : 2000,
         bonus_str     : resultJoinEvent['bonusStr'],
         turn          : resultJoinEvent['dataUserUpdate']['turn'],
-        ls_event      : lsFilter
+        ls_event      : lsFilter,
+        id_event      : resultJoinEvent['id_event']
       });
 
     }
