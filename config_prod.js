@@ -151,8 +151,8 @@ exports.MISSIONS                  = [
 ];
 
 exports.EVENTS                    = {
-  start     : '2020-09-30',
-  end       : '2020-11-30',
+  start     : '2020-09-29 17:00:00',
+  end       : '2020-11-30 16:59:59',
   data      : [
     {
       id            : 0,

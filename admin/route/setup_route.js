@@ -1165,6 +1165,11 @@ const setupRoute = async (app, opt) => {
         events = eventDS;
       }
 
+      let start       = new Date(events['start']);
+      let end         = new Date(events['end']);
+      events['start'] = util.convertDateEventToString(start.getTime() + 7 * 3600 * 1000);
+      events['end']   = util.convertDateEventToString(end.getTime() + 7 * 3600 * 1000);
+
       rep.view('/partials/config_event_view.ejs', {
         data  : events
       });
@@ -1415,11 +1420,10 @@ const setupRoute = async (app, opt) => {
         let tmpFromDate = new Date(`${fromDate} 00:00:00`);
         let tmpToDate   = new Date(`${toDate} 00:00:00`);
 
-        if (isNaN(tmpFromDate.getTime()) || isNaN(tmpToDate.getTime()) || tmpFromDate.getTime() >= tmpToDate.getTime() || bonusTurn <= 0) {
+        if (isNaN(tmpFromDate.getTime()) || isNaN(tmpToDate.getTime()) || tmpFromDate.getTime() > tmpToDate.getTime() || bonusTurn <= 0) {
           throw `Update event failed! Date`;
         }
 
-        
         eventFind['from_date']  = util.convertDateEventToString(tmpFromDate.getTime() - 7 * 3600 * 1000) + ' 17:00:00';
         eventFind['to_date']    = util.convertDateEventToString(tmpToDate.getTime()) + ' 16:59:59';
         eventFind['mul']        = bonusTurn;
@@ -1508,11 +1512,10 @@ const setupRoute = async (app, opt) => {
       let startTime = req.body.start.toString().trim();
       let endTime   = req.body.end.toString().trim();
 
-      let tmpS      = new Date(startTime);
-      let tmpE      = new Date(endTime);
+      let tmpS      = new Date(`${startTime} 00:00:00`);
+      let tmpE      = new Date(`${endTime} 00:00:00`);
 
-      if (isNaN(tmpS.getTime()) || isNaN(tmpE.getTime()) ||
-          tmpS.getTime() >= tmpE.getTime()) {
+      if (isNaN(tmpS.getTime()) || isNaN(tmpE.getTime()) || tmpS.getTime() > tmpE.getTime()) {
         throw 'Invalid time!';
       }
 
@@ -1525,8 +1528,9 @@ const setupRoute = async (app, opt) => {
         tmpEvents = events;
       }
 
-      tmpEvents['start']  = startTime;
-      tmpEvents['end']    = endTime;
+      tmpEvents['start']  = util.convertDateEventToString(tmpS.getTime() - 7 * 3600 * 1000) + ' 17:00:00';
+      tmpEvents['end']    = util.convertDateEventToString(tmpE.getTime()) + ' 16:59:59';
+
       DS.DSUpdateDataGlobal('admin', 'events', tmpEvents);
 
       rep.send({

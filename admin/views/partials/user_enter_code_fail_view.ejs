@@ -50,6 +50,7 @@
             <tr>
               <th style="font-weight: bold;">MEGA ID</th>
               <th style="font-weight: bold;">TÊN</th>
+              <th style="font-weight: bold;">SĐT</th>
               <th style="font-weight: bold;">CODE</th>
               <th style="font-weight: bold;">THỜI GIAN</th>
             </tr>
@@ -59,6 +60,7 @@
               <tr>
                 <td><%= d['mega_code'] %></td>
                 <td><%= d['name'] %></td>
+                <td><%= d['phone'] %></td>
                 <td><%= d['code'] %></td>
                 <td><%= d['time'] %></td>
               </tr>
@@ -96,45 +98,11 @@
       nextPage();
       previousPage();
 
-      $('#text-search').click(() => {
+      $('#text-search').on('keyup', () => {
+        console.log('aaa');
         $('#user-info-table tbody').empty();
         $('#pagination').empty();
         search();
-      });
-
-      $('#btn-export').click(() => {
-        // let data    = getDataTableToExport($('#user-info-table tbody tr'));
-        // let columns = [
-        //       {
-        //         dataField   : "mega_code",
-        //         displayName : "MEGA ID"
-        //       },
-        //       {
-        //         dataField   : "name",
-        //         displayName : "TÊN"
-        //       },
-        //       {
-        //         dataField   : "phone",
-        //         displayName : "SĐT"
-        //       },
-        //       {
-        //         dataField   : "amount_enter_code",
-        //         displayName : "SỐ CODE ĐÃ NHẬP"
-        //       },
-        //       {
-        //         dataField   : "total_turn",
-        //         displayName : "LƯỢT CHƠI TỔNG"
-        //       },
-        //       {
-        //         dataField   : "turn_remain",
-        //         displayName : "LƯỢT CHƠI CÒN"
-        //       },
-        //       {
-        //         dataField   : "total_turned",
-        //         displayName : "LƯỢT CHƠI ĐÃ SỬ DỤNG"
-        //       }
-        //     ];
-        // export_data.export(data, columns, 'Thông Tin Chung');
       });
 
     });
@@ -144,8 +112,9 @@
       for (let tr of window.arrTr) {
         let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
         let name    = tr.getElementsByTagName('td')[1].textContent.toLowerCase();
+        let phone   = tr.getElementsByTagName('td')[2].textContent.toLowerCase();
 
-        if (megaID.includes(textSearch) || name.includes(textSearch)) {
+        if (megaID.includes(textSearch) || name.includes(textSearch) || phone.includes(textSearch)) {
           tr.style.opacity = 1.0;
           $('#user-info-table tbody').append(tr);
         }

@@ -1,5 +1,6 @@
 const DS              = require('../../repository/datastore');
 const util            = require('../../utils/util');
+const redisClient     = require('../../redis/redis_client');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -194,6 +195,7 @@ exports.getAllCodeFail = async () => {
     tmp.push({
       mega_code : d['mega_id'],
       name      : d['name'],
+      phone     : d['phone'],
       code      : d['code'],
       time      : convertTimeToString(d['time']),
       milli     : d['time']

@@ -34,6 +34,7 @@ exports.requestTopupCardPhone = (amountCard, phoneNumber, megaID) => {
         detail    : 'error when call api topup',
         data      : err
       }); //logger
+      // console.log(err);
     }
     else {
       logger.emit('log', {
@@ -42,6 +43,7 @@ exports.requestTopupCardPhone = (amountCard, phoneNumber, megaID) => {
         detail    : 'user get card mobile when call get-item',
         data      : body
       }); //logger
+      // console.log(body)
     }
 
   });

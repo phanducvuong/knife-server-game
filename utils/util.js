@@ -40,12 +40,12 @@ exports.chkItemExistInInven = (inventory, idItem) => {
 
 exports.chkTimeEvent = (start, end) => {
   let time  = new Date();
-  let timeS = new Date(`${start} 00:00:00`);
-  let timeE = new Date(`${end} 23:59:59`);
+  let timeS = new Date(start);
+  let timeE = new Date(end);
 
   // let convertMilli = time.getTime();
-  let convertMilli = time.getTime() + 7 * 3600 * 1000;
-  if (convertMilli >= timeS.getTime() && convertMilli <= timeE.getTime()) {
+  // let convertMilli = time.getTime() + 7 * 3600 * 1000;
+  if (time.getTime() >= timeS.getTime() && time.getTime() <= timeE.getTime()) {
     return true;
   }
   return false;
@@ -72,11 +72,10 @@ exports.convertTimeToString = (milli) => {
 }
 
 exports.convertDateEventToString = (milli) => {
-  let time    = new Date(milli + 7 * 3600 * 1000);
+  let time    = new Date(milli);
   let month   = (time.getMonth() + 1) < 10 ? `0${time.getMonth() + 1}` : time.getMonth() + 1;
   let date    = time.getDate() < 10 ? `0${time.getDate()}` : time.getDate();
   let year    = time.getFullYear();
-  // let second  = time.getSeconds();
   return `${year}-${month}-${date}`;
 }
 
@@ -146,11 +145,11 @@ exports.genEnterCode = (code) => {
 exports.getAmountTeleCardByRegion = (region) => {
   switch(region) {
     case '10k'  : return 10000;
-    case '20k'  : return 10000;
-    case '50k'  : return 10000;
-    case '100k' : return 10000;
-    case '200k' : return 10000;
-    case '500k' : return 10000;
+    case '20k'  : return 20000;
+    case '50k'  : return 50000;
+    case '100k' : return 100000;
+    case '200k' : return 200000;
+    case '500k' : return 500000;
     default     : return 'none';
   }
 }

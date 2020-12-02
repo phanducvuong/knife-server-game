@@ -31,6 +31,7 @@ const dashboardRoute = async (app, opt) => {
       let totalNewbieUser = dashboardFunc.totalNewbieUserByDate(lsAllMegaID, lsAllDataUser, date.getTime());
       let totalTurnCreate = dashboardFunc.totalTurnCreateByDate(lsAllMegaID, lsAllDataUser, date.getTime());
       let totalTurnUsed   = dashboardFunc.totalTurnUsedByDate(lsAllMegaID, lsHisAllUser, date.getTime());
+      let totalEnterCode  = dashboardFunc.totalEnterCode(lsAllDataUser, date);
 
       let totalTurnRemain = totalTurnCreate - totalTurnUsed;
       if (totalTurnRemain < 0) totalTurnRemain = 0;
@@ -40,7 +41,8 @@ const dashboardRoute = async (app, opt) => {
         total_newbie_user   : totalNewbieUser,
         total_turn_created  : totalTurnCreate,
         total_turn_used     : totalTurnUsed,
-        total_turn_remain   : totalTurnRemain
+        total_turn_remain   : totalTurnRemain,
+        total_enter_code    : totalEnterCode
       });
 
     }
@@ -255,6 +257,46 @@ const dashboardRoute = async (app, opt) => {
       rep.send({
         status_code : 2000,
         result      : totalTurnRemain
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/get-total-enter-code', async (req, rep) => {
+    try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
+        throw `unvalid token`;
+      }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[0]['id'])) throw 'Permission denied!';
+
+      let date = new Date(req.body.date_str.toString().trim());
+      if (isNaN(date.getTime())) throw 'Invalid date!';
+
+      let lsAllMegaID     = await DS.DSGetAllUser();
+      let lsAllDataUser   = await dashboardFunc.getAllDataUser(lsAllMegaID);
+      let totalEnterCode  = dashboardFunc.totalEnterCode(lsAllDataUser, date);
+
+      rep.send({
+        status_code : 2000,
+        result      : totalEnterCode
       });
 
     }

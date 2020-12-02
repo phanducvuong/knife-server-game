@@ -441,7 +441,7 @@
         let tmpTimeE      = new Date(endingTime);
 
         if (isNaN(tmpTimeS.getTime()) || isNaN(tmpTimeE.getTime()) ||
-            tmpTimeS.getTime() >= tmpTimeE.getTime()) {
+            tmpTimeS.getTime() > tmpTimeE.getTime()) {
           alert('Invalid time!');
           return;
         }

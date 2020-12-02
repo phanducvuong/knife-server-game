@@ -23,6 +23,19 @@ exports.DSInsertCodeUserInputFailed = (kind, data) => {
     dbClient.save({
       key : keyEntity,
       data: data
+    })
+  }
+  catch(err) {
+    console.log(err);
+  }
+}
+
+exports.DSInsertCodeUserInputFaileds = (kind, key, data) => {
+  try {
+    let keyEntity = dbClient.key([`${kind}`, parseInt(key, 10)]);
+    dbClient.save({
+      key : keyEntity,
+      data: data
     });
   }
   catch(err) {
@@ -162,6 +175,27 @@ exports.DSGetAllCodeFail = async () => {
     let query     = dbClient.createQuery('log_code_fail');
     let [result]  = await dbClient.runQuery(query);
     return result;
+  }
+  catch(err) {
+    console.log(err);
+    return [];
+  }
+}
+
+exports.DSGetAllCodeFails = async () => {
+  try {
+    let query     = dbClient.createQuery('log_code_fail');
+    let [result]  = await dbClient.runQuery(query);
+
+    let tmp = [];
+    for (let t of result) {
+      tmp.push({
+        id  : t[dbClient.KEY].id,
+        data: t
+      });
+    }
+
+    return tmp;
   }
   catch(err) {
     console.log(err);

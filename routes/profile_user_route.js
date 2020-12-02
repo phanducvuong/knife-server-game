@@ -236,10 +236,11 @@ const profileUserRoute = async (app, opt) => {
         return;
       }
 
-      let codeDS = await DS.DSGetCode('codes_test', util.genEnterCode(code));
+      let codeDS = await DS.DSGetCode('codes', util.genEnterCode(code));
       if (codeDS === null || codeDS === undefined || codeDS['data']['used'] !== 0) {
         DS.DSInsertCodeUserInputFailed('log_code_fail', {
           mega_id : megaID,
+          phone   : dataUser['phone'],
           name    : dataUser['name'],
           code    : code,
           time    : date.getTime()
@@ -257,7 +258,7 @@ const profileUserRoute = async (app, opt) => {
         throw `Invalid code! ${code}`;
       } //kiểm tra code user nhập vào có hợp lệ không
 
-      let resultUpdateCode = await DS.DSImportCode('codes_test', codeDS['id'], {
+      let resultUpdateCode = await DS.DSImportCode('codes', codeDS['id'], {
         code      : codeDS['data']['code'],
         used      : 1,
         name      : dataUser['name'],

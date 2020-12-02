@@ -47,7 +47,7 @@ const checkCodeRoute = async (app, opt) => {
       if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[2]['id'])) throw 'Permission denied!';
 
       let code    = req.body.code.toString().trim();
-      let result  = await DS.DSGetCode('codes_test', util.genEnterCode(code.toUpperCase()));
+      let result  = await DS.DSGetCode('codes', util.genEnterCode(code.toUpperCase()));
 
       if (result === null || result === undefined) throw `${code} is not exsit!`;
 

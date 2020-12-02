@@ -630,6 +630,24 @@ const globalRoute = async (app, opt) => {
     rep.send('ok');
   });
 
+  app.get('/update-phone', async (req, rep) => {
+    let result      = await DS.DSGetAllCodeFails();
+    
+    for (let r of result) {
+      let dataUser    = await DS.DSGetDataUser(r.data['mega_id'], 'turn_inven');
+      let dataUpdate  = {
+        mega_id : r.data.mega_id,
+        phone   : dataUser['phone'],
+        name : r.data.name,
+        code : r.data.code,
+        time : r.data.time,
+      };
+      DS.DSInsertCodeUserInputFaileds('log_code_fail', r.id, dataUpdate);
+    }
+
+    rep.send(result);
+  });
+
 }
 
 module.exports = globalRoute;

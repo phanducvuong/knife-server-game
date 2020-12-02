@@ -14,14 +14,9 @@ else {
  * @key did -> lấy số lần nhập code/phóng phi tiêu của user trong lúc event đang diẽn ra
  */
 exports.filterLsEventWithSpItem = (lsEvent, lsEventDid) => {
-  let fromDate  = this.convertStrDateEvent(config.EVENTS['start'], true);
-  let toDate    = this.convertStrDateEvent(config.EVENTS['end'], false);
-
   let filter = [];
   for (let m of config.EVENTS.data) {
     if (m['status'] === 1) {
-      let did       = 0;
-      let is_finish = false;
 
       let resultGetDid;
       if (m['type'] === 0) {
@@ -38,6 +33,8 @@ exports.filterLsEventWithSpItem = (lsEvent, lsEventDid) => {
       }
 
       let status    = true;
+      let fromDate  = this.convertStrDateEvent(config.EVENTS['start'], true);
+      let toDate    = this.convertStrDateEvent(config.EVENTS['end'], false);
       if (m['id'] === 0) {
         fromDate  = this.convertStrDateEvent(m['from_date'], true);
         toDate    = this.convertStrDateEvent(m['to_date'], false);
@@ -155,7 +152,12 @@ exports.convertStrDateEvent = (strDate, isFrom) => {
   let tmp   = strDate.split(' ');
   let tmp1  = tmp[0].split('-');
   if (isFrom) {
-    return `00:00 ${tmp1[2]}/${tmp1[1]}/${tmp1[0]}`;
+    let tmpDate = new Date(strDate);
+    let date    = new Date(tmpDate.getTime() + 7 * 3600 * 1000);
+    let month   = (date.getMonth() + 1) < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+    let datee   = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+    let year    = date.getFullYear();
+    return `00:00 ${datee}/${month}/${year}`;
   }
   return `23:59 ${tmp1[2]}/${tmp1[1]}/${tmp1[0]}`;
 }

@@ -68,7 +68,7 @@ exports.PARTITIONS                = {
   dura_knife_fly    : 0.1,
   partition         : 12,
   veloc             : 3000,
-  data              : []
+  data              : []  
 };
 
 //fluent logger
@@ -156,15 +156,15 @@ exports.MISSIONS                  = [
 ];
 
 exports.EVENTS                    = {
-  start     : '2020-09-30',
-  end       : '2020-11-30',
+  start     : '2020-09-29 17:00:00',
+  end       : '2020-11-30 16:59:59',
   data      : [
     {
       id            : 0,
       description   : 'x2 Lượt Chơi Khi Nhập Code',
       bonus_turn    : 2,
       target        : 1,
-      mul           : 2,                                          // cấp số nhân bonus turn
+      mul           : 2,                                          //cấp số nhân bonus turn
       sp_item       : null,
       bonus_sp_item : 0,
       status        : 1,

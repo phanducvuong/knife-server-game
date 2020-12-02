@@ -43,8 +43,8 @@ const eventRoute = async (app, opt) => {
             status        : util.isEligibleEventById0(config.EVENTS['data'][0]['from_date'], config.EVENTS['data'][0]['to_date']),
             bonus_str_1   : '',
             bonus_str_2   : '',
-            from_date     : eventFunc.convertStrDateEvent(config.EVENTS['data'][0]['from_date']),
-            to_date       : eventFunc.convertStrDateEvent(config.EVENTS['data'][0]['to_date'])
+            from_date     : eventFunc.convertStrDateEvent(config.EVENTS['data'][0]['from_date'], true),
+            to_date       : eventFunc.convertStrDateEvent(config.EVENTS['data'][0]['to_date'], false)
           }
         ]
         rep.send({
@@ -63,8 +63,8 @@ const eventRoute = async (app, opt) => {
       rep.send({
         status_code : 2000,
         ls_event    : lsFilter,
-        time_start  : config.EVENTS.start,
-        time_end    : config.EVENTS.end,
+        time_start  : eventFunc.convertStrDateEvent(config.EVENTS.start, true),
+        time_end    : eventFunc.convertStrDateEvent(config.EVENTS.end, false),
         turn        : dataUser['turn'],
         turned      : dataUser['total_turned'],
         name        : dataUser['name']

@@ -46,7 +46,6 @@ exports.totalUniqueUserJoinGame = (lsMegaID, lsDataUser, fromDate, toDate) => {
       }
     }
   }
-  // console.log('\n------------------')
   return total;
 }
 
@@ -90,6 +89,19 @@ exports.totalTurnUsedByDate = (lsMegaID, lsHisAllUser, millisecond) => {
     }
   }
   return total;
+}
+
+exports.totalEnterCode = (lsAllDataUser, date) => {
+  let totalEnterCode = 0;
+  for (let d of lsAllDataUser) {
+    for (let c of d['data_user']['log_get_turn']['from_enter_code']) {
+      let split = c.split('_')                                                //{code}_{new-turn-user}_{bonus-turn}_{timestamp}_{lucky-code}
+      if (util.chkTheSameDate(date.getTime(), parseInt(split[3], 10))) {
+        totalEnterCode += 1;
+      }
+    }
+  }
+  return totalEnterCode;
 }
 
 //-------------------------------functional--------------------------------------

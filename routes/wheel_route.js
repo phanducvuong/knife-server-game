@@ -153,7 +153,7 @@ const wheelRoute = async (app, opt) => {
       if (region === null || region === undefined) throw `Can not get region by ${item['id']}`;
 
       //topup tele card when item is tele
-      let amountTeleCard = util.getAmountTeleCardByRegion(region);
+      let amountTeleCard = util.getAmountTeleCardByRegion(region['region']);
       if (!isNaN(amountTeleCard)) {
         topup.requestTopupCardPhone(amountTeleCard, dataUser['phone'], megaID);
       }

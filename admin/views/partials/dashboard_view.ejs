@@ -86,6 +86,17 @@
               <p id="total-turn-remain"><%= total_turn_remain %></p>
             </div>
           </div>
+
+          <!-- Tổng số code nhập theo ngày -->
+          <div class="form-group row">
+            <label class="col-sm-3 col-form-label">Tổng số code nhập theo ngày</label>
+            <div class="col-sm-3">
+              <input type="date" id="date-enter-code" class="form-control" value="2020-09-12">
+            </div>
+            <div class="col-sm-6 total-statistical">
+              <p id="total-enter-code"><%= total_enter_code %></p>
+            </div>
+          </div>
           
         </div>
         </div>
@@ -109,12 +120,14 @@
     $('#date-turn-created').val(strTime);
     $('#date-turn-used').val(strTime);
     $('#date-turn-remain').val(strTime);
+    $('#date-enter-code').val(strTime);
 
     getTotalUniqueUserJoinGame();
     getTotalNewbieUser();
     getTotalTurnCreate();
     getTotalTurnUsed();
     getTotalTurnRemain();
+    getTotalEnterCode();
 
   });
 
@@ -358,6 +371,47 @@
             }
             $('#loading').css('display', 'none');
             $('#total-turn-remain').text(data['result']);
+
+          })
+          .fail(() => {});
+      }
+      else
+        $('#loading').css('display', 'none');
+    });
+  }
+
+  function getTotalEnterCode() {
+    $('#date-enter-code').change(() => {
+      $('#loading').css('display', 'block');
+      let dateStr = $('#date-enter-code').val();
+      let tmpDate = new Date(dateStr);
+
+      if (!isNaN(tmpDate.getTime())) {
+        $.ajax({
+          url           : env.http + window.location.host + '/api/v1/admin/dashboard/get-total-enter-code',
+          method        : 'POST',
+          headers       : {
+            'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type'	:'application/json'
+          },
+          contentType   : 'application/json; charset=utf-8',
+          data          : JSON.stringify({ date_str: dateStr })
+        })
+          .done((data) => {
+
+            if (data['status_code'] !== 2000) {
+
+              if (data['error'] === 'unvalid token') {
+                window.location.href = env.http + window.location.host + '/api/v1/admin/signin';
+                return;
+              }
+
+              $('#loading').css('display', 'none');
+              alert(data['error']);
+              return;
+            }
+            $('#loading').css('display', 'none');
+            $('#total-enter-code').text(data['result']);
 
           })
           .fail(() => {});
