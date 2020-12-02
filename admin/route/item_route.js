@@ -160,6 +160,97 @@ const itemRoute = async (app, opt) => {
     }
   });
 
+  //del special item in inventory's user
+  app.post('/get-list-special-item-user', async (req, rep) => {
+    try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
+        throw `unvalid token`;
+      }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[3]['id'])) throw 'Permission denied!';
+
+      let megaID = req.body.mega_id.toString().trim();
+      if (megaID === null || megaID === undefined) throw `Error!`;
+
+      let dataUser = await DS.DSGetDataUser(megaID, 'turn_inven');
+      if (dataUser === null || dataUser === undefined) {
+        throw `${megaID} is not exist!`;
+      }
+
+      rep.send({
+        status_code : 2000,
+        result      : itemFunc.getListItemSpecialUser(dataUser['special_item'])
+      });
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/del-special-item', async (req, rep) => {
+    try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
+        throw `unvalid token`;
+      }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[3]['id'])) throw 'Permission denied!';
+
+      let condition = req.body.condition.toString().trim();
+      let megaID    = req.body.mega_id.toString().trim();
+      if (megaID === null || megaID === undefined || condition === null || condition === undefined || condition === '') {
+        throw `Error!`;
+      }
+
+      let dataUser = await DS.DSGetDataUser(megaID, 'turn_inven');
+      if (dataUser === null || dataUser === undefined) {
+        throw `${megaID} is not exist!`;
+      }
+
+      let resultDelSpecialItem = itemFunc.delSpecialItemUser(dataUser['special_item'], condition);
+      if (!resultDelSpecialItem['status']) throw 'Del failed!';
+
+      dataUser['special_item'] = resultDelSpecialItem['ls_special_item_update'];
+      redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
+      DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
+
+      rep.send({
+        status_code             : 2000,
+        ls_special_item_update  : itemFunc.getListItemSpecialUser(dataUser['special_item'])
+      });
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
   //set turn for user
   app.post('/set-turn', async (req, rep) => {
     try {

@@ -126,14 +126,14 @@ input::-webkit-inner-spin-button {
   left: 30%;
 }
 
-#time-sel-item, #search-code, #search-user {
+#time-sel-item, #search-code, #search-user, #search-mega-id {
   left: 31%;
   border-style: solid;
   border-color: #8080802b;
   border-radius: 5px;
 }
 
-#btn-search-code {
+#btn-search-code, #btn-search-mega-id {
   margin-left: 30px;
   height: 30px;
   width: 70px;

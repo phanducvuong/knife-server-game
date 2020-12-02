@@ -70,3 +70,34 @@ exports.getTotalAmountItemBy = async (idItem, millisecond) => {
     total   : total,
   };
 }
+
+exports.getListItemSpecialUser = (lsSpecialItem) => {
+  let tmp = [];
+  for (let s of lsSpecialItem) {
+    let ss              = s.split('_');                                                           //{id_special_item}_{millisecond}
+    let specialItemFind = config.SPECIAL_ITEM.find(e => { return e['id'] === parseInt(ss[0]) });
+    if (specialItemFind !== null && specialItemFind !== undefined) {
+      tmp.push({
+        id          : specialItemFind['id'],
+        description : specialItemFind['description'],
+        millisecond : ss[1],
+        time        : util.convertTimeToString(parseInt(ss[1], 10))
+      });
+    }
+  }
+  return tmp;
+}
+
+exports.delSpecialItemUser = (lsSpecialItem, condition) => {
+  let specialItemFind = lsSpecialItem.find(e => { return e === condition });
+  if (specialItemFind === null || specialItemFind === undefined) {
+    return { status: false };
+  }
+
+  let index = lsSpecialItem.indexOf(specialItemFind);
+  lsSpecialItem.splice(index, 1);
+  return {
+    status                  : true,
+    ls_special_item_update  : lsSpecialItem
+  };
+}
