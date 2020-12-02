@@ -95,8 +95,9 @@ exports.totalEnterCode = (lsAllDataUser, date) => {
   let totalEnterCode = 0;
   for (let d of lsAllDataUser) {
     for (let c of d['data_user']['log_get_turn']['from_enter_code']) {
-      let split = c.split('_')                                                //{code}_{new-turn-user}_{bonus-turn}_{timestamp}_{lucky-code}
-      if (util.chkTheSameDate(date.getTime(), parseInt(split[3], 10))) {
+      let split = c.split('_')                                              //{code}_{new-turn-user}_{bonus-turn}_{timestamp}_{lucky-code}
+      let milli = parseInt(split[3], 10) + 7 * 3600 * 1000;
+      if (util.chkTheSameDate(date.getTime(), milli)) {
         totalEnterCode += 1;
       }
     }

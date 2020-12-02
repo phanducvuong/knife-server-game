@@ -14,7 +14,7 @@ exports.filterOptionItem = async () => {
   let lsAllItem = await DS.DSGetAllItem();
   let filter    = [];
   for (let i of lsAllItem) {
-    if (i['type'] === 0 || i['type'] === 1) {
+    if (i['type'] !== -1) {
       filter.push({
         id    : i['id'],
         name  : i['name']
@@ -40,30 +40,33 @@ exports.getTotalAmountItemBy = async (idItem, millisecond) => {
     type    : itemFind['type']
   }
 
-  let details = [];                                          //list detail history user. Dùng để xuất log
-  for (let u of lsHisAllUser) {
-    let tmpArr  = [];
-    for (let his of u['histories']) {
-      let json    = JSON.parse(his);
-      let milli   = json['time'] + 7 * 3600 * 1000;
-      if (idItem === json['id_item'] && util.chkTheSameDate(millisecond, milli)) {
-        total += 1;
-        tmpArr.push(json)
+  if (itemFind['type'] === 2) {
+    let lsAllDataUser = await dashboardFunc.getAllDataUser(lsAllMegaID);
+    for (let d of lsAllDataUser) {
+      for (let l of d['data_user']['lucky_code']) {
+        let split = l.split('_');                                           //{code}_{millisecond}
+        let milli = parseInt(split[1], 10) + 7 * 3600 * 1000;
+        if (util.chkTheSameDate(millisecond, milli)) {
+          total += 1;
+        }
       }
     }
-
-    if (tmpArr.length > 0) {
-      details.push({
-        mega_code : u['mega_code'],
-        province  : u['province'],
-        data      : tmpArr
-      });
+  } //get total lucky_code is created by date
+  else {
+    for (let u of lsHisAllUser) {
+      for (let his of u['histories']) {
+        let json    = JSON.parse(his);
+        let milli   = json['time'] + 7 * 3600 * 1000;
+        if (idItem === json['id_item'] && util.chkTheSameDate(millisecond, milli)) {
+          total += 1;
+        }
+      }
     }
   }
+
   return {
     status  : true,
     item    : item,
     total   : total,
-    details : details
   };
 }

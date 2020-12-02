@@ -71,7 +71,6 @@ const itemRoute = async (app, opt) => {
         status_code : 2000,
         item        : result['item'],
         total       : result['total'],
-        details     : result['details']
       });
 
     }
