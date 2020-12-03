@@ -9,65 +9,39 @@
       <div style="background-color: white;">
         <div class="div-all-item row">
 
-          <!-- <div class="filter-info-user">
+          <div class="filter-info-user">
             <a hidden id="csv" href=""></a>
-            <button class="btn btn-primary" id="btn-export">CSV</button>
-          </div> -->
+            <button class="btn btn-primary" id="btn-export-lucky-code">CSV</button>
+          </div>
 
           <!-- search -->
           <div class="filter-info-user">
             <label>Search</label>
-            <input type="text" placeholder="megaID/name" id="text-search" value="">
+            <input type="text" placeholder="megaID/username" id="search-user" value="">
           </div>
-
-          <!-- select column filter -->
-          <!-- <div class="filter-info-user">
-            <label>Select Column</label>
-            <select id="sel-col">
-              <option selected value="-1">none</option>
-              <option value="3">code đã nhập</option>
-              <option value="4">lượt chơi tổng</option>
-              <option value="5">lượt chơi còn</option>
-              <option value="6">lượt chơi đã sử dụng</option>
-            </select>
-          </div> -->
-
-          <!-- min -->
-          <!-- <div class="filter-info-user">
-            <label>Min</label>
-            <input type="number" placeholder="min" step="0" min="0" id="min" value="">
-          </div> -->
-
-          <!-- max -->
-          <!-- <div class="filter-info-user">
-            <label>Max</label>
-            <input type="number" placeholder="max" step="0" min="0" id="max" value="">
-          </div> -->
         </div>
 
-        <table id="user-info-table" class="footable table table-stripped">
+        <table id="table-lucky-code" class="footable table table-stripped">
           <thead>
             <tr>
               <th style="font-weight: bold;">MEGA ID</th>
               <th style="font-weight: bold;">TÊN</th>
               <th style="font-weight: bold;">SĐT</th>
-              <th style="font-weight: bold;">CODE</th>
-              <th style="font-weight: bold;">THỜI GIAN</th>
+              <th style="font-weight: bold;">TỈNH/THÀNH PHỐ</th>
+              <th style="font-weight: bold;">MÃ CƠ HỘI</th>
             </tr>
           </thead>
           <tbody>
             <% for (let d of data) { %>
               <tr>
-                <td><%= d['mega_code'] %></td>
+                <td><%= d['mega_id'] %></td>
                 <td><%= d['name'] %></td>
                 <td><%= d['phone'] %></td>
-                <td><%= d['code'] %></td>
-                <td><%= d['time'] %></td>
+                <td><%= d['province'] %></td>
+                <td><%= d['lucky_code'] %></td>
               </tr>
             <% } %>
           </tbody>
-          <tfoot>
-          </tfoot>
         </table>
         <div style="text-align: end;">
           <div class="pagination-custom">
@@ -89,8 +63,8 @@
 
     $(document).ready(() => {
 
-      window.arrTr      = [];
-      for (let tr of $('#user-info-table tbody tr')) {
+      window.arrTr = [];
+      for (let tr of $('#table-lucky-code tbody tr')) {
         window.arrTr.push(tr);
       }
 
@@ -98,33 +72,87 @@
       nextPage();
       previousPage();
 
-      $('#text-search').on('keyup', () => {
-        $('#user-info-table tbody').empty();
-        $('#pagination').empty();
+      $('#btn-export-enter-code').click(() => {
+        let data    = getDataTableToExport($('#table-lucky-code tbody tr'));
+        let columns = [
+          {
+            dataField: "mega_code",
+            displayName: "MEGA ID"
+          },
+          {
+            dataField: "name",
+            displayName: "TÊN"
+          },
+          {
+            dataField: "phone",
+            displayName: "SĐT"
+          },
+          {
+            dataField: "code",
+            displayName: "CODE"
+          },
+          {
+            dataField: "lucky_code",
+            displayName: "MÃ CƠ HỘI"
+          },
+          {
+            dataField: "time",
+            displayName: "THỜI GIAN"
+          }
+        ];
+        export_data.export(data, columns, 'Danh Sách Code Đã Nhập');
+      });
+
+      $('#search-user').on('keyup', () => {
+        search();
+      });
+
+      $('#from-date-enter-code').change(() => {
+        search();
+      });
+
+      $('#to-date-enter-code').change(() => {
         search();
       });
 
     });
 
     function search() {
-      let textSearch = $('#text-search').val();
-      for (let tr of window.arrTr) {
-        let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
-        let name    = tr.getElementsByTagName('td')[1].textContent;
-        let phone   = tr.getElementsByTagName('td')[2].textContent;
+      let textSearch  = $('#search-user').val().toLowerCase();
+      let fromDate    = new Date($('#from-date-enter-code').val() + ' 00:00:00');
+      let toDate      = new Date($('#to-date-enter-code').val() + ' 23:59:59');
 
-        if (megaID.includes(textSearch.toLowerCase()) || name.includes(textSearch) || phone.includes(textSearch)) {
-          tr.style.opacity = 1.0;
-          $('#user-info-table tbody').append(tr);
-        }
+      $('#table-lucky-code tbody').empty();
+      $('#pagination').empty();
+
+      if (textSearch !== '' && !isNaN(fromDate.getTime()) && !isNaN(toDate.getTime())) {
+        filterByTextAndDate(fromDate, toDate, textSearch);
+        getPagination();
+        return;
       }
-      
-      getPagination();
+
+      if (textSearch !== '' && (isNaN(fromDate.getTime()) || isNaN(toDate.getTime))) {
+        filterByText(textSearch);
+        getPagination();
+        return;
+      }
+
+      if (textSearch === '' && !isNaN(fromDate.getTime()) && !isNaN(toDate.getTime())) {
+        filterByDate(fromDate, toDate);
+        getPagination();
+        return;
+      }
+
+      if (textSearch === '' && (isNaN(fromDate.getTime()) || isNaN(toDate.getTime()))) {
+        filterAll();
+        getPagination();
+        return;
+      }
+
     }
 
-    //-----------------------------------------------------pagination--------------------------------------------------------
     function getPagination() {
-      let rowsTotal = $('#user-info-table tbody tr').length;
+      let rowsTotal = $('#table-lucky-code tbody tr').length;
       let numPages  = parseInt(rowsTotal / env.rows_show, 10);
 
       if ((rowsTotal % env.rows_show) !== 0) {
@@ -154,8 +182,8 @@
       }
 
       $('#pagination').append(markup);
-      $('#user-info-table tbody tr').hide();
-      $('#user-info-table tbody tr').slice(0, env.rows_show).show();
+      $('#table-lucky-code tbody tr').hide();
+      $('#table-lucky-code tbody tr').slice(0, env.rows_show).show();
 
       $('body').delegate('.page', 'click', (event) => {
         let currPage  = parseInt(event.currentTarget.attributes.getNamedItem('data-id').value, 10);
@@ -165,7 +193,7 @@
 
     function nextPage() {
       $('#next-page').click(() => {
-        let rowsTotal = $('#user-info-table tbody tr').length;
+        let rowsTotal = $('#table-lucky-code tbody tr').length;
         let numPages  = parseInt(rowsTotal / env.rows_show, 10);
         if ((rowsTotal % env.rows_show) !== 0) {
           numPages += 1;
@@ -182,7 +210,7 @@
 
     function previousPage() {
       $('#previous-page').click(() => {
-        let rowsTotal = $('#user-info-table tbody tr').length;
+        let rowsTotal = $('#table-lucky-code tbody tr').length;
         let numPages  = parseInt(rowsTotal / env.rows_show, 10);
         if ((rowsTotal % env.rows_show) !== 0) {
           numPages += 1;
@@ -265,7 +293,7 @@
     function showDataTableBy(currPage) {
       let startItem = currPage * env.rows_show;
       let endItem   = startItem + env.rows_show;
-      $('#user-info-table tbody tr')
+      $('#table-lucky-code tbody tr')
           .css('opacity', '0.0')
           .hide()
           .slice(startItem, endItem)
@@ -273,7 +301,76 @@
           .animate({ opacity: 1 }, 300);
     }
 
+    function convertStringToMillisecond(s) {
+      let date = new Date(s);
+      if (!isNaN(date.getTime())) {
+        return date.getTime();
+      }
+      return 0;
+    }
+
     //-----------------------------------------------------filter------------------------------------------------------------
+
+    function filterAll() {
+      for (let tr of window.arrTr) {
+        tr.style.opacity = 1.0;
+        $('#table-lucky-code tbody').append(tr);
+      }
+    }
+
+    function filterByTextAndDate(fromDate, toDate, textSearch) {
+      for (let tr of window.arrTr) {
+        let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
+        let name    = tr.getElementsByTagName('td')[1].textContent.toLowerCase();
+        let phone   = tr.getElementsByTagName('td')[2].textContent;
+        let date    = convertStringToMillisecond(tr.getElementsByTagName('td')[5].textContent);
+
+        if (megaID.includes(textSearch) || phone.includes(textSearch) || name.includes(textSearch)) {
+          if (date >= fromDate.getTime() && date <= toDate.getTime()) {
+            tr.style.opacity = 1.0;
+            $('#table-lucky-code tbody').append(tr);
+          }
+        }
+      }
+    }
+
+    function filterByText(textSearch) {
+      for (let tr of window.arrTr) {
+        let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
+        let name    = tr.getElementsByTagName('td')[1].textContent.toLowerCase();
+        let phone   = tr.getElementsByTagName('td')[2].textContent;
+
+        if (megaID.includes(textSearch) || phone.includes(textSearch) || name.includes(textSearch)) {
+          tr.style.opacity = 1.0;
+          $('#table-lucky-code tbody').append(tr);
+        }
+      }
+    }
+
+    function filterByDate(fromDate, toDate) {
+      for (let tr of window.arrTr) {
+        let date = convertStringToMillisecond(tr.getElementsByTagName('td')[5].textContent);
+        if (date >= fromDate.getTime() && date <= toDate.getTime()) {
+          tr.style.opacity = 1.0;
+          $('#table-lucky-code tbody').append(tr);
+        }
+      }
+    }
+
+    function getDataTableToExport(arrTable) {
+      let data = [];
+      for (let tr of arrTable) {
+        data.push({
+          mega_code         : tr.getElementsByTagName('td')[0].textContent,
+          name              : tr.getElementsByTagName('td')[1].textContent,
+          phone             : tr.getElementsByTagName('td')[2].textContent,
+          code              : tr.getElementsByTagName('td')[3].textContent,
+          lucky_code        : tr.getElementsByTagName('td')[4].textContent,
+          time              : tr.getElementsByTagName('td')[5].textContent,
+        });
+      }
+      return data;
+    }
 
   </script>
 

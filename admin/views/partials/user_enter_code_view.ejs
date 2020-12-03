@@ -55,6 +55,7 @@
               <th style="font-weight: bold;">TÊN</th>
               <th style="font-weight: bold;">SĐT</th>
               <th style="font-weight: bold;">CODE</th>
+              <th style="font-weight: bold;">MÃ CƠ HỘI</th>
               <th style="font-weight: bold;">THỜI GIAN</th>
             </tr>
           </thead>
@@ -65,6 +66,7 @@
                 <td><%= d['name'] %></td>
                 <td><%= d['phone'] %></td>
                 <td><%= d['code'] %></td>
+                <td><%= d['lucky_code'] %></td>
                 <td><%= d['time'] %></td>
               </tr>
             <% } %>
@@ -117,6 +119,10 @@
           {
             dataField: "code",
             displayName: "CODE"
+          },
+          {
+            dataField: "lucky_code",
+            displayName: "MÃ CƠ HỘI"
           },
           {
             dataField: "time",
@@ -346,7 +352,7 @@
         let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
         let name    = tr.getElementsByTagName('td')[1].textContent.toLowerCase();
         let phone   = tr.getElementsByTagName('td')[2].textContent;
-        let date    = convertStringToMillisecond(tr.getElementsByTagName('td')[4].textContent);
+        let date    = convertStringToMillisecond(tr.getElementsByTagName('td')[5].textContent);
 
         if (megaID.includes(textSearch) || phone.includes(textSearch) || name.includes(textSearch)) {
           if (date >= fromDate.getTime() && date <= toDate.getTime()) {
@@ -372,7 +378,7 @@
 
     function filterByDate(fromDate, toDate) {
       for (let tr of window.arrTr) {
-        let date = convertStringToMillisecond(tr.getElementsByTagName('td')[4].textContent);
+        let date = convertStringToMillisecond(tr.getElementsByTagName('td')[5].textContent);
         if (date >= fromDate.getTime() && date <= toDate.getTime()) {
           tr.style.opacity = 1.0;
           $('#user-info-table tbody').append(tr);
@@ -388,7 +394,8 @@
           name              : tr.getElementsByTagName('td')[1].textContent,
           phone             : tr.getElementsByTagName('td')[2].textContent,
           code              : tr.getElementsByTagName('td')[3].textContent,
-          time              : tr.getElementsByTagName('td')[4].textContent,
+          lucky_code        : tr.getElementsByTagName('td')[4].textContent,
+          time              : tr.getElementsByTagName('td')[5].textContent,
         });
       }
       return data;

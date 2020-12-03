@@ -4,6 +4,7 @@ const profileFunc     = require('../../functions/profile_user_func');
 const jwt             = require('../../utils/jwt');
 const signinFunc      = require('../functions/signin_func');
 const roleFunc        = require('../functions/role_func');
+const log             = require('../../utils/log');
 
 const unlockUserRoute = async (app, opt) => {
 
@@ -99,6 +100,8 @@ const unlockUserRoute = async (app, opt) => {
       dataUser['block_acc'] = profileFunc.resetBlockAccUser(dataUser['block_acc']);
       DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
       redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
+
+      log.logAdminTool('UNLOCK-USER', resultVerify['mailer'], {mega_id : megaID});
 
       rep.send({
         status_code : 2000,

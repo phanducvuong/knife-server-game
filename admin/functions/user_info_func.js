@@ -1,6 +1,5 @@
 const DS              = require('../../repository/datastore');
 const util            = require('../../utils/util');
-const redisClient     = require('../../redis/redis_client');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -129,23 +128,26 @@ exports.getTurnningInfo = (lsHistoryAllUser) => {
       }
     }//duyệt qua history
 
-    // for (let l of h['lucky_code']) {
-    //   let split = l.split('_');
-    //   let find  = lsTurnningInfo.find(e => { e['reward'] === `MCH: ${split[0]}` });
+  //   for (let l of h['lucky_code']) {
+  //     let split = l.split('_');
+  //     let find  = lsTurnningInfo.find(e => { return e['reward'] === `MCH: ${split[0]}` });
 
-    //   if (find === null || find === undefined) {
-    //     let time = parseInt(split[1], 10);
-    //     lsTurnningInfo.push({
-    //       mega_code   : h['mega_code'],
-    //       name        : h['name'],
-    //       phone       : h['phone'],
-    //       province    : h['province'],
-    //       reward      : `MCH: ${split[0]}`,
-    //       time        : util.convertTimeToString(time),
-    //       milli       : time
-    //     });
-    //   }
-    // }
+  //     console.log(split[0]);
+  //     console.log(find);
+
+  //     if (find === null || find === undefined) {
+  //       let time = parseInt(split[1], 10);
+  //       lsTurnningInfo.push({
+  //         mega_code   : h['mega_code'],
+  //         name        : h['name'],
+  //         phone       : h['phone'],
+  //         province    : h['province'],
+  //         reward      : `MCH: ${split[0]}`,
+  //         time        : util.convertTimeToString(time),
+  //         milli       : time
+  //       });
+  //     }
+  //   }
   }
   return lsTurnningInfo;
 }
@@ -157,12 +159,13 @@ exports.getEnterCodeInfo = (lsAllDataUser) => {
       let s = c.split('_');
       let t = util.convertTimeToString(parseInt(s[3], 10));
       lsEnterCodeInfo.push({
-        mega_code : m['mega_code'],
-        name      : m['data']['name'],
-        phone     : m['data']['phone'],
-        code      : s[0],
-        time      : t,
-        milli     : parseInt(s[3], 10)
+        mega_code   : m['mega_code'],
+        name        : m['data']['name'],
+        phone       : m['data']['phone'],
+        code        : s[0],
+        lucky_code  : s[4],
+        time        : t,
+        milli       : parseInt(s[3], 10)
       });
     }
   }
@@ -225,6 +228,24 @@ exports.getSpecialItemsAllUser = (lsAllUser, lsTurnning) => {
   }
   lsTurnning.sort((a, b) => { return b['milli'] - a['milli'] });
   return lsTurnning;
+}
+
+exports.getAllLuckyCode = async () => {
+  let lsAllDataUser = await this.getAllDataUser();
+  let tmp           = [];
+  for (let d of lsAllDataUser) {
+    for (let m of d['data']['lucky_code']) {
+      let s = m.split('_');                                             //{code}_{new-turn-user}_{bonus-turn}_{timestamp}_{lucky-code}
+      tmp.push({
+        mega_id     : d['mega_code'],
+        name        : d['data']['name'],
+        phone       : d['data']['phone'],
+        province    : d['data']['province'],
+        lucky_code  : s[0]
+      });
+    }
+  }
+  return tmp;
 }
 
 //--------------------------------------------functional-----------------------------------

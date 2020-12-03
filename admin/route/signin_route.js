@@ -3,6 +3,7 @@ const jwt                 = require('../../utils/jwt');
 const sendMail            = require('../../utils/send_mail');
 const DS                  = require('../../repository/datastore');
 const roleFunc            = require('../functions/role_func');
+const log                 = require('../../utils/log');
 
 const signinRoute = async (app, opt) => {
 
@@ -58,6 +59,8 @@ const signinRoute = async (app, opt) => {
       let token   = req.body.token;
       let result  = await jwt.verify(token, signinFunc.SECRETE);
       if (!result['status']) throw 'Signin Failed!';
+
+      log.logAdminTool('SIGN-IN', result['mailer'], { mailer: result['mailer'] });
 
       let roleFind = roleFunc.GETROLES().find(e => { return e['id'] === result['mailer']['role'][0] });
       rep.send({

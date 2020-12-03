@@ -5,6 +5,7 @@ const util              = require('../../utils/util');
 const jwt               = require('../../utils/jwt');
 const signinFunc        = require('../functions/signin_func');
 const roleFunc          = require('../functions/role_func');
+const log               = require('../../utils/log');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -54,6 +55,8 @@ const setupRoute = async (app, opt) => {
           data                : []
         }
 
+        log.logAdminTool('UPDATE-BOARD', resultVerify['mailer'], tmpPartition);
+
         DS.DSUpdateDataGlobal('admin', 'partitions', tmpPartition);
         redisClient.updatePartition(JSON.stringify(tmpPartition));
 
@@ -69,6 +72,8 @@ const setupRoute = async (app, opt) => {
       partitions['dura_knife_fly']    = duraKnifeFly;
       partitions['dura_ani_board']    = duraInimBoard;
       partitions['distane_ani_board'] = disAnimBoard;
+
+      log.logAdminTool('UPDATE-BOARD', resultVerify['mailer'], partitions);
 
       DS.DSUpdateDataGlobal('admin', 'partitions', partitions);
       redisClient.updatePartition(JSON.stringify(partitions));
@@ -182,6 +187,18 @@ const setupRoute = async (app, opt) => {
           data              : data
         }
 
+        log.logAdminTool('ADD-PARTITION', resultVerify.mailer,
+          {
+            new_partition: {
+              id      : id,
+              region  : region,
+              name    : name,
+              pos     : pos
+            },
+            partition : partitions
+          }
+        );
+
         DS.DSUpdateDataGlobal('admin', 'partitions', partitions);
         redisClient.updatePartition(JSON.stringify(partitions));
 
@@ -217,6 +234,19 @@ const setupRoute = async (app, opt) => {
           data              : data
         }
 
+        log.logAdminTool(
+          'ADD-PARTITION', resultVerify['mailer'],
+          {
+            new_partition: {
+              id      : id,
+            region  : region,
+            name    : name,
+            pos     : pos
+            },
+            partition: tmpPar
+          }
+        );
+
         DS.DSUpdateDataGlobal('admin', 'partitions', tmpPar);
         redisClient.updatePartition(JSON.stringify(tmpPar));
 
@@ -238,6 +268,19 @@ const setupRoute = async (app, opt) => {
         region  : region,
         pos     : pos
       });
+
+      log.logAdminTool(
+        'ADD-PARTITION', resultVerify['mailer'],
+        {
+          new_partition: {
+            id      : id,
+            region  : region,
+            name    : name,
+            pos     : pos
+          },
+          partition: partitions
+        }
+      );
 
       DS.DSUpdateDataGlobal('admin', 'partitions', partitions);
       redisClient.updatePartition(JSON.stringify(partitions));
@@ -281,8 +324,17 @@ const setupRoute = async (app, opt) => {
       let partitions = await DS.DSGetDataGlobal('admin', 'partitions');
       if (partitions['data'] === null || partitions['data'] === undefined) throw `Delete partition failed!`;
 
+      let prePartition = JSON.parse(JSON.stringify(partitions));
       let result = setupFunc.deletePartitionBy(partitions['data'], pos);
       if (result['status'] === false) throw `${pos} is not exist in list partition!`;
+
+      log.logAdminTool(
+        'DEL-PARTITION', resultVerify['mailer'],
+        {
+          pos           : pos,
+          pre_partition : prePartition
+        }
+      );
 
       partitions['data'] = result['lsPartitionUpdate'];
       DS.DSUpdateDataGlobal('admin', 'partitions', partitions);
@@ -393,6 +445,7 @@ const setupRoute = async (app, opt) => {
         throw `Update partition failed!`;
       }
 
+      let prePartition = JSON.parse(JSON.stringify(partitions));
       let parAtPos = setupFunc.findPartitionAndIndex(partitions['data'], pos);
       if (parAtPos === null || parAtPos === undefined) throw `Partition is not exist!`;
 
@@ -401,6 +454,19 @@ const setupRoute = async (app, opt) => {
       parAtPos['item']['region']  = region;
 
       partitions['data'][`${parAtPos['index']}`] = parAtPos['item'];
+
+      log.logAdminTool(
+        'UPDATE-PARTITION', resultVerify['mailer'],
+        {
+          item_update   : {
+            id          : id,
+            pos         : pos,
+            name        : name,
+            region      : region
+          },
+          pre_partition : prePartition
+        }
+      );
 
       DS.DSUpdateDataGlobal('admin', 'partitions', partitions);
       redisClient.updatePartition(JSON.stringify(partitions));
@@ -541,6 +607,8 @@ const setupRoute = async (app, opt) => {
 
       lsItem.push(itemJs);
 
+      log.logAdminTool('ADD-ITEM', resultVerify['mailer'], itemJs);
+
       redisClient.initItemBy(id);
       redisClient.updateArrItem(JSON.stringify(lsItem));
       DS.DSUpdateDataGlobal('items', id, itemJs);
@@ -591,8 +659,17 @@ const setupRoute = async (app, opt) => {
         }
       }
 
-      let lsItemUpdate = setupFunc.deleteItemBy(lsItem, id);
+      let preLsItem     = JSON.parse(JSON.stringify(lsItem));
+      let lsItemUpdate  = setupFunc.deleteItemBy(lsItem, id);
       if (lsItemUpdate['status'] === false) throw `${id} is not exist!`;
+
+      log.logAdminTool(
+        'DEL_ITEM', resultVerify['mailer'],
+        {
+          id_item_del : id,
+          pre_ls_item : preLsItem
+        }
+      );
 
       DS.DSDeleteItemBy('items', id);
       redisClient.delKeyItem(id);
@@ -684,13 +761,27 @@ const setupRoute = async (app, opt) => {
       let lsItem = await DS.DSGetAllItem();
       if (lsItem === null || lsItem === undefined) throw `List item is not exist!`;
 
-      let tmp = setupFunc.findItemAndIndex(lsItem, id);
+      let preLsItem = JSON.parse(JSON.stringify(lsItem));
+      let tmp       = setupFunc.findItemAndIndex(lsItem, id);
       if (tmp === null || tmp === undefined) throw `Can not find item by ${id}`;
 
       tmp['item']['name']         = name;
       tmp['item']['maximum']      = maximum;
       tmp['item']['percent']      = percent;
       lsItem[tmp['index']]        = tmp['item'];
+
+      log.logAdminTool(
+        'UPDATE-ITEM', resultVerify['mailer'],
+        {
+          item_update: {
+            id      : id,
+            name    : name,
+            maximum : maximum,
+            percent : percent
+          },
+          pre_ls_item : preLsItem
+        }
+      );
 
       DS.DSUpdateDataGlobal('items', id, tmp['item']);
       redisClient.updateArrItem(JSON.stringify(lsItem));
@@ -1131,6 +1222,8 @@ const setupRoute = async (app, opt) => {
         });
       }
 
+      log.logAdminTool('UPDATE-SUPPORT-ITEM', resultVerify['mailer'], { id: id, description: description });
+
     }
     catch(err) {
 
@@ -1318,6 +1411,8 @@ const setupRoute = async (app, opt) => {
         }
       }
 
+      log.logAdminTool('ADD-EVENT', resultVerify['mailer'], { event_add: eventAdd, pre_ls_event: events });
+
       events['data'].push(eventAdd);
       DS.DSUpdateDataGlobal('admin', 'events', events);
 
@@ -1384,6 +1479,7 @@ const setupRoute = async (app, opt) => {
       else {
         events = eventDS;
       }
+      let preEvent = JSON.parse(JSON.stringify(events));
 
       let supportingItems;
       if (spItemDS === null || spItemDS === undefined) {
@@ -1430,6 +1526,24 @@ const setupRoute = async (app, opt) => {
         eventFind['target']     = 1;
       }
 
+      log.logAdminTool(
+        'UPDATE-EVENT', resultVerify['mailer'],
+        {
+          event_update: {
+            id            : id,
+            description   : description,
+            target        : target,
+            bonus_turn    : bonusTurn,
+            sp_item       : spItem,
+            bonus_sp_item : bonusSpItem,
+            status        : status,
+            from_date     : fromDate,
+            to_date       : toDate
+          },
+          pre_event       : preEvent
+        }
+      );
+
       DS.DSUpdateDataGlobal('admin', 'events', events);
       rep.send({
         status_code     : 2000,
@@ -1472,8 +1586,11 @@ const setupRoute = async (app, opt) => {
       let eventDS = await DS.DSGetDataGlobal('admin', 'events');
       if (eventDS === null || eventDS === undefined) throw '1. Delete event failed!';
 
-      let result = setupFunc.deleteEventByID(eventDS, id);
+      let preEvent  = JSON.parse(JSON.stringify(eventDS));
+      let result    = setupFunc.deleteEventByID(eventDS, id);
       if (!result['status']) throw result['msg'];
+
+      log.logAdminTool('DEL-EVENT', resultVerify['mailer'], { id_event: id, pre_event: preEvent });
 
       DS.DSUpdateDataGlobal('admin', 'events', result['eventUpdate']);
       rep.send({
