@@ -26,7 +26,7 @@
         </div>
         <div class="panel-body">
 
-          <!-- Tổng User Unique Tham Gia -->
+          <!-- Tổng Unique User Tham Gia -->
           <div class="form-group row">
             <label class="col-sm-3 col-form-label">Tổng Unique User Tham Gia</label>
             <div class="col-sm-3">
@@ -40,6 +40,23 @@
             </div>
             <div class="col-sm-2 total-statistical">
               <p id="total-user-unique"><%= total_unique_user %></p>
+            </div>
+          </div>
+
+          <!-- Tổng Unique User nhập code theo range ngày -->
+          <div class="form-group row">
+            <label class="col-sm-3 col-form-label">Tổng Unique User Nhập Code</label>
+            <div class="col-sm-3">
+              <input type="date" id="start-date-range-unique-user-enter-code" class="form-control" value="2020-09-12">
+            </div>
+            <div class="col-sm-1">
+              <p style="margin-top: 10px; text-align: center; font-weight: bolder;">TO</p>
+            </div>
+            <div class="col-sm-3">
+              <input type="date" id="end-date-range-unique-user-enter-code" class="form-control" value="2020-09-12">
+            </div>
+            <div class="col-sm-2 total-statistical">
+              <p id="total-user-unique-user-enter-code"><%= total_user_enter_code %></p>
             </div>
           </div>
 
@@ -116,6 +133,8 @@
 
     $('#start-date-range-user-unique').val(strTime);
     $('#end-date-range-user-unique').val(strTime);
+    $('#start-date-range-unique-user-enter-code').val(strTime);
+    $('#end-date-range-unique-user-enter-code').val(strTime);
     $('#date-newbie-user').val(strTime);
     $('#date-turn-created').val(strTime);
     $('#date-turn-used').val(strTime);
@@ -123,6 +142,7 @@
     $('#date-enter-code').val(strTime);
 
     getTotalUniqueUserJoinGame();
+    getTotalUniqueUserEnterCode();
     getTotalNewbieUser();
     getTotalTurnCreate();
     getTotalTurnUsed();
@@ -418,6 +438,94 @@
       }
       else
         $('#loading').css('display', 'none');
+    });
+  }
+
+  function getTotalUniqueUserEnterCode() {
+    $('#start-date-range-unique-user-enter-code').change(() => {
+      $('#loading').css('display', 'block');
+      let fromDate  = $('#start-date-range-unique-user-enter-code').val();
+      let toDate    = $('#end-date-range-unique-user-enter-code').val();
+      let tmpDateF  = new Date(fromDate);
+      let tmpDateT  = new Date(toDate);
+
+      if (!isNaN(tmpDateF.getTime()) && !isNaN(tmpDateT.getTime()) && tmpDateF.getTime() <= tmpDateT.getTime()) {
+
+        $.ajax({
+          url           : env.http + window.location.host + '/api/v1/admin/dashboard/get-unique-user-enter-code',
+          method        : 'POST',
+          headers       : {
+            'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type'	:'application/json'
+          },
+          contentType   : 'application/json; charset=utf-8',
+          data          : JSON.stringify({
+            from_date   : fromDate,
+            to_date     : toDate
+          })
+        })
+          .done((data) => {
+
+            if (data['status_code'] !== 2000) {
+              $('#loading').css('display', 'none');
+              
+              if (data['error'] === 'unvalid token') {
+                window.location.href = env.http + window.location.host + '/api/v1/admin/signin';
+                return;
+              }
+
+              alert(data['error']);
+              return;
+            }
+            $('#loading').css('display', 'none');
+            $('#total-user-unique-user-enter-code').text(data['result']);
+
+          })
+          .fail(() => {});
+
+      }
+      else
+        $('#loading').css('display', 'none');
+
+    });
+
+    $('#end-date-range-unique-user-enter-code').change(() => {
+      $('#loading').css('display', 'block');
+      let fromDate  = $('#start-date-range-unique-user-enter-code').val();
+      let toDate    = $('#end-date-range-unique-user-enter-code').val();
+      let tmpDateF  = new Date(fromDate);
+      let tmpDateT  = new Date(toDate);
+
+      if (!isNaN(tmpDateF.getTime()) && !isNaN(tmpDateT.getTime()) && tmpDateF.getTime() <= tmpDateT.getTime()) {
+
+        $.ajax({
+          url           : env.http + window.location.host + '/api/v1/admin/dashboard/get-unique-user-enter-code',
+          method        : 'POST',
+          headers       : {
+            'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type'	:'application/json'
+          },
+          data          : JSON.stringify({
+            from_date   : fromDate,
+            to_date     : toDate
+          })
+        })
+          .done((data) => {
+
+            if (data['status_code'] !== 2000) {
+              alert(data['error']);
+              return;
+            }
+            $('#loading').css('display', 'none');
+            $('#total-user-unique-user-enter-code').text(data['result']);
+
+          })
+          .fail(() => {});
+
+      }
+      else
+        $('#loading').css('display', 'none');
+
     });
   }
 

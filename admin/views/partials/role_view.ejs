@@ -34,7 +34,7 @@
                 <td><%= d['mailer'] %></td>
                 <td><%= d['name'] %></td>
                 <td>
-                  <% if (d['roles'].length === 8) { %>
+                  <% if (d['roles'].length === roles.length) { %>
                     All-Control
                   <% }else { %>
                     <select>

@@ -105,6 +105,20 @@ exports.totalEnterCode = (lsAllDataUser, date) => {
   return totalEnterCode;
 }
 
+exports.totalUserEnterCode = (lsAllDataUser, fromDate, toDate) => {
+  let total = 0;
+  for (let d of lsAllDataUser) {
+    for (let c of d['data_user']['log_get_turn']['from_enter_code']) {
+      let milli = parseInt(c.split('_')[3], 0);                                                   //{code}_{new-turn-user}_{bonus-turn}_{timestamp}_{lucky-code}
+      if (chkTimeInRange(fromDate, toDate, milli)) {
+        total += 1;
+        break;
+      }
+    }
+  }
+  return total;
+}
+
 //-------------------------------functional--------------------------------------
 function chkTimeInRange(fromMilli, toMilli, milli) {
   let changeTimeZoneMilli = milli + 7 * 3600 * 1000;

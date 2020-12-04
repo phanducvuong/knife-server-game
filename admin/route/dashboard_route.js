@@ -27,22 +27,24 @@ const dashboardRoute = async (app, opt) => {
         dashboardFunc.getHistoryAllUser(lsAllMegaID)
       ]);
 
-      let totalUniqueUser = dashboardFunc.totalUniqueUserJoinGame(lsAllMegaID, lsAllDataUser, date, date);
-      let totalNewbieUser = dashboardFunc.totalNewbieUserByDate(lsAllMegaID, lsAllDataUser, date.getTime());
-      let totalTurnCreate = dashboardFunc.totalTurnCreateByDate(lsAllMegaID, lsAllDataUser, date.getTime());
-      let totalTurnUsed   = dashboardFunc.totalTurnUsedByDate(lsAllMegaID, lsHisAllUser, date.getTime());
-      let totalEnterCode  = dashboardFunc.totalEnterCode(lsAllDataUser, date);
+      let totalUniqueUser     = dashboardFunc.totalUniqueUserJoinGame(lsAllMegaID, lsAllDataUser, date, date);
+      let totalNewbieUser     = dashboardFunc.totalNewbieUserByDate(lsAllMegaID, lsAllDataUser, date.getTime());
+      let totalTurnCreate     = dashboardFunc.totalTurnCreateByDate(lsAllMegaID, lsAllDataUser, date.getTime());
+      let totalTurnUsed       = dashboardFunc.totalTurnUsedByDate(lsAllMegaID, lsHisAllUser, date.getTime());
+      let totalEnterCode      = dashboardFunc.totalEnterCode(lsAllDataUser, date);
+      let totalUserEnterCode  = dashboardFunc.totalUserEnterCode(lsAllDataUser, date, date);
 
       let totalTurnRemain = totalTurnCreate - totalTurnUsed;
       if (totalTurnRemain < 0) totalTurnRemain = 0;
 
       rep.view('/partials/dashboard_view.ejs', {
-        total_unique_user   : totalUniqueUser,
-        total_newbie_user   : totalNewbieUser,
-        total_turn_created  : totalTurnCreate,
-        total_turn_used     : totalTurnUsed,
-        total_turn_remain   : totalTurnRemain,
-        total_enter_code    : totalEnterCode
+        total_unique_user     : totalUniqueUser,
+        total_newbie_user     : totalNewbieUser,
+        total_turn_created    : totalTurnCreate,
+        total_turn_used       : totalTurnUsed,
+        total_turn_remain     : totalTurnRemain,
+        total_enter_code      : totalEnterCode,
+        total_user_enter_code : totalUserEnterCode
       });
 
     }
@@ -90,6 +92,55 @@ const dashboardRoute = async (app, opt) => {
       rep.send({
         status_code : 2000,
         result      : totalUniqueUser
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/get-unique-user-enter-code', async (req, rep) => {
+    try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
+        throw `unvalid token`;
+      }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[0]['id'])) throw 'Permission denied!';
+
+      let fromDate    = req.body.from_date.toString().trim();
+      let toDate      = req.body.to_date.toString().trim();
+
+      let tmpDateF    = new Date(fromDate);
+      let tmpDateT    = new Date(toDate);
+      if (isNaN(tmpDateF.getTime()) || isNaN(tmpDateT.getTime()) || 
+          tmpDateF.getTime() > tmpDateT.getTime()) {
+        
+        throw `Invalid date!`;
+      
+      }
+
+      let lsAllMegaID               = await DS.DSGetAllUser();
+      let lsAllDataUser             = await dashboardFunc.getAllDataUser(lsAllMegaID);
+      let totalUniqueUserEnterCode  = dashboardFunc.totalUserEnterCode(lsAllDataUser, tmpDateF, tmpDateT);
+
+      rep.send({
+        status_code : 2000,
+        result      : totalUniqueUserEnterCode
       });
 
     }

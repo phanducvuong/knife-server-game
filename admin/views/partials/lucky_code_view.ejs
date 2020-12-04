@@ -72,7 +72,7 @@
       nextPage();
       previousPage();
 
-      $('#btn-export-enter-code').click(() => {
+      $('#btn-export-lucky-code').click(() => {
         let data    = getDataTableToExport($('#table-lucky-code tbody tr'));
         let columns = [
           {
@@ -88,16 +88,12 @@
             displayName: "SĐT"
           },
           {
-            dataField: "code",
-            displayName: "CODE"
+            dataField: "province",
+            displayName: "TỈNH/THÀNH PHỐ"
           },
           {
             dataField: "lucky_code",
             displayName: "MÃ CƠ HỘI"
-          },
-          {
-            dataField: "time",
-            displayName: "THỜI GIAN"
           }
         ];
         export_data.export(data, columns, 'Danh Sách Code Đã Nhập');
@@ -107,47 +103,16 @@
         search();
       });
 
-      $('#from-date-enter-code').change(() => {
-        search();
-      });
-
-      $('#to-date-enter-code').change(() => {
-        search();
-      });
-
     });
 
     function search() {
       let textSearch  = $('#search-user').val().toLowerCase();
-      let fromDate    = new Date($('#from-date-enter-code').val() + ' 00:00:00');
-      let toDate      = new Date($('#to-date-enter-code').val() + ' 23:59:59');
 
       $('#table-lucky-code tbody').empty();
       $('#pagination').empty();
 
-      if (textSearch !== '' && !isNaN(fromDate.getTime()) && !isNaN(toDate.getTime())) {
-        filterByTextAndDate(fromDate, toDate, textSearch);
-        getPagination();
-        return;
-      }
-
-      if (textSearch !== '' && (isNaN(fromDate.getTime()) || isNaN(toDate.getTime))) {
-        filterByText(textSearch);
-        getPagination();
-        return;
-      }
-
-      if (textSearch === '' && !isNaN(fromDate.getTime()) && !isNaN(toDate.getTime())) {
-        filterByDate(fromDate, toDate);
-        getPagination();
-        return;
-      }
-
-      if (textSearch === '' && (isNaN(fromDate.getTime()) || isNaN(toDate.getTime()))) {
-        filterAll();
-        getPagination();
-        return;
-      }
+      filterByText(textSearch.toLowerCase());
+      getPagination();
 
     }
 
@@ -318,22 +283,6 @@
       }
     }
 
-    function filterByTextAndDate(fromDate, toDate, textSearch) {
-      for (let tr of window.arrTr) {
-        let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
-        let name    = tr.getElementsByTagName('td')[1].textContent.toLowerCase();
-        let phone   = tr.getElementsByTagName('td')[2].textContent;
-        let date    = convertStringToMillisecond(tr.getElementsByTagName('td')[5].textContent);
-
-        if (megaID.includes(textSearch) || phone.includes(textSearch) || name.includes(textSearch)) {
-          if (date >= fromDate.getTime() && date <= toDate.getTime()) {
-            tr.style.opacity = 1.0;
-            $('#table-lucky-code tbody').append(tr);
-          }
-        }
-      }
-    }
-
     function filterByText(textSearch) {
       for (let tr of window.arrTr) {
         let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
@@ -347,16 +296,6 @@
       }
     }
 
-    function filterByDate(fromDate, toDate) {
-      for (let tr of window.arrTr) {
-        let date = convertStringToMillisecond(tr.getElementsByTagName('td')[5].textContent);
-        if (date >= fromDate.getTime() && date <= toDate.getTime()) {
-          tr.style.opacity = 1.0;
-          $('#table-lucky-code tbody').append(tr);
-        }
-      }
-    }
-
     function getDataTableToExport(arrTable) {
       let data = [];
       for (let tr of arrTable) {
@@ -364,9 +303,9 @@
           mega_code         : tr.getElementsByTagName('td')[0].textContent,
           name              : tr.getElementsByTagName('td')[1].textContent,
           phone             : tr.getElementsByTagName('td')[2].textContent,
-          code              : tr.getElementsByTagName('td')[3].textContent,
+          province          : tr.getElementsByTagName('td')[3].textContent,
           lucky_code        : tr.getElementsByTagName('td')[4].textContent,
-          time              : tr.getElementsByTagName('td')[5].textContent,
+          // time              : tr.getElementsByTagName('td')[5].textContent,
         });
       }
       return data;
