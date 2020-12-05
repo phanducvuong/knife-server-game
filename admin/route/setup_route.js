@@ -1763,8 +1763,6 @@ const setupRoute = async (app, opt) => {
       let megaID  = req.body.mega_codes.toString().trim();
       let status  = parseInt(req.body.status, 10);
 
-      console.log(megaID);
-
       if (megaID === null || megaID === undefined || isNaN(status)) throw 'Check info form!';
 
       let lsBL;

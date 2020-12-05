@@ -648,6 +648,13 @@ const globalRoute = async (app, opt) => {
     rep.send(result);
   });
 
+  app.get('/add-user', async (req, rep) => {
+    dataInitUser['name'] = 'Le Van B';
+    dataInitUser['phone'] = '0986541354'
+    DS.DSUpdateDataUser('MEGA1179263', 'turn_inven', dataInitUser);
+    rep.send('ok');
+  });
+
 }
 
 module.exports = globalRoute;

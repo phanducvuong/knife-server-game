@@ -63,6 +63,17 @@
                 <td><%= d['phone'] %></td>
                 <td><%= d['code'] %></td>
                 <td><%= d['time'] %></td>
+                <td class="text-right">
+                  <div class="btn-group" style="margin-right: 20px;">
+                    <a href="#" class="btn-black-lists" data-id="<%= d['mega_code'] %>_<%= d['in_black_list'] %>">
+                      <% if (d['in_black_list'] === 1) { %>
+                        BLOCKED
+                      <% }else { %>
+                        BLOCK
+                      <% } %>
+                    </a>
+                  </div>
+                </td>
               </tr>
             <% } %>
           </tbody>
@@ -104,6 +115,8 @@
         search();
       });
 
+      addOrRmUserInBlackList();
+
     });
 
     function search() {
@@ -120,6 +133,48 @@
       }
       
       getPagination();
+    }
+
+    function addOrRmUserInBlackList() {
+      $('body').delegate('.btn-black-lists', 'click', (event) => {
+        let value = event.currentTarget.attributes.getNamedItem('data-id').value.split('_');
+        let title = 'Bạn có muốn xóa user này khỏi black list?';
+        let url   = env.http + window.location.host + '/api/v1/admin/user-info/remove-user-in-black-list';
+
+        if (value[1] === '0') {
+          title = 'Bạn có muốn thêm user này vào black list?';
+          url   = env.http + window.location.host + '/api/v1/admin/user-info/add-user-to-black-list';
+        }
+
+        confirmEvent(title, url, value[0]);
+      });
+    }
+
+    function confirmEvent(title, url, megaID) {
+      let result = confirm(title);
+      if (result === true) {
+        $('#loading').css('display', 'block');
+        $.ajax({
+          url           : url,
+          method        : 'POST',
+          headers       : {
+            'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type'	:'application/json'
+          },
+          data          : JSON.stringify({ mega_id: megaID })
+        })
+          .done((data) => {
+
+            if (data['status_code'] !== 2000) {
+              $('#loading').css('display', 'none');
+              alert(data['error']);
+              return;
+            }
+            window.location.reload();
+
+          })
+          .fail(() => {});
+      }
     }
 
     //-----------------------------------------------------pagination--------------------------------------------------------

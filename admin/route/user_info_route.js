@@ -186,6 +186,82 @@ const userInfoRoute = async (app, opt) => {
 
     }
   });
+
+  app.post('/add-user-to-black-list', async (req, rep) => {
+    try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
+        throw `unvalid token`;
+      }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
+
+      let megaID = req.body.mega_id.toString().trim();
+      if (megaID === null || megaID === undefined) throw 'Error!';
+
+      userInfoFunc.addUserToBlackList(megaID);
+      rep.send({
+        status_code : 2000,
+        mega_id     : megaID
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  app.post('/remove-user-in-black-list', async (req, rep) => {
+    try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
+        throw `unvalid token`;
+      }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[6]['id'])) throw 'Permission denied!';
+
+      let megaID = req.body.mega_id.toString().trim();
+      if (megaID === null || megaID === undefined) throw 'Error!';
+      
+      let result = await userInfoFunc.delUserInBlackList(megaID);
+      if (!result['status']) throw result['msg'];
+
+      rep.send({
+        status_code : 2000,
+        mega_id     : megaID
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
 }
 
 module.exports = userInfoRoute;

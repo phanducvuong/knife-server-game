@@ -99,11 +99,7 @@ exports.BONUS_ENTER_CODE          = {
   }
 };
 
-exports.BLACK_LIST                = [
-  {
-    mega_code : 'MEGA1179262', status : 0
-  }
-];
+exports.BLACK_LIST                = [];
 
 exports.RULE_BLOCK_ACC            = [
   {

@@ -194,14 +194,27 @@ exports.getAllNameOfLsItems = () => {
 exports.getAllCodeFail = async () => {
   let tmp           = [];
   let lsCodeFailed  = await DS.DSGetAllCodeFail();
+
+  let lsBlackList   = [];
+  let blackListDS   = await DS.DSGetDataGlobal('admin', 'black_list');
+  if (blackListDS !== null && blackListDS !== undefined) {
+    lsBlackList = blackListDS['black_list'];
+  }
+
   for (let d of lsCodeFailed) {
+    let inBlackList = 0;
+    if (chkUserInBlackList(d['mega_id'], lsBlackList)) {
+      inBlackList = 1;
+    }
+
     tmp.push({
-      mega_code : d['mega_id'],
-      name      : d['name'],
-      phone     : d['phone'],
-      code      : d['code'],
-      time      : convertTimeToString(d['time']),
-      milli     : d['time']
+      mega_code     : d['mega_id'],
+      name          : d['name'],
+      phone         : d['phone'],
+      code          : d['code'],
+      time          : convertTimeToString(d['time']),
+      milli         : d['time'],
+      in_black_list : inBlackList
     });
   }
   tmp.sort((a, b) => { return b['milli'] - a['milli'] });
@@ -246,6 +259,48 @@ exports.getAllLuckyCode = async () => {
     }
   }
   return tmp;
+}
+
+exports.addUserToBlackList = async (megaID) => {
+  let blackListDS = await DS.DSGetDataGlobal('admin', 'black_list');
+  if (blackListDS === null || blackListDS === undefined) {
+    let tmp = [];
+    tmp.push({
+      mega_code : megaID,
+      status    : 1
+    });
+    DS.DSUpdateDataGlobal('admin', 'black_list', {black_list: tmp});
+    return;
+  }
+
+  let blFind = blackListDS['black_list'].find(e => { return e['mega_code'] === megaID });
+  if (blFind === null || blFind === undefined) {
+    blackListDS['black_list'].push({
+      mega_code : megaID,
+      status    : 1
+    });
+  }
+  else {
+    blFind['status'] = 1;
+  }
+  DS.DSUpdateDataGlobal('admin', 'black_list', blackListDS);
+}
+
+exports.delUserInBlackList = async (megaID) => {
+  let blackListDS = await DS.DSGetDataGlobal('admin', 'black_list');
+  if (blackListDS === null || blackListDS === undefined) {
+    return {status: false, msg: 'Failed!'};
+  }
+
+  let userFind = blackListDS['black_list'].find(e => { return e['mega_code'] === megaID });
+  if (userFind === null || userFind === undefined) {
+    return {status: false, msg: 'User not exist!'};
+  }
+
+  let index = blackListDS['black_list'].indexOf(userFind);
+  blackListDS['black_list'].splice(index, 1);
+  DS.DSUpdateDataGlobal('admin', 'black_list', blackListDS);
+  return {status: true};
 }
 
 //--------------------------------------------functional-----------------------------------
@@ -328,4 +383,10 @@ function convertTimeToString(milli) {
   let minute  = time.getMinutes() < 10 ? `0${time.getMinutes()}` : time.getMinutes();
   // let second  = time.getSeconds();
   return `${date}/${month}/${year}  ${hour}:${minute}`;
+}
+
+function chkUserInBlackList(megaID, lsBlackList) {
+  let tmp = lsBlackList.find(e => { return e['mega_code'] === megaID });
+  if (tmp !== null && tmp !== undefined && tmp['status'] === 1) return true;
+  return false;
 }
