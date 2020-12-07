@@ -4,6 +4,7 @@ const DS                    = require('../../repository/datastore');
 const jwt                   = require('../../utils/jwt');
 const signinFunc            = require('../functions/signin_func');
 const roleFunc              = require('../functions/role_func');
+const log                   = require('../../utils/log');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -144,6 +145,11 @@ const itemRoute = async (app, opt) => {
       redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
       DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
 
+      log.logAdminTool('ADD-SPECIAL-ITEM', resultVerify['mailer']['mail'], {
+        mega_code : megaID,
+        item      : itemSpecial
+      });
+
       rep.send({
         status_code : 2000,
         msg         : 'Success'
@@ -235,6 +241,11 @@ const itemRoute = async (app, opt) => {
       redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
       DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
 
+      log.logAdminTool('DEL-SPECIAL-ITEm-USER', resultVerify['mailer']['mail'], {
+        mega_code : megaID,
+        item      : resultDelSpecialItem['special_item']
+      });
+
       rep.send({
         status_code             : 2000,
         ls_special_item_update  : itemFunc.getListItemSpecialUser(dataUser['special_item'])
@@ -279,8 +290,15 @@ const itemRoute = async (app, opt) => {
       }
 
       dataUser['turn'] += turn;
+      if (dataUser['turn'] < 0) dataUser['turn'] = 0;
+
       redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
       DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
+
+      log.logAdminTool('SET-TURN', resultVerify['mailer']['mail'], {
+        mega_code : megaID,
+        turn      : turn
+      });
 
       rep.send({
         status_code : 2000,

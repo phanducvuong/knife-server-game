@@ -300,7 +300,7 @@ const dashboardRoute = async (app, opt) => {
         dashboardFunc.getHistoryAllUser(lsAllMegaID)
       ]);
 
-      let totalTurnCreate = dashboardFunc.totalTurnCreateByDate(lsAllDataUser, lsAllDataUser, date.getTime());
+      let totalTurnCreate = dashboardFunc.totalTurnCreateByDate(lsAllMegaID, lsAllDataUser, date.getTime());
       let totalTurnUsed   = dashboardFunc.totalTurnUsedByDate(lsAllMegaID, lsHisAllUser, date.getTime());
       let totalTurnRemain = totalTurnCreate - totalTurnUsed;
 

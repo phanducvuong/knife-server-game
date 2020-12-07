@@ -28,32 +28,6 @@
           </tfoot>
         </table>
       </div>
-
-      <!-- <h2 style="margin-top: 50px;">DETAILS</h2> -->
-      <!-- <div style="background-color: white;">
-        <div class="div-all-item">
-
-          <button class="btn btn-primary btn-log" id="btn-log-excel">CSV</button>
-          <a target="_blank" href="blob:http://localhost:3000/553b4fa8-f857-4289-a096-e314940d25dc" download="data.csv" class="btn btn-primary btn-log" id="btn-log-psd">PSD</a>
-
-          <label class="time-right">Search</label>
-          <input style="outline-style: none;" type="text" placeholder="megaID/username/time" id="search-detail" class="col-3 time-right" value="">
-        </div>
-        
-        <table id="details-table" class="footable table table-stripped">
-          <thead>
-            <tr>
-              <th style="font-weight: bold;">MEGA ID</th>
-              <th style="font-weight: bold;">USERNAME</th>
-              <th style="font-weight: bold;">TIME</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-          <tfoot>
-          </tfoot>
-        </table>
-      </div> -->
     </section>
   </div>
 
@@ -169,9 +143,11 @@
     function setDataTotalAmountItemTable(data, total) {
       $('#total-amount-item-table tbody').remove();
 
-      let tmpTypeStr = 'Thẻ Cào';
+      let tmpTypeStr = 'MCH';
       if (data['type'] === 0) {
         tmpTypeStr = 'Quà';
+      }else if (data['type'] === 1) {
+        tmpTypeStr = 'Thẻ Cào';
       }
 
       let markup = `

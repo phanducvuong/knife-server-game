@@ -101,7 +101,7 @@ const unlockUserRoute = async (app, opt) => {
       DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
       redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
 
-      log.logAdminTool('UNLOCK-USER', resultVerify['mailer'], {mega_id : megaID});
+      log.logAdminTool('UNLOCK-USER', resultVerify['mailer']['mail'], {mega_id : megaID});
 
       rep.send({
         status_code : 2000,

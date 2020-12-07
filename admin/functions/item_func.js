@@ -41,12 +41,11 @@ exports.getTotalAmountItemBy = async (idItem, millisecond) => {
   }
 
   if (itemFind['type'] === 2) {
-    let lsAllDataUser = await dashboardFunc.getAllDataUser(lsAllMegaID);
-    for (let d of lsAllDataUser) {
-      for (let l of d['data_user']['lucky_code']) {
-        let split = l.split('_');                                           //{code}_{millisecond}
-        let milli = parseInt(split[1], 10) + 7 * 3600 * 1000;
-        if (util.chkTheSameDate(millisecond, milli)) {
+    for (let d of lsHisAllUser) {
+      for (let his of d['histories']) {
+        let json  = JSON.parse(his);                                           //{code}_{millisecond}
+        let milli = json['time'] + 7 * 3600 * 1000;
+        if (json['code'].length > 2 && util.chkTheSameDate(millisecond, milli)) {
           total += 1;
         }
       }
@@ -98,6 +97,7 @@ exports.delSpecialItemUser = (lsSpecialItem, condition) => {
   lsSpecialItem.splice(index, 1);
   return {
     status                  : true,
-    ls_special_item_update  : lsSpecialItem
+    ls_special_item_update  : lsSpecialItem,
+    special_item            : specialItemFind
   };
 }

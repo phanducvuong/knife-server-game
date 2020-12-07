@@ -173,6 +173,7 @@ const userInfoRoute = async (app, opt) => {
       if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[5]['id'])) throw 'Permission denied!';
 
       let result = await userInfoFunc.getAllCodeFail();
+      console.log(result);
       rep.view('/partials/user_enter_code_fail_view.ejs', {
         data  : result
       });
@@ -205,6 +206,8 @@ const userInfoRoute = async (app, opt) => {
 
       let megaID = req.body.mega_id.toString().trim();
       if (megaID === null || megaID === undefined) throw 'Error!';
+
+      log.logAdminTool('ADD-USER-TO-BLACK-LIST', resultVerify['mailer']['mail'], { mega_code: megaID });
 
       userInfoFunc.addUserToBlackList(megaID);
       rep.send({
@@ -245,6 +248,8 @@ const userInfoRoute = async (app, opt) => {
       
       let result = await userInfoFunc.delUserInBlackList(megaID);
       if (!result['status']) throw result['msg'];
+
+      log.logAdminTool('REMOVE-USER-IN-BLACK-LIST', resultVerify['mailer']['mail'], { mega_code: megaID });
 
       rep.send({
         status_code : 2000,

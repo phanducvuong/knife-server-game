@@ -55,7 +55,7 @@ const setupRoute = async (app, opt) => {
           data                : []
         }
 
-        log.logAdminTool('UPDATE-BOARD', resultVerify['mailer'], tmpPartition);
+        log.logAdminTool('UPDATE-BOARD', resultVerify['mailer']['mail'], tmpPartition);
 
         DS.DSUpdateDataGlobal('admin', 'partitions', tmpPartition);
         redisClient.updatePartition(JSON.stringify(tmpPartition));
@@ -187,7 +187,7 @@ const setupRoute = async (app, opt) => {
           data              : data
         }
 
-        log.logAdminTool('ADD-PARTITION', resultVerify.mailer,
+        log.logAdminTool('ADD-PARTITION', resultVerify['mailer']['mail'],
           {
             new_partition: {
               id      : id,
@@ -329,7 +329,7 @@ const setupRoute = async (app, opt) => {
       if (result['status'] === false) throw `${pos} is not exist in list partition!`;
 
       log.logAdminTool(
-        'DEL-PARTITION', resultVerify['mailer'],
+        'DEL-PARTITION', resultVerify['mailer']['mail'],
         {
           pos           : pos,
           pre_partition : prePartition
@@ -456,7 +456,7 @@ const setupRoute = async (app, opt) => {
       partitions['data'][`${parAtPos['index']}`] = parAtPos['item'];
 
       log.logAdminTool(
-        'UPDATE-PARTITION', resultVerify['mailer'],
+        'UPDATE-PARTITION', resultVerify['mailer']['mail'],
         {
           item_update   : {
             id          : id,
@@ -607,7 +607,7 @@ const setupRoute = async (app, opt) => {
 
       lsItem.push(itemJs);
 
-      log.logAdminTool('ADD-ITEM', resultVerify['mailer'], itemJs);
+      log.logAdminTool('ADD-ITEM', resultVerify['mailer']['mail'], itemJs);
 
       redisClient.initItemBy(id);
       redisClient.updateArrItem(JSON.stringify(lsItem));
@@ -664,7 +664,7 @@ const setupRoute = async (app, opt) => {
       if (lsItemUpdate['status'] === false) throw `${id} is not exist!`;
 
       log.logAdminTool(
-        'DEL_ITEM', resultVerify['mailer'],
+        'DEL_ITEM', resultVerify['mailer']['mail'],
         {
           id_item_del : id,
           pre_ls_item : preLsItem
@@ -771,7 +771,7 @@ const setupRoute = async (app, opt) => {
       lsItem[tmp['index']]        = tmp['item'];
 
       log.logAdminTool(
-        'UPDATE-ITEM', resultVerify['mailer'],
+        'UPDATE-ITEM', resultVerify['mailer']['mail'],
         {
           item_update: {
             id      : id,
@@ -1222,7 +1222,7 @@ const setupRoute = async (app, opt) => {
         });
       }
 
-      log.logAdminTool('UPDATE-SUPPORT-ITEM', resultVerify['mailer'], { id: id, description: description });
+      log.logAdminTool('UPDATE-SUPPORT-ITEM', resultVerify['mailer']['mail'], { id: id, description: description });
 
     }
     catch(err) {
@@ -1411,7 +1411,7 @@ const setupRoute = async (app, opt) => {
         }
       }
 
-      log.logAdminTool('ADD-EVENT', resultVerify['mailer'], { event_add: eventAdd, pre_ls_event: events });
+      log.logAdminTool('ADD-EVENT', resultVerify['mailer']['mail'], { event_add: eventAdd, pre_ls_event: events });
 
       events['data'].push(eventAdd);
       DS.DSUpdateDataGlobal('admin', 'events', events);
@@ -1527,7 +1527,7 @@ const setupRoute = async (app, opt) => {
       }
 
       log.logAdminTool(
-        'UPDATE-EVENT', resultVerify['mailer'],
+        'UPDATE-EVENT', resultVerify['mailer']['mail'],
         {
           event_update: {
             id            : id,
@@ -1590,7 +1590,7 @@ const setupRoute = async (app, opt) => {
       let result    = setupFunc.deleteEventByID(eventDS, id);
       if (!result['status']) throw result['msg'];
 
-      log.logAdminTool('DEL-EVENT', resultVerify['mailer'], { id_event: id, pre_event: preEvent });
+      log.logAdminTool('DEL-EVENT', resultVerify['mailer']['mail'], { id_event: id, pre_event: preEvent });
 
       DS.DSUpdateDataGlobal('admin', 'events', result['eventUpdate']);
       rep.send({
@@ -1647,6 +1647,11 @@ const setupRoute = async (app, opt) => {
 
       tmpEvents['start']  = util.convertDateEventToString(tmpS.getTime() - 7 * 3600 * 1000) + ' 17:00:00';
       tmpEvents['end']    = util.convertDateEventToString(tmpE.getTime()) + ' 16:59:59';
+
+      log.logAdminTool('UPDATE-TIME-EVENT', resultVerify['mailer']['mail'], {
+        start : tmpEvents['start'],
+        end   : tmpEvents['end']
+      });
 
       DS.DSUpdateDataGlobal('admin', 'events', tmpEvents);
 
@@ -1724,6 +1729,8 @@ const setupRoute = async (app, opt) => {
       if (lsBlackDS === null || lsBlackDS === undefined) lsBlackList = config.BLACK_LIST;
       else lsBlackList = lsBlackDS['black_list'];
 
+      log.logAdminTool('ADD-USER-BLACK-LIST', resultVerify['mailer']['mail'], { ls_mega_code: lsMegaCode });
+
       lsBlackList = setupFunc.addNewUserIntoBlackList(lsBlackList, lsMegaCode);
       DS.DSUpdateDataGlobal('admin', 'black_list', { black_list: lsBlackList });
 
@@ -1772,6 +1779,11 @@ const setupRoute = async (app, opt) => {
 
       let tmpUserFind = lsBL.find(e => { return e['mega_code'] === megaID });
       if (tmpUserFind === null || tmpUserFind === undefined) throw `${megaID} is not exist!`;
+
+      log.logAdminTool('EDIT-USER-BLACK-LIST', resultVerify['mailer']['mail'], {
+        mega_code : megaID,
+        status    : status
+      });
 
       tmpUserFind['status'] = status;
       DS.DSUpdateDataGlobal('admin', 'black_list', { black_list: lsBL });
@@ -1863,6 +1875,8 @@ const setupRoute = async (app, opt) => {
 
       let tmpUserFind = lsBL.find(e => { return e['mega_code'] === megaID });
       if (tmpUserFind === null || tmpUserFind === undefined) throw `${megaID} is not exist!`;
+
+      log.logAdminTool('DEL-USER-BLACK-LIST', resultVerify['mailer']['mail'], { mega_code: megaID });
 
       lsBL = lsBL.filter(e => e['mega_code'] !== megaID);
       DS.DSUpdateDataGlobal('admin', 'black_list', { black_list: lsBL });
@@ -1964,6 +1978,8 @@ const setupRoute = async (app, opt) => {
       let hour    = time.getHours() < 10 ? `0${time.getHours()}` : time.getHours();
       let minute  = time.getMinutes() < 10 ? `0${time.getMinutes()}` : time.getMinutes();
 
+      log.logAdminTool('UPDATE-COUNT-DOWN', resultVerify['mailer']['mail'], { count_down: countDown });
+
       countDown = `${year}-${month}-${date} ${hour}:${minute}:00`;
       DS.DSUpdateDataGlobal('admin', 'count_down', { count_down: countDown });
       rep.send({
@@ -2019,6 +2035,13 @@ const setupRoute = async (app, opt) => {
       bonusEnterCode['bonus_1']['bonus_lucky_code'] = bonusLuckyCode1;
       bonusEnterCode['bonus_2']['bonus_lucky_code'] = bonusLuckyCode2;
 
+      log.logAdminTool('UPDATE-BONUS-ENTER-CODE', resultVerify['mailer']['mail'], {
+        bonus_turn_1        : bonusTurn1,
+        bonus_turn_2        : bonusTurn2,
+        bonus_lucky_code_1  : bonusLuckyCode1,
+        bonus_lucky_code_2  : bonusLuckyCode2
+      });
+
       DS.DSUpdateDataGlobal('admin', 'bonus_enter_code', bonusEnterCode);
       rep.send({
         status_code : 2000,
@@ -2060,6 +2083,8 @@ const setupRoute = async (app, opt) => {
       if (text === null || text === undefined || text === '' || isNaN(count)) {
         throw 'Invalid info text show!';
       }
+
+      log.logAdminTool('UPDATE-TEXT-SHOW', resultVerify['mailer']['mail'], { text_show: text, count: count });
 
       DS.DSUpdateDataGlobal('admin', 'text_show', {
         text  : text,
@@ -2141,6 +2166,8 @@ const setupRoute = async (app, opt) => {
       if (!setupFunc.isValidRules(dataRules)) {
         throw 'invalid data!';
       }
+
+      log.logAdminTool('UPDATE-RULE-BLOCK-ACC', resultVerify['mailer']['mail'], { rule: dataRules });
 
       DS.DSUpdateDataGlobal('admin', 'rule_block_acc', {
         rule_block_acc  : dataRules

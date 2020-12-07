@@ -16,6 +16,8 @@ const roleFunc            = require('../functions/role_func');
 const signinFunc          = require('../functions/signin_func');
 const jwt                 = require('../../utils/jwt');
 const DS                  = require('../../repository/datastore');
+const log                 = require('../../utils/log');
+const { verifiedaccess } = require('googleapis/build/src/apis/verifiedaccess');
 
 const roleRoute = async (app, opt) => {
 
@@ -116,6 +118,11 @@ const roleRoute = async (app, opt) => {
       let resultChkRoleRequest = roleFunc.chkRolesRequest(roles);
       if (resultChkRoleRequest.length <= 0) throw 'Role is not except!';
 
+      log.logAdminTool('ADD-ROLE', resultVerify['mailer'], {
+        mailer  : mailer,
+        roles   : roles
+      });
+
       DS.DSUpdateDataGlobal('administrators', mailer, {
         mail  : mailer,
         role  : resultChkRoleRequest,
@@ -166,6 +173,11 @@ const roleRoute = async (app, opt) => {
       let resultChkRoleRequest = roleFunc.chkRolesRequest(roles);
       if (resultChkRoleRequest.length <= 0) throw 'Role is not except!';
 
+      log.logAdminTool('EDIT-ROLE', resultVerify['mailer'], {
+        mailer  : mailer,
+        roles   : roles
+      });
+
       DS.DSUpdateDataGlobal('administrators', mailer, {
         mail  : mailer,
         role  : resultChkRoleRequest,
@@ -210,6 +222,8 @@ const roleRoute = async (app, opt) => {
       if (mailerDS === null || mailerDS === undefined) throw `${mailer} is not exist!`;
 
       if (mailerDS['mail'] === resultVerify['mailer']['mail']) throw 'Can not edit yourself!';
+
+      log.logAdminTool('DEL-ROLE-USER', resultVerify['mailer']['mail'], { mailer: mailer });
 
       DS.DSDeleteUserRole('administrators', mailer);
       rep.send({

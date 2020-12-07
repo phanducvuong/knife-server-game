@@ -67,7 +67,7 @@ exports.totalTurnCreateByDate = (lsMegaID, lsDataUser, milli) => {
   for (let u of lsMegaID) {
     let dataUserFind = lsDataUser.find(e => { return e['mega_code'] === u });
     if (dataUserFind !== null && dataUserFind !== undefined) {
-      total += getTotalTurnBy(milli, dataUserFind['data_user']['log_get_turn']['from_mission']);
+      // total += getTotalTurnBy(milli, dataUserFind['data_user']['log_get_turn']['from_mission']);
       total += getTotalTurnBy(milli, dataUserFind['data_user']['log_get_turn']['from_enter_code']);
     }
   }
