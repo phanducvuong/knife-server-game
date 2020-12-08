@@ -145,10 +145,7 @@ const itemRoute = async (app, opt) => {
       redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
       DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
 
-      log.logAdminTool('ADD-SPECIAL-ITEM', resultVerify['mailer']['mail'], {
-        mega_code : megaID,
-        item      : itemSpecial
-      });
+      log.logAdminTool('ADD-SPECIAL-ITEM', resultVerify['mailer']['mail'], {mega_code: megaID, item: {id: itemSpecial['id'], description: itemSpecial['description']}});
 
       rep.send({
         status_code : 2000,
@@ -241,7 +238,7 @@ const itemRoute = async (app, opt) => {
       redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
       DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
 
-      log.logAdminTool('DEL-SPECIAL-ITEm-USER', resultVerify['mailer']['mail'], {
+      log.logAdminTool('DEL-SPECIAL-ITEM-USER', resultVerify['mailer']['mail'], {
         mega_code : megaID,
         item      : resultDelSpecialItem['special_item']
       });
@@ -283,6 +280,58 @@ const itemRoute = async (app, opt) => {
       let turn    = parseInt(req.body.turn, 10);
 
       if (megaID === null || megaID === undefined || isNaN(turn)) throw `Check input data!`;
+
+      let dataUser    = await DS.DSGetDataUser(megaID, 'turn_inven');
+      if (dataUser === null || dataUser === undefined) {
+        throw `${megaID} is not exist!`;
+      }
+
+      dataUser['turn'] += turn;
+      if (dataUser['turn'] < 0) dataUser['turn'] = 0;
+
+      redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
+      DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
+
+      log.logAdminTool('SET-TURN', resultVerify['mailer']['mail'], {mega_code: megaID, turn: turn});
+
+      rep.send({
+        status_code : 2000,
+        msg         : 'Success'
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  //set turn for user
+  app.post('/update-lucky-code-user', async (req, rep) => {
+    try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
+        throw `unvalid token`;
+      }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[3]['id'])) throw 'Permission denied!';
+
+      let luckyCodes  = req.body.ls_lucky_code;
+      let action      = parseInt(req.body.action, 10);
+
+      if (luckyCodes === null || luckyCodes === undefined || luckyCodes.length <= 0 || isNaN(action)) throw `Check input data!`;
 
       let dataUser    = await DS.DSGetDataUser(megaID, 'turn_inven');
       if (dataUser === null || dataUser === undefined) {

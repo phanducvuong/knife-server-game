@@ -60,7 +60,7 @@ const signinRoute = async (app, opt) => {
       let result  = await jwt.verify(token, signinFunc.SECRETE);
       if (!result['status']) throw 'Signin Failed!';
 
-      log.logAdminTool('SIGN-IN', result['mailer'], { mailer: result['mailer']['mail'] });
+      log.logAdminTool('SIGN-IN', result['mailer']['mail'], { mailer: result['mailer']['mail'] });
 
       let roleFind = roleFunc.GETROLES().find(e => { return e['id'] === result['mailer']['role'][0] });
       rep.send({

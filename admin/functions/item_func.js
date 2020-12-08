@@ -101,3 +101,20 @@ exports.delSpecialItemUser = (lsSpecialItem, condition) => {
     special_item            : specialItemFind
   };
 }
+
+//action: 0 -> del, 1 -> add
+exports.updateLuckyCodeUser = (luckyCodes, dataUser, action) => {
+  if (!isValidLuckyCodes(luckyCodes)) return { status: false, msg: 'Invalid list lucky code!' };
+
+  
+}
+
+async function isValidLuckyCodes(luckyCodes) {
+  for (let l of luckyCodes) {
+    // let luckyCodeDS = await DS.DSGet
+    if (l.length != 6) {
+      return false;
+    }
+  }
+  return true;
+}

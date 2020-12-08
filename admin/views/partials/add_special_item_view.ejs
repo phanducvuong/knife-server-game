@@ -67,6 +67,35 @@
       </div>
     </div>
 
+    <div class="row">
+      <div class="col-xl-12 col-12">
+        <div class="box" style="box-shadow: 1px 0 10px rgba(0,0,0,0.1);">
+          <div class="panel-body">
+
+            <!-- ADD/REMOVE LUCKY CODE USER -->
+            <div class="form-group row">
+              <div class="col-sm-3">
+                <label>Mega ID</label>
+                <input type="text" id="input-mega-id-lucky-code" class="form-control" value="">
+              </div>
+              <div class="col-sm-4 div-lucky-code" style="position: inherit; margin-left: 55px;">
+                <label style="display: grid;">MCH</label>
+                <textarea name="tf-lucky-code" id="tf-lucky-code" cols="40" rows="5"></textarea>
+              </div>
+
+              <div class="col-sm-4" style="text-align: center; position: absolute; top: 40%; left: 55%;">
+                <button style="width: 80px;" class="btn-update-global" id="btn-add-lucky-code">THÊM</button>
+                <button style="width: 80px; margin-left: 20px" class="btn-update-global" id="btn-del-lucky-code">XÓA</button>
+              </div>
+              <!-- <div class="col-sm-2" style="text-align: center; position: absolute; top: 40%; left: 60%;">
+                <button style="width: 80px;" class="btn-update-global" id="btn-set-turn">Cập Nhật</button>
+              </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- DELETE SPECIAL ITEM -->
     <div class="row">
       <div class="col-xl-12 col-12">
@@ -192,10 +221,54 @@
         .fail(() => {});
     });
 
+    $('#btn-add-lucky-code').click(() => {
+      let luckyCodes = $('#tf-lucky-code').val().split(',').map(i => {return i.trim().toUpperCase()});
+      if (!isValidLsLuckyCode(luckyCodes)) {
+        alert('Check array lucky codes!');
+        return;
+      }
+      updateLuckyCodeUser(luckyCodes, 1);
+    });
+
+    $('#btn-del-lucky-code').click(() => {
+      let luckyCodes = $('#tf-lucky-code').val().split(',').map(i => {return i.trim().toUpperCase()});
+      if (!isValidLsLuckyCode(luckyCodes)) {
+        alert('Check array lucky codes!');
+        return;
+      }
+      updateLuckyCodeUser(luckyCodes, 0);
+    });
+
     getListSpecialItemUser();
     delSpecialItem();
 
   });
+
+  //action: 0 -> del, 1 -> add
+  function updateLuckyCodeUser(luckyCodes, action) {
+    $('#loadding').css('display', 'block');
+    $.ajax({
+      url               : env.http + window.location.host + '/api/v1/admin/item/update-lucky-code-user',
+      method            : 'POST',
+      headers           : {
+        'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type'	:'application/json'
+      },
+      data              : JSON.stringify({ ls_lucky_code: luckyCodes, action: action })
+    })
+      .done((data) => {
+
+        if (data['status_code'] !== 2000) {
+          $('#loadding').css('display', 'none');
+          alert(data['error']);
+          return;
+        }
+        $('#loadding').css('display', 'none');
+        alert(data['msg']);
+
+      })
+      .fail(() => {});
+  }
 
   function getListSpecialItemUser() {
     $('#btn-search-mega-id').click(() => {
@@ -293,6 +366,16 @@
     }
     markup += '</tbody>';
     $('#table-special-item').append(markup);
+  }
+
+  function isValidLsLuckyCode(luckyCodes) {
+    if (luckyCodes.length <= 0) return false;
+    for (let l of luckyCodes) {
+      if (l.length !== 6) {
+        return false;
+      }
+    }
+    return true;
   }
 
 </script>

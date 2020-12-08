@@ -175,6 +175,11 @@ input::-webkit-inner-spin-button {
   color: white;
 }
 
+#btn-del-lucky-code:hover {
+  color: white;
+  background-color: red;
+}
+
 .btn-update-global {
   border-style: none;
   height: 40px;
