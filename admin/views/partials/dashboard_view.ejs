@@ -26,90 +26,73 @@
         </div>
         <div class="panel-body">
 
-          <!-- Tổng Unique User Tham Gia -->
+          <!-- range time -->
           <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Tổng Unique User Tham Gia</label>
+            <label class="col-sm-3 col-form-label" style="text-align: right;">FROM</label>
             <div class="col-sm-3">
-              <input type="date" id="start-date-range-user-unique" class="form-control" value="2020-09-12">
+              <input type="date" id="from-date" class="form-control" value="2020-09-12">
             </div>
             <div class="col-sm-1">
               <p style="margin-top: 10px; text-align: center; font-weight: bolder;">TO</p>
             </div>
             <div class="col-sm-3">
-              <input type="date" id="end-date-range-user-unique" class="form-control" value="2020-09-12">
+              <input type="date" id="to-date" class="form-control" value="2020-09-12">
             </div>
-            <div class="col-sm-2 total-statistical">
+          </div>
+
+          <br>
+
+          <!-- Tổng Unique User Tham Gia -->
+          <div class="form-group row">
+            <label class="col-sm-6 col-form-label" style="padding-left: 15%;">TỔNG UNIQUE USER THAM GIA</label>
+            <div class="col-sm-6 total-statistical">
               <p id="total-user-unique"><%= total_unique_user %></p>
             </div>
           </div>
 
           <!-- Tổng Unique User nhập code theo range ngày -->
           <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Tổng Unique User Nhập Code</label>
-            <div class="col-sm-3">
-              <input type="date" id="start-date-range-unique-user-enter-code" class="form-control" value="2020-09-12">
-            </div>
-            <div class="col-sm-1">
-              <p style="margin-top: 10px; text-align: center; font-weight: bolder;">TO</p>
-            </div>
-            <div class="col-sm-3">
-              <input type="date" id="end-date-range-unique-user-enter-code" class="form-control" value="2020-09-12">
-            </div>
-            <div class="col-sm-2 total-statistical">
+            <label class="col-sm-6 col-form-label" style="padding-left: 15%;">TỔNG UNIQUE USER NHẬP CODE</label>
+            <div class="col-sm-6 total-statistical">
               <p id="total-user-unique-user-enter-code"><%= total_user_enter_code %></p>
             </div>
           </div>
 
-          <!-- User Mới Tham Gian Theo Ngày -->
+          <!-- User Mới Tham Gia -->
           <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Tổng User Mới Tham Gia Theo Ngày</label>
-            <div class="col-sm-3">
-              <input type="date" id="date-newbie-user" class="form-control" value="2020-09-12">
-            </div>
+            <label class="col-sm-6 col-form-label" style="padding-left: 15%;">TỔNG USER MỚI THAM GIA</label>
             <div class="col-sm-6 total-statistical">
               <p id="total-newbie-user"><%= total_newbie_user %></p>
             </div>
           </div>
 
-          <!-- Số Lượt Quay Tạo Ra Theo Ngày -->
+          <!-- Số Lượt Quay Tạo Ra -->
           <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Tổng Số Lượt Quay Tạo Ra Theo Ngày</label>
-            <div class="col-sm-3">
-              <input type="date" id="date-turn-created" class="form-control" value="2020-09-12">
-            </div>
+            <label class="col-sm-6 col-form-label" style="padding-left: 15%;">TỔNG SỐ LƯỢT QUAY TẠO RA THEO NGÀY</label>
             <div class="col-sm-6 total-statistical">
               <p id="total-turn-created"><%= total_turn_created %></p>
             </div>
           </div>
 
-          <!-- Số lượt quay được dùng theo ngày -->
+          <!-- Số lượt quay được dùng -->
           <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Tổng Số lượt quay được dùng theo ngày</label>
-            <div class="col-sm-3">
-              <input type="date" id="date-turn-used" class="form-control" value="2020-09-12">
-            </div>
+            <label class="col-sm-6 col-form-label" style="padding-left: 15%;">TỔNG SỐ LƯỢT QUAY ĐƯỢC DÙNG</label>
             <div class="col-sm-6 total-statistical">
               <p id="total-turn-used"><%= total_turn_used %></p>
             </div>
           </div>
 
-          <!-- Số lượt quay còn tồn theo ngày -->
+          <!-- Số lượt quay còn tồn -->
           <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Tổng Số lượt quay còn tồn theo ngày</label>
-            <div class="col-sm-3">
-              <input type="date" id="date-turn-remain" class="form-control" value="2020-09-12">
-            </div>
+            <label class="col-sm-6 col-form-label" style="padding-left: 15%;">TỔNG SỐ LƯỢT QUAY CÒN TỒN</label>
             <div class="col-sm-6 total-statistical">
               <p id="total-turn-remain"><%= total_turn_remain %></p>
             </div>
           </div>
 
-          <!-- Tổng số code nhập theo ngày -->
+          <!-- Tổng số code nhập -->
           <div class="form-group row">
-            <label class="col-sm-3 col-form-label">Tổng số code nhập theo ngày</label>
-            <div class="col-sm-3">
-              <input type="date" id="date-enter-code" class="form-control" value="2020-09-12">
-            </div>
+            <label class="col-sm-6 col-form-label" style="padding-left: 15%;">TỔNG SỐ CODE NHẬP</label>
             <div class="col-sm-6 total-statistical">
               <p id="total-enter-code"><%= total_enter_code %></p>
             </div>
@@ -131,404 +114,69 @@
     let date = new Date();
     let strTime = convertDateToStringInputDate(date.getDate(), date.getMonth() + 1, date.getFullYear());
 
-    $('#start-date-range-user-unique').val(strTime);
-    $('#end-date-range-user-unique').val(strTime);
-    $('#start-date-range-unique-user-enter-code').val(strTime);
-    $('#end-date-range-unique-user-enter-code').val(strTime);
-    $('#date-newbie-user').val(strTime);
-    $('#date-turn-created').val(strTime);
-    $('#date-turn-used').val(strTime);
-    $('#date-turn-remain').val(strTime);
-    $('#date-enter-code').val(strTime);
+    $('#from-date').val(strTime);
+    $('#to-date').val(strTime);
 
-    getTotalUniqueUserJoinGame();
-    getTotalUniqueUserEnterCode();
-    getTotalNewbieUser();
-    getTotalTurnCreate();
-    getTotalTurnUsed();
-    getTotalTurnRemain();
-    getTotalEnterCode();
+    $('#from-date').change(() => {
+      console.log('from date');
+      updateStatistical();
+    });
+
+    $('#to-date').change(() => {
+      console.log('to date');
+      updateStatistical();
+    });
 
   });
 
-  function getTotalUniqueUserJoinGame() {
-    $('#start-date-range-user-unique').change(() => {
+  function updateStatistical() {
+    let fromDate  = $('#from-date').val();
+    let toDate    = $('#to-date').val();
+    let tmpDateF  = new Date(fromDate);
+    let tmpDateT  = new Date(toDate);
+
+    if (!isNaN(tmpDateF.getTime()) && !isNaN(tmpDateT.getTime()) && tmpDateF.getTime() <= tmpDateT.getTime()) {
       $('#loading').css('display', 'block');
-      let fromDate  = $('#start-date-range-user-unique').val();
-      let toDate    = $('#end-date-range-user-unique').val();
-      let tmpDateF  = new Date(fromDate);
-      let tmpDateT  = new Date(toDate);
-
-      if (!isNaN(tmpDateF.getTime()) && !isNaN(tmpDateT.getTime()) && tmpDateF.getTime() <= tmpDateT.getTime()) {
-
-        $.ajax({
-          url           : env.http + window.location.host + '/api/v1/admin/dashboard/get-unique-user',
-          method        : 'POST',
-          headers       : {
-            'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type'	:'application/json'
-          },
-          contentType   : 'application/json; charset=utf-8',
-          data          : JSON.stringify({
-            from_date   : fromDate,
-            to_date     : toDate
+      $.ajax({
+            url           : env.http + window.location.host + '/api/v1/admin/dashboard/update-statistical',
+            method        : 'POST',
+            headers       : {
+              'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+              'Content-Type'	:'application/json'
+            },
+            contentType   : 'application/json; charset=utf-8',
+            data          : JSON.stringify({
+              from_date   : fromDate,
+              to_date     : toDate
+            })
           })
-        })
-          .done((data) => {
+            .done((data) => {
 
-            if (data['status_code'] !== 2000) {
+              if (data['status_code'] !== 2000) {
+                $('#loading').css('display', 'none');
+                
+                if (data['error'] === 'unvalid token') {
+                  window.location.href = env.http + window.location.host + '/api/v1/admin/signin';
+                  return;
+                }
+
+                alert(data['error']);
+                return;
+              }
               $('#loading').css('display', 'none');
-              
-              if (data['error'] === 'unvalid token') {
-                window.location.href = env.http + window.location.host + '/api/v1/admin/signin';
-                return;
-              }
+              $('#total-user-unique').text(data['total_unique_user']);
+              $('#total-user-unique-user-enter-code').text(data['total_user_enter_code']);
+              $('#total-newbie-user').text(data['total_newbie_user']);
+              $('#total-turn-created').text(data['total_turn_created']);
+              $('#total-turn-used').text(data['total_turn_used']);
+              $('#total-turn-remain').text(data['total_turn_remain']);
+              $('#total-enter-code').text(data['total_enter_code']);
 
-              alert(data['error']);
-              return;
-            }
-            $('#loading').css('display', 'none');
-            $('#total-user-unique').text(data['result']);
-
-          })
-          .fail(() => {});
-
+            })
+            .fail(() => {});
       }
-      else
-        $('#loading').css('display', 'none');
-
-    });
-
-    $('#end-date-range-user-unique').change(() => {
-      $('#loading').css('display', 'block');
-      let fromDate  = $('#start-date-range-user-unique').val();
-      let toDate    = $('#end-date-range-user-unique').val();
-      let tmpDateF  = new Date(fromDate);
-      let tmpDateT  = new Date(toDate);
-
-      if (!isNaN(tmpDateF.getTime()) && !isNaN(tmpDateT.getTime()) && tmpDateF.getTime() <= tmpDateT.getTime()) {
-
-        $.ajax({
-          url           : env.http + window.location.host + '/api/v1/admin/dashboard/get-unique-user',
-          method        : 'POST',
-          headers       : {
-            'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type'	:'application/json'
-          },
-          data          : JSON.stringify({
-            from_date   : fromDate,
-            to_date     : toDate
-          })
-        })
-          .done((data) => {
-
-            if (data['status_code'] !== 2000) {
-              alert(data['error']);
-              return;
-            }
-            $('#loading').css('display', 'none');
-            $('#total-user-unique').text(data['result']);
-
-          })
-          .fail(() => {});
-
-      }
-      else
-        $('#loading').css('display', 'none');
-
-    });
   }
-
-  function getTotalNewbieUser() {
-    $('#date-newbie-user').change(() => {
-      $('#loading').css('display', 'block');
-      let dateStr = $('#date-newbie-user').val();
-      let tmpDate = new Date(dateStr);
-
-      if (!isNaN(tmpDate.getTime())) {
-        $.ajax({
-          url           : env.http + window.location.host + '/api/v1/admin/dashboard/get-newbie-user',
-          method        : 'POST',
-          headers       : {
-            'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type'	:'application/json'
-          },
-          contentType   : 'application/json; charset=utf-8',
-          data          : JSON.stringify({ date_str: dateStr })
-        })
-          .done((data) => {
-
-            if (data['status_code'] !== 2000) {
-
-              if (data['error'] === 'unvalid token') {
-                window.location.href = env.http + window.location.host + '/api/v1/admin/signin';
-                return;
-              }
-
-              alert(data['error']);
-              return;
-            }
-            $('#loading').css('display', 'none');
-            $('#total-newbie-user').text(data['result']);
-
-          })
-          .fail(() => {});
-      }
-      else
-        $('#loading').css('display', 'none');
-    });
-  }
-
-  function getTotalTurnCreate() {
-    $('#date-turn-created').change(() => {
-      $('#loading').css('display', 'block');
-      let dateStr = $('#date-turn-created').val();
-      let tmpDate = new Date(dateStr);
-
-      if (!isNaN(tmpDate.getTime())) {
-        $.ajax({
-          url           : env.http + window.location.host + '/api/v1/admin/dashboard/get-total-turn-create',
-          method        : 'POST',
-          headers       : {
-            'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type'	:'application/json'
-          },
-          contentType   : 'application/json; charset=utf-8',
-          data          : JSON.stringify({ date_str: dateStr })
-        })
-          .done((data) => {
-
-            if (data['status_code'] !== 2000) {
-
-              if (data['error'] === 'unvalid token') {
-                window.location.href = env.http + window.location.host + '/api/v1/admin/signin';
-                return;
-              }
-
-              alert(data['error']);
-              return;
-            }
-            $('#loading').css('display', 'none');
-            $('#total-turn-created').text(data['result']);
-
-          })
-          .fail(() => {});
-      }
-      else
-        $('#loading').css('display', 'none');
-    });
-  }
-
-  function getTotalTurnUsed() {
-    $('#date-turn-used').change(() => {
-      $('#loading').css('display', 'block');
-      let dateStr = $('#date-turn-used').val();
-      let tmpDate = new Date(dateStr);
-
-      if (!isNaN(tmpDate.getTime())) {
-        $.ajax({
-          url           : env.http + window.location.host + '/api/v1/admin/dashboard/get-total-turn-used',
-          method        : 'POST',
-          headers       : {
-            'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type'	:'application/json'
-          },
-          contentType   : 'application/json; charset=utf-8',
-          data          : JSON.stringify({ date_str: dateStr })
-        })
-          .done((data) => {
-
-            if (data['status_code'] !== 2000) {
-
-              if (data['error'] === 'unvalid token') {
-                window.location.href = env.http + window.location.host + '/api/v1/admin/signin';
-                return;
-              }
-
-              alert(data['error']);
-              return;
-            }
-            $('#loading').css('display', 'none');
-            $('#total-turn-used').text(data['result']);
-
-          })
-          .fail(() => {});
-      }
-      else
-        $('#loading').css('display', 'none');
-    });
-  }
-
-  function getTotalTurnRemain() {
-    $('#date-turn-remain').change(() => {
-      $('#loading').css('display', 'block');
-      let dateStr = $('#date-turn-remain').val();
-      let tmpDate = new Date(dateStr);
-
-      if (!isNaN(tmpDate.getTime())) {
-        $.ajax({
-          url           : env.http + window.location.host + '/api/v1/admin/dashboard/get-total-turn-remain',
-          method        : 'POST',
-          headers       : {
-            'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type'	:'application/json'
-          },
-          contentType   : 'application/json; charset=utf-8',
-          data          : JSON.stringify({ date_str: dateStr })
-        })
-          .done((data) => {
-
-            if (data['status_code'] !== 2000) {
-
-              if (data['error'] === 'unvalid token') {
-                window.location.href = env.http + window.location.host + '/api/v1/admin/signin';
-                return;
-              }
-
-              $('#loading').css('display', 'none');
-              alert(data['error']);
-              return;
-            }
-            $('#loading').css('display', 'none');
-            $('#total-turn-remain').text(data['result']);
-
-          })
-          .fail(() => {});
-      }
-      else
-        $('#loading').css('display', 'none');
-    });
-  }
-
-  function getTotalEnterCode() {
-    $('#date-enter-code').change(() => {
-      $('#loading').css('display', 'block');
-      let dateStr = $('#date-enter-code').val();
-      let tmpDate = new Date(dateStr);
-
-      if (!isNaN(tmpDate.getTime())) {
-        $.ajax({
-          url           : env.http + window.location.host + '/api/v1/admin/dashboard/get-total-enter-code',
-          method        : 'POST',
-          headers       : {
-            'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type'	:'application/json'
-          },
-          contentType   : 'application/json; charset=utf-8',
-          data          : JSON.stringify({ date_str: dateStr })
-        })
-          .done((data) => {
-
-            if (data['status_code'] !== 2000) {
-
-              if (data['error'] === 'unvalid token') {
-                window.location.href = env.http + window.location.host + '/api/v1/admin/signin';
-                return;
-              }
-
-              $('#loading').css('display', 'none');
-              alert(data['error']);
-              return;
-            }
-            $('#loading').css('display', 'none');
-            $('#total-enter-code').text(data['result']);
-
-          })
-          .fail(() => {});
-      }
-      else
-        $('#loading').css('display', 'none');
-    });
-  }
-
-  function getTotalUniqueUserEnterCode() {
-    $('#start-date-range-unique-user-enter-code').change(() => {
-      $('#loading').css('display', 'block');
-      let fromDate  = $('#start-date-range-unique-user-enter-code').val();
-      let toDate    = $('#end-date-range-unique-user-enter-code').val();
-      let tmpDateF  = new Date(fromDate);
-      let tmpDateT  = new Date(toDate);
-
-      if (!isNaN(tmpDateF.getTime()) && !isNaN(tmpDateT.getTime()) && tmpDateF.getTime() <= tmpDateT.getTime()) {
-
-        $.ajax({
-          url           : env.http + window.location.host + '/api/v1/admin/dashboard/get-unique-user-enter-code',
-          method        : 'POST',
-          headers       : {
-            'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type'	:'application/json'
-          },
-          contentType   : 'application/json; charset=utf-8',
-          data          : JSON.stringify({
-            from_date   : fromDate,
-            to_date     : toDate
-          })
-        })
-          .done((data) => {
-
-            if (data['status_code'] !== 2000) {
-              $('#loading').css('display', 'none');
-              
-              if (data['error'] === 'unvalid token') {
-                window.location.href = env.http + window.location.host + '/api/v1/admin/signin';
-                return;
-              }
-
-              alert(data['error']);
-              return;
-            }
-            $('#loading').css('display', 'none');
-            $('#total-user-unique-user-enter-code').text(data['result']);
-
-          })
-          .fail(() => {});
-
-      }
-      else
-        $('#loading').css('display', 'none');
-
-    });
-
-    $('#end-date-range-unique-user-enter-code').change(() => {
-      $('#loading').css('display', 'block');
-      let fromDate  = $('#start-date-range-unique-user-enter-code').val();
-      let toDate    = $('#end-date-range-unique-user-enter-code').val();
-      let tmpDateF  = new Date(fromDate);
-      let tmpDateT  = new Date(toDate);
-
-      if (!isNaN(tmpDateF.getTime()) && !isNaN(tmpDateT.getTime()) && tmpDateF.getTime() <= tmpDateT.getTime()) {
-
-        $.ajax({
-          url           : env.http + window.location.host + '/api/v1/admin/dashboard/get-unique-user-enter-code',
-          method        : 'POST',
-          headers       : {
-            'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type'	:'application/json'
-          },
-          data          : JSON.stringify({
-            from_date   : fromDate,
-            to_date     : toDate
-          })
-        })
-          .done((data) => {
-
-            if (data['status_code'] !== 2000) {
-              alert(data['error']);
-              return;
-            }
-            $('#loading').css('display', 'none');
-            $('#total-user-unique-user-enter-code').text(data['result']);
-
-          })
-          .fail(() => {});
-
-      }
-      else
-        $('#loading').css('display', 'none');
-
-    });
-  }
-
+  
   function convertDateToStringInputDate(date, month, year) {
     let str = `${year}-`;
     if (month < 10) str += `0${month}-`;

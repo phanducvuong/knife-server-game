@@ -146,7 +146,7 @@ async function isValidLuckyCodes(luckyCodes) {
 
 function chkLsLuckyCodeFollowByRule(luckyCodes) {
   for (let l of luckyCodes) {
-    if (l.length !== 6) {
+    if (l.length !== 6 || l.includes('0') || l.includes('O') || l.includes('I')) {
       return false;
     }
   }

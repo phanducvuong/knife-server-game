@@ -49,12 +49,12 @@ exports.totalUniqueUserJoinGame = (lsMegaID, lsDataUser, fromDate, toDate) => {
   return total;
 }
 
-exports.totalNewbieUserByDate = (lsMegaID, lsDataUser, milli) => {
+exports.totalNewbieUserByDate = (lsMegaID, lsDataUser, fromDate, toDate) => {
   let total = 0;
   for (let u of lsMegaID) {
     let dataUserFind = lsDataUser.find(e => { return e['mega_code'] === u });
     if (dataUserFind !== null && dataUserFind !== undefined) {
-      if (util.chkTheSameDate(dataUserFind['data_user']['date_login'][0], milli)) {
+      if (chkTimeInRange(fromDate.getTime(), toDate.getTime(), dataUserFind['data_user']['date_login'][0])) {
         total += 1;
       }
     }
@@ -62,27 +62,26 @@ exports.totalNewbieUserByDate = (lsMegaID, lsDataUser, milli) => {
   return total;
 }
 
-exports.totalTurnCreateByDate = (lsMegaID, lsDataUser, milli) => {
+exports.totalTurnCreateByDate = (lsMegaID, lsDataUser, fromDate, toDate) => {
   let total = 0;
   for (let u of lsMegaID) {
     let dataUserFind = lsDataUser.find(e => { return e['mega_code'] === u });
     if (dataUserFind !== null && dataUserFind !== undefined) {
       // total += getTotalTurnBy(milli, dataUserFind['data_user']['log_get_turn']['from_mission']);
-      total += getTotalTurnBy(milli, dataUserFind['data_user']['log_get_turn']['from_enter_code']);
+      total += getTotalTurnBy(fromDate, toDate, dataUserFind['data_user']['log_get_turn']['from_enter_code']);
     }
   }
   return total;
 }
 
-exports.totalTurnUsedByDate = (lsMegaID, lsHisAllUser, millisecond) => {
+exports.totalTurnUsedByDate = (lsMegaID, lsHisAllUser, fromDate, toDate) => {
   let total = 0;
   for (let u of lsMegaID) {
     let hisUserFind = lsHisAllUser.find(e => { return e['mega_code'] === u });
     if (hisUserFind !== null && hisUserFind !== undefined) {
       for (let his of hisUserFind['histories']) {
         let json  = JSON.parse(his);
-        let milli = json['time'] + 7 * 3600 * 1000;
-        if (util.chkTheSameDate(millisecond, milli)) {
+        if (chkTimeInRange(fromDate.getTime(), toDate.getTime(), json['time'])) {
           total += 1;
         }
       }
@@ -91,13 +90,13 @@ exports.totalTurnUsedByDate = (lsMegaID, lsHisAllUser, millisecond) => {
   return total;
 }
 
-exports.totalEnterCode = (lsAllDataUser, date) => {
+exports.totalEnterCode = (lsAllDataUser, fromDate, toDate) => {
   let totalEnterCode = 0;
   for (let d of lsAllDataUser) {
     for (let c of d['data_user']['log_get_turn']['from_enter_code']) {
       let split = c.split('_')                                              //{code}_{new-turn-user}_{bonus-turn}_{timestamp}_{lucky-code}
-      let milli = parseInt(split[3], 10) + 7 * 3600 * 1000;
-      if (util.chkTheSameDate(date.getTime(), milli)) {
+      let milli = parseInt(split[3], 10);
+      if (chkTimeInRange(fromDate.getTime(), toDate.getTime(), milli)) {
         totalEnterCode += 1;
       }
     }
@@ -109,7 +108,7 @@ exports.totalUserEnterCode = (lsAllDataUser, fromDate, toDate) => {
   let total = 0;
   for (let d of lsAllDataUser) {
     for (let c of d['data_user']['log_get_turn']['from_enter_code']) {
-      let milli = parseInt(c.split('_')[3], 0);                                                   //{code}_{new-turn-user}_{bonus-turn}_{timestamp}_{lucky-code}
+      let milli = parseInt(c.split('_')[3], 10);   
       if (chkTimeInRange(fromDate, toDate, milli)) {
         total += 1;
         break;
@@ -121,7 +120,8 @@ exports.totalUserEnterCode = (lsAllDataUser, fromDate, toDate) => {
 
 //-------------------------------functional--------------------------------------
 function chkTimeInRange(fromMilli, toMilli, milli) {
-  let changeTimeZoneMilli = milli + 7 * 3600 * 1000;
+  // let changeTimeZoneMilli = milli + 7 * 3600 * 1000;
+  let changeTimeZoneMilli = milli;
   let d = new Date(changeTimeZoneMilli);
   d.setHours(0, 0, 0, 0);
 
@@ -136,13 +136,12 @@ function chkTimeInRange(fromMilli, toMilli, milli) {
   return false;
 }
 
-function getTotalTurnBy(millisecond, lsFrom) {
+function getTotalTurnBy(fromDate, toDate, lsFrom) {
   let total = 0;
   for (let f of lsFrom) {
     let split = f.split('_');                                 //f = {id}_{new-turn-user}_{bonus-turn}_{timestamp}
-    // let milli = parseInt(split[3], 10) + 7 * 3600 * 1000;
     let milli = parseInt(split[3], 10);
-    if (util.chkTheSameDate(milli, millisecond)) {
+    if (chkTimeInRange(fromDate.getTime(), toDate.getTime(), milli)) {
       total += parseInt(split[2], 10);
     }
   }
