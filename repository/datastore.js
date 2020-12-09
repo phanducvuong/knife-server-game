@@ -101,7 +101,7 @@ exports.DSIsExistLuckyCode = async (kind, luckyCode) => {
   }
   catch(err) {
     console.log(err);
-    return null;
+    return true;
   }
 }
 
@@ -115,6 +115,17 @@ exports.DSInsertLuckyCode = (kind, data) => {
   }
   catch(err) {
     console.log(err);
+  }
+}
+
+exports.DSDelLuckyCodeBy = async (kind, luckyCode) => {
+  try {
+    let id = await getLuckyCodeBy(kind, luckyCode);
+    dbClient.delete(dbClient.key([`${kind}`, parseInt(id, 10)]));
+  }
+  catch(err) {
+    console.log(err);
+    return false;
   }
 }
 
@@ -320,5 +331,19 @@ exports.DSGetAllUser = async () => {
   catch(err) {
     console.log(err);
     return [];
+  }
+}
+
+async function getLuckyCodeBy(kind, code) {
+  try {
+    const query     = dbClient.createQuery(kind).filter('code', '=', code);
+    const [result]  = await dbClient.runQuery(query);
+
+    if (result[0] === null || result[0] === undefined) return null;
+    return result[0][dbClient.KEY].id;
+  }
+  catch(err) {
+    console.log(err);
+    return null;
   }
 }

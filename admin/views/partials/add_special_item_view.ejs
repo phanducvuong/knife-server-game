@@ -78,8 +78,8 @@
                 <label>Mega ID</label>
                 <input type="text" id="input-mega-id-lucky-code" class="form-control" value="">
               </div>
-              <div class="col-sm-4 div-lucky-code" style="position: inherit; margin-left: 55px;">
-                <label style="display: grid;">MCH</label>
+              <div class="col-sm-4" style="position: relative; left: 5%;">
+                <label style="display: block;">MCH</label>
                 <textarea name="tf-lucky-code" id="tf-lucky-code" cols="40" rows="5"></textarea>
               </div>
 
@@ -222,21 +222,23 @@
     });
 
     $('#btn-add-lucky-code').click(() => {
-      let luckyCodes = $('#tf-lucky-code').val().split(',').map(i => {return i.trim().toUpperCase()});
-      if (!isValidLsLuckyCode(luckyCodes)) {
-        alert('Check array lucky codes!');
+      let megaID      = $('#input-mega-id-lucky-code').val().trim();
+      let luckyCodes  = $('#tf-lucky-code').val().split(',').map(i => {return i.trim().toUpperCase()});
+      if (megaID === '' || !isValidLsLuckyCode(luckyCodes)) {
+        alert('Check input data!');
         return;
       }
-      updateLuckyCodeUser(luckyCodes, 1);
+      updateLuckyCodeUser(megaID.toUpperCase(), luckyCodes, 1);
     });
 
     $('#btn-del-lucky-code').click(() => {
-      let luckyCodes = $('#tf-lucky-code').val().split(',').map(i => {return i.trim().toUpperCase()});
-      if (!isValidLsLuckyCode(luckyCodes)) {
-        alert('Check array lucky codes!');
+      let megaID      = $('#input-mega-id-lucky-code').val().trim();
+      let luckyCodes  = $('#tf-lucky-code').val().split(',').map(i => {return i.trim().toUpperCase()});
+      if (megaID === '' || !isValidLsLuckyCode(luckyCodes)) {
+        alert('Check input data!');
         return;
       }
-      updateLuckyCodeUser(luckyCodes, 0);
+      updateLuckyCodeUser(megaID.toUpperCase(), luckyCodes, 0);
     });
 
     getListSpecialItemUser();
@@ -245,8 +247,8 @@
   });
 
   //action: 0 -> del, 1 -> add
-  function updateLuckyCodeUser(luckyCodes, action) {
-    $('#loadding').css('display', 'block');
+  function updateLuckyCodeUser(megaID, luckyCodes, action) {
+    $('#loading').css('display', 'block');
     $.ajax({
       url               : env.http + window.location.host + '/api/v1/admin/item/update-lucky-code-user',
       method            : 'POST',
@@ -254,16 +256,16 @@
         'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
         'Content-Type'	:'application/json'
       },
-      data              : JSON.stringify({ ls_lucky_code: luckyCodes, action: action })
+      data              : JSON.stringify({mega_id: megaID, ls_lucky_code: luckyCodes, action: action })
     })
       .done((data) => {
 
         if (data['status_code'] !== 2000) {
-          $('#loadding').css('display', 'none');
+          $('#loading').css('display', 'none');
           alert(data['error']);
           return;
         }
-        $('#loadding').css('display', 'none');
+        $('#loading').css('display', 'none');
         alert(data['msg']);
 
       })

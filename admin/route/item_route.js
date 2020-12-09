@@ -328,30 +328,31 @@ const itemRoute = async (app, opt) => {
 
       if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[3]['id'])) throw 'Permission denied!';
 
+      let megaID      = req.body.mega_id.trim();
       let luckyCodes  = req.body.ls_lucky_code;
       let action      = parseInt(req.body.action, 10);
 
-      if (luckyCodes === null || luckyCodes === undefined || luckyCodes.length <= 0 || isNaN(action)) throw `Check input data!`;
+      if (megaID === null || megaID === undefined || luckyCodes === null || luckyCodes === undefined || luckyCodes.length <= 0 || isNaN(action)) throw `Check input data!`;
 
       let dataUser    = await DS.DSGetDataUser(megaID, 'turn_inven');
       if (dataUser === null || dataUser === undefined) {
         throw `${megaID} is not exist!`;
       }
 
-      dataUser['turn'] += turn;
-      if (dataUser['turn'] < 0) dataUser['turn'] = 0;
+      let result = await itemFunc.updateLuckyCodeUser(luckyCodes, dataUser, action);
+      if (!result['status']) throw result['msg'];
 
-      redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
-      DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
+      redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(result['dataUserUpdate']));
+      DS.DSUpdateDataUser(megaID, 'turn_inven', result['dataUserUpdate']);
 
-      log.logAdminTool('SET-TURN', resultVerify['mailer']['mail'], {
-        mega_code : megaID,
-        turn      : turn
+      log.logAdminTool('UPDATE-LUCKY-CODE-USER', resultVerify['mailer']['mail'], {
+        mega_code           : megaID,
+        lucky_codes_update  : luckyCodes
       });
 
       rep.send({
         status_code : 2000,
-        msg         : 'Success'
+        msg         : 'success'
       });
 
     }
