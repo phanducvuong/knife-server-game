@@ -269,8 +269,8 @@ const profileUserRoute = async (app, opt) => {
       if (resultUpdateCode === null) throw `Enter code failed! ${code}`;
 
       //bonus by condition
-      let strGenerate   = '';
-      let bonusTurn     = 0;
+      let strGenerate = '';
+      let bonusTurn   = 0;
       if (dataUser['log_get_turn']['from_enter_code'].length % 2 === 0) {
         bonusTurn = config.BONUS_ENTER_CODE['bonus_1']['bonus_turn'];
         if (config.BONUS_ENTER_CODE['bonus_1']['bonus_lucky_code'] > 0) {
@@ -293,8 +293,6 @@ const profileUserRoute = async (app, opt) => {
           dataUser['lucky_code'].push(`${strGenerate}_${date.getTime()}`);
         }
       }
-      dataUser['actions'][0] += 1;
-      dataUser['log_get_turn']['from_enter_code'].push(`${code}_${dataUser['turn']}_${bonusTurn}_${date.getTime()}_${strGenerate}`);
 
       if (util.chkTimeEvent(config.EVENTS['start'], config.EVENTS['end'])) {
         dataUser['events'][0] += 1;
@@ -303,13 +301,13 @@ const profileUserRoute = async (app, opt) => {
       if (util.isEligibleEventById0(config.EVENTS['data'][0]['from_date'], config.EVENTS['data'][0]['to_date']) &&
           config.EVENTS['data'][0]['status'] === 1) {
         bonusTurn         *= config.EVENTS['data'][0]['mul'];
-        dataUser['turn']  += bonusTurn;
       } //x2_bonus_turn nếu events đang diễn ra
-      else {
-        dataUser['turn'] += bonusTurn;
-      }
 
+      dataUser['turn']       += bonusTurn;
+      dataUser['actions'][0] += 1;
+      dataUser['log_get_turn']['from_enter_code'].push(`${code}_${dataUser['turn']}_${bonusTurn}_${date.getTime()}_${strGenerate}`);
       dataUser['block_acc'] = profileFunc.resetBlockAccUser(dataUser['block_acc']);
+
       redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
       DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
       DS.DSInsertLuckyCode('lucky_code_s1', { code: strGenerate, time: date.getTime() });

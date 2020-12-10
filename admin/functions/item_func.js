@@ -1,6 +1,8 @@
 const DS              = require('../../repository/datastore');
 const dashboardFunc   = require('./dashboard_func');
 const util            = require('../../utils/util');
+const redisClient     = require('../../redis/redis_client');
+const generateStr     = require('../../utils/generate_string');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -134,6 +136,79 @@ exports.updateLuckyCodeUser = async (luckyCodes, dataUser, action) => {
   return { status: true, dataUserUpdate: dataUser };
 }
 
+exports.enterCodesForUser = async (megaID, dataUser, codes) => {
+  let date          = new Date();
+  let tmpSaveStages = [];
+  for (let c of codes) {
+    let codeDS = await DS.DSGetCode('codes_test', util.genEnterCode(c));
+    if (codeDS === null || codeDS === undefined || codeDS['data']['used'] !== 0) return { status: false, msg: `${c} is not exist or used!` };
+
+    let tmpCode = tmpSaveStages.find(e => { return e['code'] === c });
+    if (tmpCode !== null && tmpCode !== undefined) return { status: false, msg: `The same code ${tmpCode['code']}` };
+
+    let strGenerate = '';
+    let bonusTurn   = 0;
+    if (dataUser['log_get_turn']['from_enter_code'].length % 2 === 0) {
+      bonusTurn = config.BONUS_ENTER_CODE['bonus_1']['bonus_turn'];
+      if (config.BONUS_ENTER_CODE['bonus_1']['bonus_lucky_code'] > 0) {
+        strGenerate   = generateStr.getStringGenerate();
+        if (await DS.DSIsExistLuckyCode('lucky_code_s1', strGenerate) === true) return { status: false, msg: 'MCH. Enter code failed!' };
+        dataUser['lucky_code'].push(`${strGenerate}_${date.getTime()}`);
+      }
+    }
+    else {
+      bonusTurn = config.BONUS_ENTER_CODE['bonus_2']['bonus_turn'];
+      if (config.BONUS_ENTER_CODE['bonus_2']['bonus_lucky_code'] > 0) {
+        strGenerate   = generateStr.getStringGenerate();
+        if (await DS.DSIsExistLuckyCode('lucky_code_s1', strGenerate) === true) return { status: false, msg: 'MCH. Enter code failed!' };
+        dataUser['lucky_code'].push(`${strGenerate}_${date.getTime()}`);
+      }
+    }
+
+    if (util.chkTimeEvent(config.EVENTS['start'], config.EVENTS['end'])) {
+      dataUser['events'][0] += 1;
+    }
+
+    if (util.isEligibleEventById0(config.EVENTS['data'][0]['from_date'], config.EVENTS['data'][0]['to_date']) &&
+          config.EVENTS['data'][0]['status'] === 1) {
+        bonusTurn         *= config.EVENTS['data'][0]['mul'];
+    } //x2_bonus_turn nếu events đang diễn ra
+
+    tmpSaveStages.push({
+      code    : c,
+      code_ds : codeDS,
+      str_gen : strGenerate
+    });
+
+    dataUser['turn']        += bonusTurn;
+    dataUser['actions'][0]  += 1;
+    dataUser['log_get_turn']['from_enter_code'].push(`${c}_${dataUser['turn']}_${bonusTurn}_${date.getTime()}_${strGenerate}`);
+  }
+
+  for (let c of tmpSaveStages) {
+    DS.DSImportCode('codes_test', c['code_ds']['id'], {
+      code      : c['code_ds']['data']['code'],
+      used      : 1,
+      name      : dataUser['name'],
+      province  : dataUser['province'],
+      phone     : dataUser['phone'],
+      time      : date.getTime()
+    });
+
+    if (c['str_gen'].length > 2)
+      DS.DSInsertLuckyCode('lucky_code_s1', { code: c['str_gen'], time: date.getTime() });
+  }
+
+  redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
+  DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
+
+  return {
+    status  : true,
+    msg     : 'Success'
+  };
+}
+
+//----------------------------------------------------function--------------------------------------------------
 async function isValidLuckyCodes(luckyCodes) {
   for (let l of luckyCodes) {
     let isExist = await DS.DSIsExistLuckyCode('lucky_code_s1', l);

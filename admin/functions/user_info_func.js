@@ -161,6 +161,7 @@ exports.getEnterCodeInfo = (lsAllDataUser) => {
       lsEnterCodeInfo.push({
         mega_code   : m['mega_code'],
         name        : m['data']['name'],
+        province    : m['data']['province'],
         phone       : m['data']['phone'],
         code        : s[0],
         lucky_code  : s[4],

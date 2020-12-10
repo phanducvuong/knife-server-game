@@ -311,7 +311,7 @@ const itemRoute = async (app, opt) => {
     }
   });
 
-  //set turn for user
+  //update-lucky-code-user
   app.post('/update-lucky-code-user', async (req, rep) => {
     try {
 
@@ -353,6 +353,52 @@ const itemRoute = async (app, opt) => {
       rep.send({
         status_code : 2000,
         msg         : 'success'
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  //enter code for user to get turn (nhập số lượng lớn mã dự thưởng để lây lượt cho user)
+  app.post('/enter-code', async (req, rep) => {
+    try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
+        throw `unvalid token`;
+      }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[3]['id'])) throw 'Permission denied!';
+      
+      let megaID            = req.body.mega_id.trim();
+      let codes             = req.body.codes;
+      if (megaID === null || megaID === undefined || codes === null || codes === undefined || codes.length <= 0) {
+        throw `1.Enter Code Failed!`;
+      }
+
+      let dataUser  = await DS.DSGetDataUser(megaID, 'turn_inven');
+      if (dataUser === null || dataUser === undefined) throw `${megaID} is not exist!`;
+
+      let result = await itemFunc.enterCodesForUser(megaID, dataUser, codes);
+      if (!result['status']) throw result['msg'];
+
+      rep.send({
+        status_code : 2000,
+        msg         : result['msg']
       });
 
     }
