@@ -384,8 +384,8 @@ const itemRoute = async (app, opt) => {
 
       if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[3]['id'])) throw 'Permission denied!';
       
-      let megaID            = req.body.mega_id.trim();
-      let codes             = req.body.codes;
+      let megaID  = req.body.mega_id.trim();
+      let codes   = req.body.codes;
       if (megaID === null || megaID === undefined || codes === null || codes === undefined || codes.length <= 0) {
         throw `1.Enter Code Failed!`;
       }
@@ -395,6 +395,64 @@ const itemRoute = async (app, opt) => {
 
       let result = await itemFunc.enterCodesForUser(megaID, dataUser, codes);
       if (!result['status']) throw result['msg'];
+
+      log.logAdminTool('ENTER-MANY-CODE', resultVerify['mailer']['mail'], {
+        mega_code : megaID,
+        codes     : codes
+      });
+
+      rep.send({
+        status_code : 2000,
+        msg         : result['msg']
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
+  // remove code get turn in user
+  app.post('/remove-code-get-turn', async (req, rep) => {
+    try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
+        throw `unvalid token`;
+      }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[3]['id'])) throw 'Permission denied!';
+      
+      let megaID  = req.body.mega_id.trim();
+      let code    = req.body.code;
+      if (megaID === null || megaID === undefined || code === null || code === undefined) {
+        throw `1.Remove Code Failed!`;
+      }
+
+      let dataUser  = await DS.DSGetDataUser(megaID, 'turn_inven');
+      if (dataUser === null || dataUser === undefined) throw `${megaID} is not exist!`;
+
+      let result = await itemFunc.enterCodesForUser(megaID, dataUser, codes);
+      if (!result['status']) throw result['msg'];
+
+      log.logAdminTool('REMOVE-CODE-GET-TURN', resultVerify['mailer']['mail'], {
+        mega_code   : megaID,
+        code        : code,
+        turn        : result['turn'],
+        lucky_code  : result['lucky_code']
+      });
 
       rep.send({
         status_code : 2000,

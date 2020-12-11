@@ -306,7 +306,7 @@ const profileUserRoute = async (app, opt) => {
       dataUser['turn']       += bonusTurn;
       dataUser['actions'][0] += 1;
       dataUser['log_get_turn']['from_enter_code'].push(`${code}_${dataUser['turn']}_${bonusTurn}_${date.getTime()}_${strGenerate}`);
-      dataUser['block_acc'] = profileFunc.resetBlockAccUser(dataUser['block_acc']);
+      dataUser['block_acc']   = profileFunc.resetBlockAccUser(dataUser['block_acc']);
 
       redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
       DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);

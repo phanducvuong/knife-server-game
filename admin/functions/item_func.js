@@ -140,7 +140,7 @@ exports.enterCodesForUser = async (megaID, dataUser, codes) => {
   let date          = new Date();
   let tmpSaveStages = [];
   for (let c of codes) {
-    let codeDS = await DS.DSGetCode('codes_test', util.genEnterCode(c));
+    let codeDS = await DS.DSGetCode('codes', util.genEnterCode(c));
     if (codeDS === null || codeDS === undefined || codeDS['data']['used'] !== 0) return { status: false, msg: `${c} is not exist or used!` };
 
     let tmpCode = tmpSaveStages.find(e => { return e['code'] === c });
@@ -186,7 +186,7 @@ exports.enterCodesForUser = async (megaID, dataUser, codes) => {
   }
 
   for (let c of tmpSaveStages) {
-    DS.DSImportCode('codes_test', c['code_ds']['id'], {
+    DS.DSImportCode('codes', c['code_ds']['id'], {
       code      : c['code_ds']['data']['code'],
       used      : 1,
       name      : dataUser['name'],
@@ -206,6 +206,31 @@ exports.enterCodesForUser = async (megaID, dataUser, codes) => {
     status  : true,
     msg     : 'Success'
   };
+}
+
+exports.removeCodeGetTurn = async (megaID, dataUser, code) => {
+  let minusTurn = -1;
+  let luckyCode = 'none';
+  let enterCode = '';
+  for (let l of dataUser['log_get_turn']['from_enter_code']) {
+    let tmp = l.split('_');
+    if (tmp['0'] === code) {
+      minusTurn = parseInt(tmp[2], 10);
+      luckyCode = tmp[4];
+      enterCode = tmp;
+      break;
+    }
+  }
+
+  if (minusTurn === -1 || luckyCode === 'none') throw `1.${code} is not exist!`;
+
+  let codeDS = await DS.DSGetCode('codes_test', util.genEnterCode(code));
+  if (codeDS === null || codeDS === undefined) throw `2.${code} is not exist!`;
+
+  let index                = dataUser['log_get_turn']['from_enter_code'].indexOf(enterCode);
+  dataUser['turn']        -= minusTurn;
+  dataUser['actions'][0]  -= 1;
+  dataUser['log_get_turn']['from_enter_code'].splice(index, 1);
 }
 
 //----------------------------------------------------function--------------------------------------------------

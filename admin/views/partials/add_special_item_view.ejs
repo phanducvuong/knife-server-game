@@ -101,20 +101,19 @@
         <div class="box" style="box-shadow: 1px 0 10px rgba(0,0,0,0.1);">
           <div class="panel-body">
 
-            <!-- ADD/REMOVE LUCKY CODE USER -->
+            <!-- ADD CODE FOR USER TO GET TURN -->
             <div class="form-group row">
               <div class="col-sm-3">
                 <label>Mega ID</label>
-                <input type="text" id="input-mega-id-lucky-code" class="form-control" value="">
+                <input type="text" id="input-mega-id-code" class="form-control" value="">
               </div>
               <div class="col-sm-4" style="position: relative; left: 5%;">
-                <label style="display: block;">MCH</label>
-                <textarea name="tf-lucky-code" id="tf-lucky-code" cols="40" rows="5"></textarea>
+                <label style="display: block;">MÃ DỰ THƯỞNG</label>
+                <textarea name="tf-lucky-code" id="tf-code" cols="40" rows="5"></textarea>
               </div>
 
-              <div class="col-sm-4" style="text-align: center; position: absolute; top: 40%; left: 55%;">
-                <button style="width: 80px;" class="btn-update-global" id="btn-add-lucky-code">THÊM</button>
-                <button style="width: 80px; margin-left: 20px" class="btn-update-global" id="btn-del-lucky-code">XÓA</button>
+              <div class="col-sm-4" style="text-align: center; position: absolute; top: 40%; left: 50%;">
+                <button style="width: 80px;" class="btn-update-global" id="btn-add-code">THÊM</button>
               </div>
               <!-- <div class="col-sm-2" style="text-align: center; position: absolute; top: 40%; left: 60%;">
                 <button style="width: 80px;" class="btn-update-global" id="btn-set-turn">Cập Nhật</button>
@@ -251,7 +250,7 @@
     });
 
     $('#btn-add-lucky-code').click(() => {
-      let megaID      = $('#input-mega-id-lucky-code').val().trim();
+      let megaID      = $('#input-mega-id-lucky-code').val().trim().toUpperCase();
       let luckyCodes  = $('#tf-lucky-code').val().split(',').map(i => {return i.trim().toUpperCase()});
       if (megaID === '' || !isValidLsLuckyCode(luckyCodes)) {
         alert('Check input data!');
@@ -261,13 +260,23 @@
     });
 
     $('#btn-del-lucky-code').click(() => {
-      let megaID      = $('#input-mega-id-lucky-code').val().trim();
+      let megaID      = $('#input-mega-id-lucky-code').val().trim().toUpperCase();
       let luckyCodes  = $('#tf-lucky-code').val().split(',').map(i => {return i.trim().toUpperCase()});
       if (megaID === '' || !isValidLsLuckyCode(luckyCodes)) {
         alert('Check input data!');
         return;
       }
       updateLuckyCodeUser(megaID.toUpperCase(), luckyCodes, 0);
+    });
+
+    $('#btn-add-code').click(() => {
+      let megaID  = $('#input-mega-id-code').val().toUpperCase();
+      let codes   = $('#tf-code').val().split(',').map(i => { return i.trim() });
+      if (megaID === '' || codes.length <= 0) {
+        alert('Check input data!');
+        return;
+      }
+      addCodeToGetTurnForUser(megaID, codes);
     });
 
     getListSpecialItemUser();
@@ -286,6 +295,31 @@
         'Content-Type'	:'application/json'
       },
       data              : JSON.stringify({mega_id: megaID, ls_lucky_code: luckyCodes, action: action })
+    })
+      .done((data) => {
+
+        if (data['status_code'] !== 2000) {
+          $('#loading').css('display', 'none');
+          alert(data['error']);
+          return;
+        }
+        $('#loading').css('display', 'none');
+        alert(data['msg']);
+
+      })
+      .fail(() => {});
+  }
+
+  function addCodeToGetTurnForUser(megaID, codes) {
+    $('#loading').css('display', 'block');
+    $.ajax({
+      url               : env.http + window.location.host + '/api/v1/admin/item/enter-code',
+      method            : 'POST',
+      headers           : {
+        'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type'	:'application/json'
+      },
+      data              : JSON.stringify({ mega_id: megaID, codes: codes })
     })
       .done((data) => {
 
