@@ -444,7 +444,7 @@ const itemRoute = async (app, opt) => {
       let dataUser  = await DS.DSGetDataUser(megaID, 'turn_inven');
       if (dataUser === null || dataUser === undefined) throw `${megaID} is not exist!`;
 
-      let result = await itemFunc.enterCodesForUser(megaID, dataUser, codes);
+      let result = await itemFunc.removeCodeGetTurn(megaID, dataUser, code);
       if (!result['status']) throw result['msg'];
 
       log.logAdminTool('REMOVE-CODE-GET-TURN', resultVerify['mailer']['mail'], {

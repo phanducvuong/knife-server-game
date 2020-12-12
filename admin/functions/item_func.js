@@ -12,6 +12,8 @@ else {
   config = require('../../config_dev');
 }
 
+const KIND_CODE = 'codes_test';
+
 exports.filterOptionItem = async () => {
   let lsAllItem = await DS.DSGetAllItem();
   let filter    = [];
@@ -140,7 +142,7 @@ exports.enterCodesForUser = async (megaID, dataUser, codes) => {
   let date          = new Date();
   let tmpSaveStages = [];
   for (let c of codes) {
-    let codeDS = await DS.DSGetCode('codes', util.genEnterCode(c));
+    let codeDS = await DS.DSGetCode(KIND_CODE, util.genEnterCode(c));
     if (codeDS === null || codeDS === undefined || codeDS['data']['used'] !== 0) return { status: false, msg: `${c} is not exist or used!` };
 
     let tmpCode = tmpSaveStages.find(e => { return e['code'] === c });
@@ -186,7 +188,7 @@ exports.enterCodesForUser = async (megaID, dataUser, codes) => {
   }
 
   for (let c of tmpSaveStages) {
-    DS.DSImportCode('codes', c['code_ds']['id'], {
+    DS.DSImportCode(KIND_CODE, c['code_ds']['id'], {
       code      : c['code_ds']['data']['code'],
       used      : 1,
       name      : dataUser['name'],
@@ -217,20 +219,51 @@ exports.removeCodeGetTurn = async (megaID, dataUser, code) => {
     if (tmp['0'] === code) {
       minusTurn = parseInt(tmp[2], 10);
       luckyCode = tmp[4];
-      enterCode = tmp;
+      enterCode = l;
       break;
     }
   }
 
-  if (minusTurn === -1 || luckyCode === 'none') throw `1.${code} is not exist!`;
+  if (minusTurn === -1 || luckyCode === 'none') return { status: false, msg: `1.${code} is not exist!` };
 
-  let codeDS = await DS.DSGetCode('codes_test', util.genEnterCode(code));
-  if (codeDS === null || codeDS === undefined) throw `2.${code} is not exist!`;
+  let codeDS = await DS.DSGetCode(KIND_CODE, util.genEnterCode(code));
+  if (codeDS === null || codeDS === undefined) return { status: false, msg: `2.${code} is not exist!` };
 
-  let index                = dataUser['log_get_turn']['from_enter_code'].indexOf(enterCode);
-  dataUser['turn']        -= minusTurn;
-  dataUser['actions'][0]  -= 1;
+  let index = dataUser['log_get_turn']['from_enter_code'].indexOf(enterCode);
   dataUser['log_get_turn']['from_enter_code'].splice(index, 1);
+
+  index = getIndexOfLuckyCodeFromUser(dataUser['lucky_code'], luckyCode);
+  if (index >= 0) dataUser['lucky_code'].splice(index, 1);
+
+  dataUser['turn'] -= minusTurn;
+  if (dataUser['turn'] < 0) dataUser['turn'] = 0;
+
+  dataUser['actions'][0] -= 1;
+  if (dataUser['actions'][0] < 0) dataUser['actions'] = 0;
+
+  if (util.chkTimeEvent(config.EVENTS['start'], config.EVENTS['end'])) {
+    dataUser['events'][0] -= 1;
+    if (dataUser['events'][0] < 0) dataUser['events'][0] = 0;
+  }
+
+  //reset code
+  DS.DSImportCode(KIND_CODE, codeDS['id'], {
+    code      : codeDS['data']['code'],
+    used      : 0
+  });
+
+  //remove lucky code in lucky_code_s1
+  DS.DSDelLuckyCodeBy('lucky_code_s1', luckyCode);
+
+  redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataUser));
+  DS.DSUpdateDataUser(megaID, 'turn_inven', dataUser);
+
+  return {
+    status      : true,
+    msg         : 'Success',
+    turn        : dataUser['turn'],
+    lucky_code  : luckyCode
+  };
 }
 
 //----------------------------------------------------function--------------------------------------------------
@@ -251,4 +284,14 @@ function chkLsLuckyCodeFollowByRule(luckyCodes) {
     }
   }
   return true;
+}
+
+function getIndexOfLuckyCodeFromUser(luckyCodes, code) {
+  for (let l of luckyCodes) {
+    let tmp = l.split('_');                                       // {lucky_code}_{time}
+    if (tmp[0] === code) {
+      return luckyCodes.indexOf(l);
+    }
+  }
+  return -1;
 }

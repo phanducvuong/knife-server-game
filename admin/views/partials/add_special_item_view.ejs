@@ -114,10 +114,8 @@
 
               <div class="col-sm-4" style="text-align: center; position: absolute; top: 40%; left: 50%;">
                 <button style="width: 80px;" class="btn-update-global" id="btn-add-code">THÊM</button>
+                <button style="width: 80px; margin-left: 20px" class="btn-update-global" id="btn-del-code">XÓA</button>
               </div>
-              <!-- <div class="col-sm-2" style="text-align: center; position: absolute; top: 40%; left: 60%;">
-                <button style="width: 80px;" class="btn-update-global" id="btn-set-turn">Cập Nhật</button>
-              </div> -->
             </div>
           </div>
         </div>
@@ -279,6 +277,16 @@
       addCodeToGetTurnForUser(megaID, codes);
     });
 
+    $('#btn-del-code').click(() => {
+      let megaID  = $('#input-mega-id-code').val().toUpperCase();
+      let code    = $('#tf-code').val();
+      if (megaID === '' || code === '') {
+        alert('Check input data!');
+        return;
+      }
+      delCodeToGetTurnForUser(megaID, code);
+    });
+
     getListSpecialItemUser();
     delSpecialItem();
 
@@ -320,6 +328,31 @@
         'Content-Type'	:'application/json'
       },
       data              : JSON.stringify({ mega_id: megaID, codes: codes })
+    })
+      .done((data) => {
+
+        if (data['status_code'] !== 2000) {
+          $('#loading').css('display', 'none');
+          alert(data['error']);
+          return;
+        }
+        $('#loading').css('display', 'none');
+        alert(data['msg']);
+
+      })
+      .fail(() => {});
+  }
+
+  function delCodeToGetTurnForUser(megaID, code) {
+    $('#loading').css('display', 'block');
+    $.ajax({
+      url               : env.http + window.location.host + '/api/v1/admin/item/remove-code-get-turn',
+      method            : 'POST',
+      headers           : {
+        'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type'	:'application/json'
+      },
+      data              : JSON.stringify({ mega_id: megaID, code: code })
     })
       .done((data) => {
 
