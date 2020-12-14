@@ -1,0 +1,425 @@
+<%- include('../layouts/header') %>
+
+  <div class="content-wrapper">
+    <section class="content-header">
+      <h1>TOP</h1>
+    </section>
+    
+    <section class="content">
+      <div style="background-color: white;">
+        <div class="div-all-item row">
+          <div class="filter-info-user">
+            <a hidden id="csv" href=""></a>
+            <button class="btn btn-primary" id="btn-export-top-enter-code">CSV</button>
+          </div>
+
+          <!-- search -->
+          <!-- <div class="filter-info-user">
+            <label>Search</label>
+            <input type="text" placeholder="megaID/username" id="search-user" value="">
+          </div> -->
+
+          <!-- from date -->
+          <div class="filter-info-user">
+            <label>From</label>
+            <input type="date" placeholder="" id="from-date-enter-code" value="">
+          </div>
+
+          <!-- to date -->
+          <div class="filter-info-user">
+            <label>To</label>
+            <input type="date" placeholder="" id="to-date-enter-code" value="">
+          </div>
+        </div>
+
+        <table id="top-enter-code-table" class="footable table table-stripped">
+          <thead>
+            <tr>
+              <th style="font-weight: bold;">TỈNH/THÀNH PHỐ</th>
+              <th style="font-weight: bold;">TỔNG</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for (let d of data) { %>
+              <tr>
+                <td><%= d['province'] %></td>
+                <td><%= d['sum'] %></td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+        <div style="text-align: end;">
+          <div class="pagination-custom">
+            <a href="#" id="previous-page">&laquo;</a>
+          </div>
+          <div class="pagination-custom" id="pagination">
+            <!-- <a href="#" class="three-dot">...</a> -->
+          </div>
+          <div class="pagination-custom">
+            <a href="#" id="next-page" data-id="0">&raquo;</a>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </div>
+
+  <script>
+
+    $(document).ready(() => {
+
+      window.arrTr = [];
+      for (let tr of $('#top-enter-code-table tbody tr')) {
+        window.arrTr.push(tr);
+      }
+
+      let date = new Date();
+      $('#from-date-enter-code').val(date.getFullYear() + '-' + (date.getMonth()+1)+ '-' + date.getDate());
+      $('#to-date-enter-code').val(date.getFullYear() + '-' + (date.getMonth()+1)+ '-' + date.getDate());
+
+      getPagination();
+      nextPage();
+      previousPage();
+
+      $('#btn-export-top-enter-code').click(() => {
+        let data    = getDataTableToExport($('#top-enter-code-table tbody tr'));
+        let columns = [
+          {
+            dataField: "province",
+            displayName: "TỈNH/THÀNH PHỐ"
+          },
+          {
+            dataField: "sum",
+            displayName: "TỔNG"
+          }
+        ];
+        export_data.export(data, columns, 'top tỉnh thành nhập code nhiều nhất');
+      });
+
+      // $('#search-user').on('keyup', () => {
+      //   search();
+      // });
+
+      $('#from-date-enter-code').change(() => {
+        let fromDate  = $('#from-date-enter-code').val();
+        let toDate    = $('#to-date-enter-code').val();
+
+        if (isValidDate(fromDate, toDate))
+          updateTopEnterCodeTable(fromDate, toDate);
+      });
+
+      $('#to-date-enter-code').change(() => {
+        let fromDate  = $('#from-date-enter-code').val();
+        let toDate    = $('#to-date-enter-code').val();
+
+        if (isValidDate(fromDate, toDate))
+          updateTopEnterCodeTable(fromDate, toDate);
+      });
+
+    });
+
+    function updateTopEnterCodeTable(fromDate, toDate) {
+      $('#loading').css('display', 'block');
+      $.ajax({
+        url             : env.http + window.location.host + '/api/v1/admin/code/top-enter-code-by-province',
+        method          : 'POST',
+        headers         : {
+          'Authorization'	: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type'	:'application/json'
+        },
+        data            : JSON.stringify({
+          from_date : fromDate,
+          to_date   : toDate
+        })
+      })
+        .done((data) => {
+
+          if (data['status_code'] !== 2000) {
+            $('#loading').css('display', 'none');
+            alert(data['error']);
+            return;
+          }
+          $('#loading').css('display', 'none');
+          updateTopTable(data['result']);
+
+        })
+        .fail(() => {})
+    }
+
+    function updateTopTable(data) {
+      $('#top-enter-code-table tbody').remove();
+      let markup = '<tbody>';
+      for (let d of data) {
+        markup += `
+          <tr>
+            <td>${d['province']}</td>
+            <td>${d['sum']}</td>
+          </tr>
+        `;
+      }
+      markup += '</tbody>';
+      $('#top-enter-code-table').append(markup);
+    }
+
+    function isValidDate(fromDate, toDate) {
+      let tmpDateF  = new Date(fromDate);
+      let tmpDateT  = new Date(toDate);
+      if (tmpDateF.getTime() > tmpDateT.getTime())
+        return false;
+      return true;
+    }
+
+    function search() {
+      let textSearch  = $('#search-user').val().toLowerCase();
+      let fromDate    = new Date($('#from-date-enter-code').val() + ' 00:00:00');
+      let toDate      = new Date($('#to-date-enter-code').val() + ' 23:59:59');
+
+      $('#top-enter-code-table tbody').empty();
+      $('#pagination').empty();
+
+      if (textSearch !== '' && !isNaN(fromDate.getTime()) && !isNaN(toDate.getTime())) {
+        filterByTextAndDate(fromDate, toDate, textSearch);
+        getPagination();
+        return;
+      }
+
+      if (textSearch !== '' && (isNaN(fromDate.getTime()) || isNaN(toDate.getTime))) {
+        filterByText(textSearch);
+        getPagination();
+        return;
+      }
+
+      if (textSearch === '' && !isNaN(fromDate.getTime()) && !isNaN(toDate.getTime())) {
+        filterByDate(fromDate, toDate);
+        getPagination();
+        return;
+      }
+
+      if (textSearch === '' && (isNaN(fromDate.getTime()) || isNaN(toDate.getTime()))) {
+        filterAll();
+        getPagination();
+        return;
+      }
+
+    }
+
+    function getPagination() {
+      let rowsTotal = $('#top-enter-code-table tbody tr').length;
+      let numPages  = parseInt(rowsTotal / env.rows_show, 10);
+
+      if ((rowsTotal % env.rows_show) !== 0) {
+        numPages += 1;
+      }
+
+      let markup = '';
+      if (numPages <= env.max_page) {
+        for (let i=0; i<numPages; i++) {
+          if (i === 0) {
+            markup += `<a href="#" class="page active-page" data-id="${i}">${i+1}</a>`;
+            continue;
+          }
+          markup += `<a href="#" class="page" data-id="${i}">${i+1}</a>`
+        }
+      }
+      else {
+        for (let i=0; i<env.max_page; i++) {
+          if (i === 0) {
+            markup += `<a href="#" class="page active-page" data-id="${i}">${i+1}</a>`;
+            continue;
+          }
+          markup += `<a href="#" class="page" data-id="${i}">${i+1}</a>`;
+        }
+        markup += '<a href="#" class="three-dot">...</a>';
+        markup += `<a href="#" class="page" data-id="${numPages-1}">${numPages}</a>`
+      }
+
+      $('#pagination').append(markup);
+      $('#top-enter-code-table tbody tr').hide();
+      $('#top-enter-code-table tbody tr').slice(0, env.rows_show).show();
+
+      $('body').delegate('.page', 'click', (event) => {
+        let currPage  = parseInt(event.currentTarget.attributes.getNamedItem('data-id').value, 10);
+        updatePagination(numPages, currPage);
+      });
+    }
+
+    function nextPage() {
+      $('#next-page').click(() => {
+        let rowsTotal = $('#top-enter-code-table tbody tr').length;
+        let numPages  = parseInt(rowsTotal / env.rows_show, 10);
+        if ((rowsTotal % env.rows_show) !== 0) {
+          numPages += 1;
+        }
+
+        let currPage  = parseInt($('#next-page').attr('data-id'), 10) + 1;
+        if (currPage >= numPages) {
+          return;
+        }
+
+        updatePagination(numPages, currPage);
+      });
+    }
+
+    function previousPage() {
+      $('#previous-page').click(() => {
+        let rowsTotal = $('#top-enter-code-table tbody tr').length;
+        let numPages  = parseInt(rowsTotal / env.rows_show, 10);
+        if ((rowsTotal % env.rows_show) !== 0) {
+          numPages += 1;
+        }
+
+        let currPage  = parseInt($('#next-page').attr('data-id'), 10) - 1;
+        if (currPage < 0) {
+          return;
+        }
+        
+        updatePagination(numPages, currPage);
+      });
+    }
+
+    function updatePagination(numPages, currPage) {
+      removePageActive();
+      let markup    = '';
+      if (currPage >= 4) {
+        $('#pagination').empty();
+        markup += `
+          <a href="#" class="page" data-id="0">1</a>
+          <a href="#" class="three-dot">...</a>
+          <a href="#" class="page" data-id="${currPage-2}">${currPage-1}</a>
+          <a href="#" class="page" data-id="${currPage-1}">${currPage}</a>
+          <a href="#" class="page active-page" data-id="${currPage}">${currPage+1}</a>
+        `;
+
+        if (numPages - (currPage+1) > 2) {
+          markup += `
+            <a href="#" class="page" data-id="${currPage+1}">${currPage+2}</a>
+            <a href="#" class="page" data-id="${currPage+2}">${currPage+3}</a>
+            <a href="#" class="three-dot">...</a>
+            <a href="#" class="page" data-id="${numPages-1}">${numPages}</a>
+          `;
+        }
+        else {
+          for (let i=currPage+1; i<numPages; i++) {
+            markup += `<a href="#" class="page" data-id="${i}">${i+1}</a>`;
+          }
+        }
+      }
+      else if (numPages <= env.max_page) {
+        $('#pagination').empty();
+        for (let i=0; i<numPages; i++) {
+          if (i === currPage) {
+            markup += `<a href="#" class="page active-page" data-id="${i}">${i+1}</a>`
+            continue;
+          }
+          markup += `<a href="#" class="page" data-id="${i}">${i+1}</a>`
+        }
+      }
+      else {
+        $('#pagination').empty();
+        for (let i=0; i<env.max_page; i++) {
+          if (i === currPage) {
+            markup += `<a href="#" class="page active-page" data-id="${i}">${i+1}</a>`
+            continue;
+          }
+          markup += `<a href="#" class="page" data-id="${i}">${i+1}</a>`;
+        }
+        markup += '<a href="#" class="three-dot">...</a>';
+        markup += `<a href="#" class="page" data-id="${numPages-1}">${numPages}</a>`
+      }
+
+      $('#pagination').append(markup);
+      $('#next-page').attr('data-id', currPage);
+      showDataTableBy(currPage);
+    }
+
+    function removePageActive() {
+      for (let e of $('#pagination a')) {
+        let c = e.getAttribute('class');
+        if (c.includes('active-page')) {
+          e.setAttribute('class', 'page');
+          return;
+        }
+      }
+    }
+
+    function showDataTableBy(currPage) {
+      let startItem = currPage * env.rows_show;
+      let endItem   = startItem + env.rows_show;
+      $('#top-enter-code-table tbody tr')
+          .css('opacity', '0.0')
+          .hide()
+          .slice(startItem, endItem)
+          .css('display', '')
+          .animate({ opacity: 1 }, 300);
+    }
+
+    function convertStringToMillisecond(s) {
+      let date = new Date(s);
+      if (!isNaN(date.getTime())) {
+        return date.getTime();
+      }
+      return 0;
+    }
+
+    //-----------------------------------------------------filter------------------------------------------------------------
+
+    function filterAll() {
+      for (let tr of window.arrTr) {
+        tr.style.opacity = 1.0;
+        $('#top-enter-code-table tbody').append(tr);
+      }
+    }
+
+    function filterByTextAndDate(fromDate, toDate, textSearch) {
+      for (let tr of window.arrTr) {
+        let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
+        let name    = tr.getElementsByTagName('td')[1].textContent.toLowerCase();
+        let phone   = tr.getElementsByTagName('td')[3].textContent;
+        let date    = convertStringToMillisecond(tr.getElementsByTagName('td')[6].textContent);
+
+        if (megaID.includes(textSearch) || phone.includes(textSearch) || name.includes(textSearch)) {
+          if (date >= fromDate.getTime() && date <= toDate.getTime()) {
+            tr.style.opacity = 1.0;
+            $('#top-enter-code-table tbody').append(tr);
+          }
+        }
+      }
+    }
+
+    function filterByText(textSearch) {
+      for (let tr of window.arrTr) {
+        let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
+        let name    = tr.getElementsByTagName('td')[1].textContent.toLowerCase();
+        let phone   = tr.getElementsByTagName('td')[3].textContent;
+
+        if (megaID.includes(textSearch) || phone.includes(textSearch) || name.includes(textSearch)) {
+          tr.style.opacity = 1.0;
+          $('#top-enter-code-table tbody').append(tr);
+        }
+      }
+    }
+
+    function filterByDate(fromDate, toDate) {
+      for (let tr of window.arrTr) {
+        let date = convertStringToMillisecond(tr.getElementsByTagName('td')[6].textContent);
+        if (date >= fromDate.getTime() && date <= toDate.getTime()) {
+          tr.style.opacity = 1.0;
+          $('#top-enter-code-table tbody').append(tr);
+        }
+      }
+    }
+
+    function getDataTableToExport(arrTable) {
+      let data = [];
+      for (let tr of arrTable) {
+        data.push({
+          province         : tr.getElementsByTagName('td')[0].textContent,
+          sum              : tr.getElementsByTagName('td')[1].textContent,
+        });
+      }
+      return data;
+    }
+
+  </script>
+
+<%- include('../layouts/footer') %>

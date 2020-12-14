@@ -28,7 +28,7 @@
  * block_time   -> thời gian acc bị khóa
  */
 
-
+exports.KIND_CODE                 = 'codes';                                                                  //key get check code get turn in datastore
 exports.URL_VALID_TOKEN           = 'https://mega1vip.mega1.vn/service_gameportal/v1/user/info';
 // exports.URL_TOPUP                 = 'https://topup-gw-dev-api.yeah1group.com/api/v1/topup';
 exports.URL_TOPUP                 = 'https://topup-gw-master-api.yeah1group.com/api/v1/topup';

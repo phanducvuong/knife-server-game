@@ -12,8 +12,6 @@ else {
   config = require('../../config_dev');
 }
 
-const KIND_CODE = 'codes_test';
-
 exports.filterOptionItem = async () => {
   let lsAllItem = await DS.DSGetAllItem();
   let filter    = [];
@@ -142,7 +140,7 @@ exports.enterCodesForUser = async (megaID, dataUser, codes) => {
   let date          = new Date();
   let tmpSaveStages = [];
   for (let c of codes) {
-    let codeDS = await DS.DSGetCode(KIND_CODE, util.genEnterCode(c));
+    let codeDS = await DS.DSGetCode(config.K, util.genEnterCode(c));
     if (codeDS === null || codeDS === undefined || codeDS['data']['used'] !== 0) return { status: false, msg: `${c} is not exist or used!` };
 
     let tmpCode = tmpSaveStages.find(e => { return e['code'] === c });
@@ -188,7 +186,7 @@ exports.enterCodesForUser = async (megaID, dataUser, codes) => {
   }
 
   for (let c of tmpSaveStages) {
-    DS.DSImportCode(KIND_CODE, c['code_ds']['id'], {
+    DS.DSImportCode(config.KIND_CODE, c['code_ds']['id'], {
       code      : c['code_ds']['data']['code'],
       used      : 1,
       name      : dataUser['name'],
@@ -226,7 +224,7 @@ exports.removeCodeGetTurn = async (megaID, dataUser, code) => {
 
   if (minusTurn === -1 || luckyCode === 'none') return { status: false, msg: `1.${code} is not exist!` };
 
-  let codeDS = await DS.DSGetCode(KIND_CODE, util.genEnterCode(code));
+  let codeDS = await DS.DSGetCode(config.KIND_CODE, util.genEnterCode(code));
   if (codeDS === null || codeDS === undefined) return { status: false, msg: `2.${code} is not exist!` };
 
   let index = dataUser['log_get_turn']['from_enter_code'].indexOf(enterCode);
@@ -247,7 +245,7 @@ exports.removeCodeGetTurn = async (megaID, dataUser, code) => {
   }
 
   //reset code
-  DS.DSImportCode(KIND_CODE, codeDS['id'], {
+  DS.DSImportCode(config.KIND_CODE, codeDS['id'], {
     code      : codeDS['data']['code'],
     used      : 0
   });

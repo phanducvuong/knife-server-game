@@ -17,7 +17,6 @@ const signinFunc          = require('../functions/signin_func');
 const jwt                 = require('../../utils/jwt');
 const DS                  = require('../../repository/datastore');
 const log                 = require('../../utils/log');
-const { verifiedaccess } = require('googleapis/build/src/apis/verifiedaccess');
 
 const roleRoute = async (app, opt) => {
 

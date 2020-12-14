@@ -30,7 +30,7 @@
  * block_time   -> thời gian acc bị khóa
  */
 
-
+exports.KIND_CODE                 = 'codes_test';
 exports.URL_VALID_TOKEN           = 'http://demo8992960.mockable.io/verify-token';
 // exports.URL_VALID_TOKEN           = 'https://mega1vip.mega1.vn/service_gameportal/v1/user/info';
 // exports.URL_VALID_TOKEN           = 'https://mega1-gameportal-dev.yeah1group.com/service_gameportal/v1/user/info';

@@ -46,6 +46,11 @@ const ROLES             = [
     description : 'tab lucky code',
     redirect    : '/api/v1/admin/role'
   },
+  {
+    id          : 9,
+    description : 'tab top code',
+    redirect    : '/api/v1/admin/item'
+  },
 ];
 
 exports.getAllUserAdmin = async () => {

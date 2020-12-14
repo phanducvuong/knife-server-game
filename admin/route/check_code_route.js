@@ -3,9 +3,11 @@ const util            = require('../../utils/util');
 const jwt             = require('../../utils/jwt');
 const signinFunc      = require('../functions/signin_func');
 const roleFunc        = require('../functions/role_func');
+const chkCodeFunc     = require('../functions/check_code_func');
 
 const checkCodeRoute = async (app, opt) => {
 
+  //check code get turn
   app.get('/', async (req, rep) => {
     try {
 
@@ -78,7 +80,86 @@ const checkCodeRoute = async (app, opt) => {
     }
   });
 
+  //get the best top enter code
+  app.get('/view-top-enter-code-by-province', async (req, rep) => {
+    try {
+
+      let token         = req.query.token;
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
+        rep.redirect('/api/v1/admin/signin');
+        return;
+      }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[9]['id'])) throw 'Permission denied!';
+
+      let date = new Date();
+      date.setHours(0, 0, 0, 0);
+
+      let result = await chkCodeFunc.getTopEnterCodeByProvince(date, date);
+
+      rep.view('/partials/top_enter_code_by_province.ejs', {
+        data  : result
+      });
+
+    }
+    catch(err) {
+
+      rep.view('/partials/error_view.ejs', {
+        title_error : err
+      });
+
+    }
+  });
+
+  app.post('/top-enter-code-by-province', async (req, rep) => {
+    try {
+
+      let headers = req.headers['authorization'];
+      if (headers === null || headers === undefined) {
+        throw `unvalid token`;
+      }
+
+      let token         = headers.split(' ')[1];
+      let resultVerify  = await jwt.verify(token, signinFunc.SECRETE);
+      if (!resultVerify['status']) {
+        throw `unvalid token`;
+      }
+
+      if (!resultVerify['mailer']['role'].includes(roleFunc.GETROLES()[9]['id'])) throw 'Permission denied!';
+
+      let fromDate    = req.body.from_date.toString().trim();
+      let toDate      = req.body.to_date.toString().trim();
+      let tmpDateF    = new Date(fromDate);
+      let tmpDateT    = new Date(toDate);
+      if (isNaN(tmpDateF.getTime()) ||  isNaN(tmpDateT.getTime()) || 
+          tmpDateF.getTime()        >   tmpDateT.getTime()) {
+        throw `Invalid date!`;
+      }
+      tmpDateF.setHours(0, 0, 0, 0);
+      tmpDateT.setHours(0, 0, 0, 0);
+
+      let result = await chkCodeFunc.getTopEnterCodeByProvince(tmpDateF, tmpDateT);
+      rep.send({
+        status_code : 2000,
+        result      : result
+      });
+
+    }
+    catch(err) {
+
+      console.log(err);
+      rep.send({
+        status_code : 3000,
+        error       : err
+      });
+
+    }
+  });
+
 }
+
+//--------------------------------------------------------------function---------------------------------------------------------------------
 
 function convertTimeToString(milli) {
   let time    = new Date(milli + 7 * 3600 * 1000);
