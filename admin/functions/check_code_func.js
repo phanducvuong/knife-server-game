@@ -21,6 +21,7 @@ exports.getTopEnterCodeByProvince = async (fromDate, toDate) => {
   }
 
   let filter = filterTopEnterCodeByProvince(arrSumCode, arrProvince);
+  filter.sort((a, b) => { return b['sum'] - a['sum'] });
   return filter;
 }
 

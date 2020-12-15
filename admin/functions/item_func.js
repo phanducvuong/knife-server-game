@@ -140,7 +140,7 @@ exports.enterCodesForUser = async (megaID, dataUser, codes) => {
   let date          = new Date();
   let tmpSaveStages = [];
   for (let c of codes) {
-    let codeDS = await DS.DSGetCode(config.K, util.genEnterCode(c));
+    let codeDS = await DS.DSGetCode(config.KIND_CODE, util.genEnterCode(c));
     if (codeDS === null || codeDS === undefined || codeDS['data']['used'] !== 0) return { status: false, msg: `${c} is not exist or used!` };
 
     let tmpCode = tmpSaveStages.find(e => { return e['code'] === c });

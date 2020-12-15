@@ -664,6 +664,11 @@ const globalRoute = async (app, opt) => {
     rep.send('ok');
   });
 
+  app.post('/hash-code-t', async (req, rep) => {
+    let codeHash = util.genEnterCode(req.body.code);
+    rep.send(codeHash);
+  });
+
 }
 
 module.exports = globalRoute;

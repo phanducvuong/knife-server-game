@@ -249,13 +249,16 @@ exports.getAllLuckyCode = async () => {
   let tmp           = [];
   for (let d of lsAllDataUser) {
     for (let m of d['data']['lucky_code']) {
-      let s = m.split('_');                                             //{code}_{new-turn-user}_{bonus-turn}_{timestamp}_{lucky-code}
+      let s     = m.split('_');
+      let time  = util.convertTimeToString(parseInt(s[1], 10));                                         //{code}_{new-turn-user}_{bonus-turn}_{timestamp}_{lucky-code}
+      
       tmp.push({
         mega_id     : d['mega_code'],
         name        : d['data']['name'],
         phone       : d['data']['phone'],
         province    : d['data']['province'],
-        lucky_code  : s[0]
+        lucky_code  : s[0],
+        time        : time
       });
     }
   }

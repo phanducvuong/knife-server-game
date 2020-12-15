@@ -19,6 +19,18 @@
             <label>Search</label>
             <input type="text" placeholder="megaID/username" id="search-user" value="">
           </div>
+
+          <!-- from date -->
+          <div class="filter-info-user">
+            <label>From</label>
+            <input type="date" placeholder="" id="from-date" value="">
+          </div>
+
+          <!-- to date -->
+          <div class="filter-info-user">
+            <label>To</label>
+            <input type="date" placeholder="" id="to-date" value="">
+          </div>
         </div>
 
         <table id="table-lucky-code" class="footable table table-stripped">
@@ -29,6 +41,7 @@
               <th style="font-weight: bold;">SĐT</th>
               <th style="font-weight: bold;">TỈNH/THÀNH PHỐ</th>
               <th style="font-weight: bold;">MÃ CƠ HỘI</th>
+              <th style="font-weight: bold;">THỜI GIAN</th>
             </tr>
           </thead>
           <tbody>
@@ -39,6 +52,7 @@
                 <td><%= d['phone'] %></td>
                 <td><%= d['province'] %></td>
                 <td><%= d['lucky_code'] %></td>
+                <td><%= d['time'] %></td>
               </tr>
             <% } %>
           </tbody>
@@ -94,6 +108,10 @@
           {
             dataField: "lucky_code",
             displayName: "MÃ CƠ HỘI"
+          },
+          {
+            dataField: "time",
+            displayName: "THỜI GIAN"
           }
         ];
         export_data.export(data, columns, 'Danh Sách Code Đã Nhập');
@@ -103,16 +121,50 @@
         search();
       });
 
+      $('#from-date').change(() => {
+        search();
+      });
+
+      $('#to-date').change(() => {
+        search();
+      });
+
     });
 
     function search() {
       let textSearch  = $('#search-user').val().toLowerCase();
+      let fromDate    = new Date($('#from-date').val() + ' 00:00:00');
+      let toDate      = new Date($('#to-date').val() + ' 23:59:59');
 
-      $('#table-lucky-code tbody').empty();
-      $('#pagination').empty();
+      if (textSearch !== '' && (isNaN(fromDate.getTime()) || isNaN(toDate.getTime()))) {
+        $('#table-lucky-code tbody').empty();
+        $('#pagination').empty();
 
-      filterByText(textSearch.toLowerCase());
-      getPagination();
+        filterByText(textSearch.toLowerCase());
+        getPagination();
+        return;
+      } //filter by text search
+
+      if (textSearch === '' && !isNaN(fromDate.getTime()) && !isNaN(toDate.getTime())) {
+        $('#table-lucky-code tbody').empty();
+        $('#pagination').empty();
+
+        console.log('2');
+
+        filterByRangeTime(fromDate, toDate);
+        getPagination();
+        return;
+      } //filter by range time
+
+      if (textSearch !== '' && !isNaN(fromDate.getTime()) && !isNaN(toDate.getTime())) {
+        console.log('3');
+        $('#table-lucky-code tbody').empty();
+        $('#pagination').empty();
+
+        filterByRangeTimeAndTextSeach(fromDate, toDate, textSearch);
+        getPagination();
+        return;
+      } //filter by range time and text search
 
     }
 
@@ -296,6 +348,31 @@
       }
     }
 
+    function filterByRangeTime(fromDate, toDate) {
+      for (let tr of window.arrTr) {
+        let date = convertStringToMillisecond(tr.getElementsByTagName('td')[5].textContent);
+        
+        if (date >= fromDate.getTime() && date <= toDate.getTime()) {
+          tr.style.opacity = 1.0;
+          $('#table-lucky-code tbody').append(tr);
+        }
+      }
+    }
+
+    function filterByRangeTimeAndTextSeach(fromDate, toDate, textSearch) {
+      for (let tr of window.arrTr) {
+        let megaID  = tr.getElementsByTagName('td')[0].textContent.toLowerCase();
+        let name    = tr.getElementsByTagName('td')[1].textContent.toLowerCase();
+        let phone   = tr.getElementsByTagName('td')[2].textContent;
+        let date    = convertStringToMillisecond(tr.getElementsByTagName('td')[5].textContent);
+
+        if ((megaID.includes(textSearch) || name.includes(textSearch) || phone.includes(textSearch)) && date >= fromDate.getTime() && date <= toDate.getTime()) {
+          tr.style.opacity = 1.0;
+          $('#table-lucky-code tbody').append(tr);
+        }
+      }
+    }
+
     function getDataTableToExport(arrTable) {
       let data = [];
       for (let tr of arrTable) {
@@ -305,7 +382,7 @@
           phone             : tr.getElementsByTagName('td')[2].textContent,
           province          : tr.getElementsByTagName('td')[3].textContent,
           lucky_code        : tr.getElementsByTagName('td')[4].textContent,
-          // time              : tr.getElementsByTagName('td')[5].textContent,
+          time              : tr.getElementsByTagName('td')[5].textContent,
         });
       }
       return data;
