@@ -175,7 +175,7 @@ input::-webkit-inner-spin-button {
   color: white;
 }
 
-#btn-del-lucky-code:hover {
+#btn-del-lucky-code:hover, #btn-del-code:hover {
   color: white;
   background-color: red;
 }
