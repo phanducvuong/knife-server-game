@@ -12,7 +12,7 @@ else {
   config          = require('./config_dev');
 }
 
-let versionCode   = 1;
+let versionCode   = 2;
 app.register(require('fastify-cors'));
 
 app.get('/loader.io', async (req, rep) => {
@@ -68,15 +68,26 @@ app.register(require('./routes/event_route'),             { prefix: '/api/v1/eve
 app.register(require('./routes/profile_user_route'),      { prefix: '/api/v1/profile' });
 
 //route admin
-app.register(require('./admin/route/dashboard_route'),    { prefix: '/api/v1/admin/dashboard' });
-app.register(require('./admin/route/setup_route'),        { prefix: '/api/v1/admin/setup' });
-app.register(require('./admin/route/item_route'),         { prefix: '/api/v1/admin/item' });
-app.register(require('./admin/route/user_info_route'),    { prefix: '/api/v1/admin/user-info' });
-app.register(require('./admin/route/check_code_route'),   { prefix: '/api/v1/admin/code' });
-app.register(require('./admin/route/signin_route'),       { prefix: '/api/v1/admin/signin' });
-app.register(require('./admin/route/unlock_user_route'),  { prefix: '/api/v1/admin/unlock' });
-app.register(require('./admin/route/role_route'),         { prefix: '/api/v1/admin/role' });
-app.register(require('./admin/route/lucky_code_route'),   { prefix: '/api/v1/admin/lucky-code' });
+// app.register(require('./admin/route/dashboard_route'),    { prefix: '/api/v1/admin/dashboard' });
+// app.register(require('./admin/route/setup_route'),        { prefix: '/api/v1/admin/setup' });
+// app.register(require('./admin/route/item_route'),         { prefix: '/api/v1/admin/item' });
+// app.register(require('./admin/route/user_info_route'),    { prefix: '/api/v1/admin/user-info' });
+// app.register(require('./admin/route/check_code_route'),   { prefix: '/api/v1/admin/code' });
+// app.register(require('./admin/route/signin_route'),       { prefix: '/api/v1/admin/signin' });
+// app.register(require('./admin/route/unlock_user_route'),  { prefix: '/api/v1/admin/unlock' });
+// app.register(require('./admin/route/role_route'),         { prefix: '/api/v1/admin/role' });
+// app.register(require('./admin/route/lucky_code_route'),   { prefix: '/api/v1/admin/lucky-code' });
+
+//route admin cache
+app.register(require('./admin/route_cache/dashboard_route_cache'),    { prefix: '/api/v1/admin/dashboard' });
+app.register(require('./admin/route/setup_route'),                    { prefix: '/api/v1/admin/setup' });
+app.register(require('./admin/route_cache/item_route_cache'),         { prefix: '/api/v1/admin/item' });
+app.register(require('./admin/route_cache/user_info_route_cache'),    { prefix: '/api/v1/admin/user-info' });
+app.register(require('./admin/route_cache/check_code_route_cache'),   { prefix: '/api/v1/admin/code' });
+app.register(require('./admin/route/signin_route'),                   { prefix: '/api/v1/admin/signin' });
+app.register(require('./admin/route/unlock_user_route'),              { prefix: '/api/v1/admin/unlock' });
+app.register(require('./admin/route/role_route'),                     { prefix: '/api/v1/admin/role' });
+app.register(require('./admin/route_cache/lucky_code_func_cache'),    { prefix: '/api/v1/admin/lucky-code' });
 
 //route test
 app.register(require('./test/global_route'),              { prefix: '/api/v1/test' });

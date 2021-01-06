@@ -1,3 +1,4 @@
+const utils           = require('../utils/util');
 const redisClient     = require('redis');
 const { hashCode }    = require('../utils/hash_code');
 
@@ -151,7 +152,25 @@ exports.flushall = () => {
   }
 }
 
-//-----------------------------------------functional-----------------------------------------------
+//-----------------------------------------admin tool---------------------------------------------------------
+exports.getAllKeyBy = (key) => {
+  return new Promise((resv, rej) => {
+    let lsAllMegaID = [];
+    for (let i=0; i<config.LENGTH_REDIS; i++) {
+      insLsRedis[i].keys(`*${key}*`, (err, rep) => {
+        if (rep !== null && rep !== undefined && rep.length > 0)
+          lsAllMegaID.push(...rep);
+
+        if (i === config.LENGTH_REDIS-1) {
+          let uniqueArr = utils.getUniqueArr(lsAllMegaID);
+          return resv(uniqueArr);
+        }
+      });
+    }
+  });
+}
+
+//-----------------------------------------functional---------------------------------------------------------
 function getIndex(key) {
   let index = Math.abs(hashCode(key)) % config.LENGTH_REDIS;
   return index;

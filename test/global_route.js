@@ -669,6 +669,17 @@ const globalRoute = async (app, opt) => {
     rep.send(codeHash);
   });
 
+  //test admin tool
+  app.post('/get-all-key', async (req, rep) => {
+    let result = await redisClient.getAllKeyBy(req.body.key);
+    rep.send(result);
+  });
+
+  app.post('/get-history-user', async (req, rep) => {
+    let his = JSON.parse(await redisClient.getHistoryUser(req.body.mega_id));
+    rep.send(his);
+  });
+
 }
 
 module.exports = globalRoute;

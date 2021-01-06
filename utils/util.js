@@ -173,3 +173,12 @@ exports.formatTimeRuleBlockAccTo = (millisecond) => {
   
   return 'none';
 }
+
+exports.getUniqueArr = (arr) => {
+  let uniqueArr = [];
+  for (let v of arr) {
+    if (uniqueArr.indexOf(v) === -1)
+      uniqueArr.push(v);
+  }
+  return uniqueArr;
+}
