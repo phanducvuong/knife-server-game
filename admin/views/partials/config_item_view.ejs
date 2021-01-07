@@ -18,6 +18,7 @@
               <td style="font-weight: bolder;">AMOUNT</td>
               <td style="font-weight: bolder;">MAXIMUM</td>
               <td style="font-weight: bolder;">PERCENT</td>
+              <td style="font-weight: bolder;">ACTIVE</td>
               <td style="font-weight: bolder;">SAVE</td>
               <td style="font-weight: bolder;">SPECIAL ITEM</td>
             </tr>
@@ -49,6 +50,9 @@
                   </td>
                   <td>
                     <%= e['percent'] %>
+                  </td>
+                  <td>
+                    <%= e['active'] %>
                   </td>
                   <td>
                     <p><%= e['save'] %></p>
@@ -140,6 +144,16 @@
                           <input  id="percentItem" placeholder="Percent"
                                   class="form-control input-md" type="number"
                                   step="0" min="0">
+                      </div>
+                    </div>
+
+                    <!-- ACTIVE -->
+                    <div class="form-group">
+                      <label class="col-md-4 control-label">ACTIVE</label>
+                      <div class="col-md-12">
+                          <input  id="activeItem" placeholder="Active"
+                                  class="form-control input-md" type="number"
+                                  step="0" min="-1" value="-1">
                       </div>
                     </div>
 
@@ -238,6 +252,16 @@
                     </div>
                   </div>
 
+                  <!-- ACTIVE -->
+                  <div class="form-group">
+                    <label class="col-md-4 control-label">ACTIVE</label>
+                    <div class="col-md-12">
+                        <input  id="edtActiveItem" placeholder="Active"
+                                class="form-control input-md" type="number"
+                                step="0" min="-1" value="-1">
+                    </div>
+                  </div>
+
                   <!-- SAVE -->
                   <div class="form-group">
                     <label class="col-md-4 control-label">SAVE ITEM</label>
@@ -299,6 +323,7 @@
         let name          = $('#nameItem').val().trim();
         let maximum       = $('#maximumItem').val();
         let percent       = $('#percentItem').val();
+        let active        = $('#activeItem').val();
         let save          = $('#saveItem').val() === '1' ? true : false;
         let special       = $('#specialItem').val() === '1' ? true : false;
 
@@ -313,6 +338,7 @@
           name    : name,
           maximum : maximum,
           percent : percent,
+          active  : active,
           save    : save,
           special : special
         }
@@ -356,6 +382,7 @@
         $('#nameItem').val('');
         $('#maximumItem').val('');
         $('#percentItem').val('');
+        $('#activeItem').val('');
         $('#saveItem').val('1');
         $('#specialItem').val('0');
       });
@@ -396,6 +423,9 @@
             </td>
             <td>
               <p>${e['percent']}</p>
+            </td>
+            <td>
+              <p>${e['active']}</p>
             </td>
             <td>
               <p>${e['save']}</p>
@@ -487,6 +517,7 @@
             $('#edtNameItem').val(itemUpdate['name']);
             $('#edtMaximumItem').val(itemUpdate['maximum']);
             $('#edtPercentItem').val(itemUpdate['percent']);
+            $('#edtActiveItem').val(itemUpdate['active']);
 
             itemUpdate['save']          === true ? $('#edtSaveItem').text('TRUE') : $('#edtSaveItem').text('FALSE');
             itemUpdate['special_item']  === true ? $('#edtSpecialItem').text('TRUE') : $('#edtSpecialItem').text('FALSE');
@@ -518,6 +549,7 @@
         let name        = $('#edtNameItem').val();
         let maximum     = $('#edtMaximumItem').val();
         let percent     = $('#edtPercentItem').val();
+        let active      = $('#edtActiveItem').val();
 
         if (id === '' || name === '' || maximum === '' || percent === '') {
           alert('Edit item failed!');
@@ -536,7 +568,8 @@
             id        : id,
             name      : name,
             maximum   : maximum,
-            percent   : percent
+            percent   : percent,
+            active    : active
           })
         })
           .done((data) => {

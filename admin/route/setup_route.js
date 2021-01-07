@@ -580,12 +580,13 @@ const setupRoute = async (app, opt) => {
       let name    = req.body.name;
       let maximum = parseInt(req.body.maximum, 10);
       let percent = parseInt(req.body.percent, 10);
+      let active  = parseInt(req.body.active, 10);
       let save    = req.body.save;
       let special = req.body.special;
 
       if (isNaN(id)   || isNaN(maximum) || isNaN(percent)     || isNaN(type)    || typeof save !== "boolean" || typeof special !== "boolean"  ||
           name === '' || name === null  || name === undefined || save === null  || save        === undefined || special        === null       || special === undefined ||
-          id < 0      || percent < 0) {
+          id < 0      || percent < 0    || isNaN(active)      || active === 0) {
         throw 'Add item failed!';
       }
 
@@ -601,6 +602,7 @@ const setupRoute = async (app, opt) => {
         amount        : 0,
         maximum       : maximum,
         percent       : percent,
+        active        : active,
         save          : save,
         special_item  : special
       }
@@ -751,10 +753,11 @@ const setupRoute = async (app, opt) => {
       let name    = req.body.name;
       let maximum = parseInt(req.body.maximum, 10);
       let percent = parseInt(req.body.percent, 10);
+      let active  = parseInt(req.body.active, 10);
 
       if (isNaN(id)   || isNaN(maximum) || isNaN(percent)       ||
           name === '' || name === null  || name === undefined   ||
-          id < 0      || percent < 0) {
+          id < 0      || percent < 0    || isNaN(active)        || active === 0) {
         throw `Edit item failed!`;
       }
 
@@ -768,6 +771,7 @@ const setupRoute = async (app, opt) => {
       tmp['item']['name']         = name;
       tmp['item']['maximum']      = maximum;
       tmp['item']['percent']      = percent;
+      tmp['item']['active']       = active;
       lsItem[tmp['index']]        = tmp['item'];
 
       log.logAdminTool(
@@ -777,7 +781,8 @@ const setupRoute = async (app, opt) => {
             id      : id,
             name    : name,
             maximum : maximum,
-            percent : percent
+            percent : percent,
+            active  : active
           },
           pre_ls_item : preLsItem
         }

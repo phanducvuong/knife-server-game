@@ -39,6 +39,7 @@ const dataInitUser = {
     rule_2      : { count: 0, time: 0 }
   },
   special_item  : [],
+  total_turn_active_item  : 0,
   phone         : '',
   userID        : '',
   name          : '',
@@ -330,7 +331,7 @@ const globalRoute = async (app, opt) => {
     dataInitUser.province = province;
     dataInitUser.name     = name;
     dataInitUser.userID   = userID;
-    dataInitUser.token    = '123456';
+    dataInitUser.token    = req.body.token;
 
     redisClient.updateTurnAndInvenUser(megaID, JSON.stringify(dataInitUser));
     DS.DSUpdateDataGlobal(megaID, 'turn_inven', dataInitUser);
@@ -698,6 +699,16 @@ const globalRoute = async (app, opt) => {
         item['active'] = 0;
         DS.DSUpdateDataGlobal('items', item['id'], item);
       }
+    }
+
+    rep.send('ok');
+  });
+
+  app.get('/update-item', async (req, rep) => {
+    let lsItem = await DS.DSGetAllItem();
+    for (let item of lsItem) {
+      item['active'] = -1;
+      DS.DSUpdateDataGlobal('items', item['id'], item);
     }
 
     rep.send('ok');
