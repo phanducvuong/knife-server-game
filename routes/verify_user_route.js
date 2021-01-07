@@ -107,6 +107,10 @@ const verifyUserRoute = async (app, opt) => {
         dataUser['date_login'].push(date.getTime());
       }
 
+      //thêm field mới để check trường hợp user xoay đủ số lượt quy định mới active các item khác (mặc định ra item mặc định)
+      if (dataUser['total_turn_active_item'] === undefined)
+        dataUser['total_turn_active_item'] = 0;
+
       redisClient.updateTurnAndInvenUser(`${result.mega1_code}`, JSON.stringify(dataUser));
       DS.DSUpdateDataUser(`${result.mega1_code}`, 'turn_inven', dataUser);
 

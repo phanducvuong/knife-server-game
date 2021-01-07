@@ -680,6 +680,29 @@ const globalRoute = async (app, opt) => {
     rep.send(his);
   });
 
+  app.post('/add-admins', async (req, rep) => {
+    DS.DSUpdateDataGlobal('administrators', req.body.mailer, {
+      mail  : req.body.mailer,
+      role  : [0,1,2,3,4,5,6,7,8],
+      name  : req.body.name,
+      token : ''
+    });
+    
+    rep.send('ok');
+  });
+
+  app.get('/add-filed-item', async (req, rep) => {
+    let arrItem = await DS.DSGetAllItem();
+    if (arrItem !== null && arrItem !== undefined) {
+      for (let item of arrItem) {
+        item['active'] = 0;
+        DS.DSUpdateDataGlobal('items', item['id'], item);
+      }
+    }
+
+    rep.send('ok');
+  });
+
 }
 
 module.exports = globalRoute;

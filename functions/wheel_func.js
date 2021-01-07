@@ -9,15 +9,19 @@ else {
   config = require('../config_dev');
 }
 
-exports.getRndItem = async () => {
+exports.getRndItem = async (totalTurnActiveItem) => {
   if (config.ITEM_FILTER.length <= 0) return null;
 
-  let rnd                   = Math.round(Math.random() * config.TOTAL_PERCENT) + 1;
+  //new rule: nếu user xoay đủ số lượt thì mới active item
+  let lsNewFilterItem = filterNewLsItemByTotalTurnActiveItem(config.ITEM_FILTER, totalTurnActiveItem);
+  if (lsNewFilterItem['ls_filter_item'].length <= 0) return null;
+
+  let rnd                   = Math.round(Math.random() * lsNewFilterItem['total_percent']) + 1;
   let percent               = 0;
   let isGetAmountItemRedis  = true;
 
   let tmpItem;
-  for (item of config.ITEM_FILTER) {
+  for (item of lsNewFilterItem['ls_filter_item']) {
     percent += item.percent;
     if (rnd <= percent) {
       tmpItem = item;
@@ -56,18 +60,21 @@ exports.getRndItem = async () => {
   return tmpItem;
 }
 
-exports.getItemWithRmBox = async (idItemRm) => {
+exports.getItemWithRmBox = async (idItemRm, totalTurnActiveItem) => {
   if (config.ITEM_FILTER.length <= 0) return null;
 
   let result = newLsItemFilterWhenRmBox(idItemRm);
-  if (result['newLsFilter'].length <= 0) return null;
+  if (result.length <= 0) return null;
 
-  let rnd                   = Math.round(Math.random() * result['totalPercent']) + 1;
+  let lsNewFilterItem = filterNewLsItemByTotalTurnActiveItem(result, totalTurnActiveItem);
+  if (lsNewFilterItem['ls_filter_item'].length <= 0) return null;
+
+  let rnd                   = Math.round(Math.random() * lsNewFilterItem['total_percent']) + 1;
   let percent               = 0;
   let isGetAmountItemRedis  = true;
 
   let tmpItem;
-  for (item of result['newLsFilter']) {
+  for (item of lsNewFilterItem['ls_filter_item']) {
     percent += item.percent;
     if (rnd <= percent) {
       tmpItem = item;
@@ -137,6 +144,9 @@ exports.countIdItemRmInLsParition = (idItemRm) => {
 
 //-------------------------------------------------functional------------------------------------------
 function newLsItemFilterWhenRmBox(idItemRm) {
+  if (countIdItemInLsItem(config.PARTITIONS['data'], idItemRm) !== 1)
+    return config.ITEM_FILTER;
+
   let newLsFilter = [];
   newLsFilter.push(...config.ITEM_FILTER);
 
@@ -147,13 +157,30 @@ function newLsItemFilterWhenRmBox(idItemRm) {
     }
   }
 
-  let totalPercent = 0;
-  for (let e of newLsFilter) {
-    totalPercent += e['percent'];
-  }
+  return newLsFilter;
+}
 
-  return {
-    newLsFilter   : newLsFilter,
-    totalPercent  : totalPercent
+function filterNewLsItemByTotalTurnActiveItem(lsItem, totalTurnActiveItem) {
+  let lsFilterItem  = [];
+  let totalPercent  = 0;
+
+  for (let item of lsItem) {
+    if (totalTurnActiveItem >= item['active']) {
+      lsFilterItem.push(item);
+      totalPercent += item['percent'];
+    }
   }
+  return {
+    ls_filter_item  : lsFilterItem,
+    total_percent   : totalPercent
+  };
+}
+
+function countIdItemInLsItem(lsItem, idItem) {
+  let count = 0;
+  for (let item of lsItem) {
+    if (item['id'] === idItem)
+      count++;
+  }
+  return count;
 }

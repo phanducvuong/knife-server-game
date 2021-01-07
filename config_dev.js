@@ -8,6 +8,8 @@
  * 0 -> hidden
  * 1 -> show
  * 
+ * @key active -> user xoay đủ số lượt thì item mới được active
+ * 
  * @key type mission/event: check action user
  * -1 -> NONE
  * 0  -> Nhập Code

@@ -68,7 +68,6 @@ const wheelRoute = async (app, opt) => {
           dataUser['sp_item'] = resultUpdateLsSpItem['lsSpItemUpdate'];
         }
         item = wheelFunc.getItemUnlimit();
-
       } //user is have in blacklist
       else if (idItemRm !== null && idItemRm !== undefined) {
 
@@ -84,17 +83,18 @@ const wheelRoute = async (app, opt) => {
           return;
         }
         dataUser['sp_item'] = resultUpdateLsSpItem['lsSpItemUpdate'];
+        item = await wheelFunc.getItemWithRmBox(tmpIdRm, dataUser['total_turn_active_item']);
 
-        let countItemRm = wheelFunc.countIdItemRmInLsParition(tmpIdRm);
-        if (countItemRm === 1) {
-          item = await wheelFunc.getItemWithRmBox(tmpIdRm);
-        }
-        else {
-          item = await wheelFunc.getRndItem();
-        }
+        // let countItemRm = wheelFunc.countIdItemRmInLsParition(tmpIdRm);
+        // if (countItemRm === 1) {
+        //   item = await wheelFunc.getItemWithRmBox(tmpIdRm, dataUser['total_turn_active_item']);
+        // }
+        // else {
+        //   item = await wheelFunc.getRndItem(dataUser['total_turn_active_item']);
+        // }
       } //remove item on box case
       else {
-        item = await wheelFunc.getRndItem();
+        item = await wheelFunc.getRndItem(dataUser['total_turn_active_item']);
       }
 
       if (item === null || item === undefined) throw `item is not exist! ${megaID}`;
@@ -123,10 +123,11 @@ const wheelRoute = async (app, opt) => {
       } //lưu lại lần phóng của user nếu sự kiện đang diễn ra
 
       let invenUpdate = profileUserFunc.updateInventory(dataUser['inven'], item);
-      dataUser['turn']          -= 1;
-      dataUser['actions'][1]    += 1;
-      dataUser['total_turned']  += 1;
-      dataUser['inven']          = invenUpdate['invevntoryUpdate'];
+      dataUser['turn']                    -= 1;
+      dataUser['actions'][1]              += 1;
+      dataUser['total_turned']            += 1;
+      dataUser['total_turn_active_item']  += 1;
+      dataUser['inven']                    = invenUpdate['invevntoryUpdate'];
 
       const strHis = JSON.stringify({
         time      : time.getTime(),
