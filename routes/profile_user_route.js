@@ -224,6 +224,9 @@ const profileUserRoute = async (app, opt) => {
         throw `Check info user! ${megaID}, or code!`;
       }
 
+      //ending event
+      if (util.endingEvent()) throw `Ending event!`;
+
       let date      = new Date();
       let dataUser  = JSON.parse(await redisClient.getTurnAndInvenUser(megaID));
       if (dataUser === null || dataUser === undefined) {

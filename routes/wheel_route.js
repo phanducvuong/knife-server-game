@@ -29,6 +29,9 @@ const wheelRoute = async (app, opt) => {
       const idItemRm    = req.body.idItemRm;
 
       if (!util.chkCountdown()) throw 'Game is Comming Soon!';
+
+      //ending event
+      if (util.endingEvent()) throw `Ending event!`;
       
       if (partition !== config.PARTITIONS['partition'] || config.PARTITIONS['data'].length !== config.PARTITIONS['partition']) {
         throw `please reload game to update config! ${megaID}`;

@@ -3,6 +3,7 @@ const redisClient         = require('../redis/redis_client');
 const DS                  = require('../repository/datastore');
 const profileFunc         = require('../functions/profile_user_func');
 const logger              = require('fluent-logger');
+const util                = require('../utils/util');
 
 var config;
 if (process.env.NODE_ENV === 'production') {
@@ -205,7 +206,8 @@ const verifyUserRoute = async (app, opt) => {
         count_down      : new Date(config.COUNT_DOWN).getTime(),
         count_down_str  : `${countDownSplit[1]} ${countDownSplitDate[2]}/${countDownSplitDate[1]}/${countDownSplitDate[0]}`,
         text_show       : config.TEXT_SHOW['text'],
-        count_text_show : config.TEXT_SHOW['count']
+        count_text_show : config.TEXT_SHOW['count'],
+        ending          : util.endingEvent()
       });
 
     }

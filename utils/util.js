@@ -182,3 +182,11 @@ exports.getUniqueArr = (arr) => {
   }
   return uniqueArr;
 }
+
+exports.endingEvent = () => {
+  let date        = new Date();
+  let dateNow     = new Date(date.getTime() + 7 * 3600 * 1000);
+  let dateEnding  = new Date("2021-02-28 23:59");
+
+  return dateNow.getTime() >= dateEnding.getTime();
+}

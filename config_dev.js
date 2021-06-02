@@ -33,7 +33,7 @@
  */
 
 exports.KIND_CODE                 = 'codes_test';
-exports.URL_VALID_TOKEN           = 'http://demo8992960.mockable.io/verify-token';
+exports.URL_VALID_TOKEN           = 'https://5f51b3625e98480016123d0f.mockapi.io/api/user';
 // exports.URL_VALID_TOKEN           = 'https://mega1vip.mega1.vn/service_gameportal/v1/user/info';
 // exports.URL_VALID_TOKEN           = 'https://mega1-gameportal-dev.yeah1group.com/service_gameportal/v1/user/info';
 exports.URL_TOPUP                 = 'https://topup-gw-dev-api.yeah1group.com/api/v1/topup';
